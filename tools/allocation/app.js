@@ -1,13 +1,3 @@
-// MoneyMind debug guard (temporary)
-console.log("MoneyMind Allocation JS loaded ✅");
-window.addEventListener("error", (e) => {
-  console.error("MoneyMind JS error:", e.error || e.message);
-});
-
-
-
-
-
 
 / ===== Helpers =====
 const $ = (id) => document.getElementById(id);
