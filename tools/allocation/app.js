@@ -1,4 +1,6 @@
-
+console.log("MoneyMind Allocation JS loaded ✅");
+window.addEventListener("error", (e) => console.error("MoneyMind JS error:", e.error || e.message));
+window.addEventListener("unhandledrejection", (e) => console.error("MoneyMind Promise rejection:", e.reason));
 / ===== Helpers =====
 const $ = (id) => document.getElementById(id);
 const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
