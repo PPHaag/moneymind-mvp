@@ -1,6 +1,193 @@
 <!doctype html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Allocation Insight</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
   <body>
-    Allocation test
+
+   <a class="mm-back" href="https://codepen.io/PPHaagie/full/NPRqMpy">← Back to Hub</a>
+
+<div class="mm-wrap">
+  <div class="mm-card">
+    
+    <!-- HERO -->
+    <div class="mm-hero">
+      <h1>Income is not a strategy. Allocation is.</h1>
+      <p>How much of your monthly cashflow structurally builds wealth?</p>
+    </div>
+
+    <!-- CORE INPUTS -->
+    <div class="mm-grid">
+      <div class="mm-field">
+        <label>Monthly Net Income</label>
+        <div class="mm-input">
+          <span>€</span>
+          <input id="income" type="number" min="0" step="1" placeholder="4500" />
+        </div>
+      </div>
+
+      <div class="mm-field">
+        <label>Fixed Structural Costs</label>
+        <div class="mm-input">
+          <span>€</span>
+          <input id="fixed" type="number" min="0" step="1" placeholder="2400" />
+        </div>
+      </div>
+
+      <div class="mm-field">
+        <label>Monthly Wealth Building</label>
+        <div class="mm-input">
+          <span>€</span>
+          <input id="wealth" type="number" min="0" step="1" placeholder="600" />
+        </div>
+      </div>
+    </div>
+
+    <button id="calcBtn" class="mm-btn">Calculate allocation</button>
+
+    <!-- RESULT -->
+    <div id="result" class="mm-result mm-hidden">
+      <div class="mm-resultRow">
+        <div class="mm-metric">
+          <div class="mm-big" id="wealthPct">—%</div>
+          <div class="mm-sub">builds future wealth</div>
+        </div>
+
+        <div class="mm-divider"></div>
+
+        <div class="mm-metric">
+          <div class="mm-big" id="fixedPct">—%</div>
+          <div class="mm-sub">fixed cost load</div>
+        </div>
+
+        <div class="mm-divider"></div>
+
+        <div class="mm-metric">
+          <div class="mm-big" id="restPct">—%</div>
+          <div class="mm-sub">flex + lifestyle</div>
+        </div>
+      </div>
+
+      <div class="mm-note">Structure determines trajectory.</div>
+    </div>
+
+    <!-- SILENT LEAK -->
+    <div id="silentLeak" class="mm-section mm-hidden">
+      <div class="mm-sectionTitle">Allocation Upgrade: The Silent Leak</div>
+      <div class="mm-sectionSub">
+        Pick recurring costs you could redirect to wealth building — without real impact.
+      </div>
+
+      <div class="mm-grid mm-grid3">
+        <div class="mm-field">
+          <label>Leak #1</label>
+          <div class="mm-input">
+            <span>€</span>
+            <input id="leak1" type="number" min="0" step="1" placeholder="25" />
+          </div>
+        </div>
+
+        <div class="mm-field">
+          <label>Leak #2</label>
+          <div class="mm-input">
+            <span>€</span>
+            <input id="leak2" type="number" min="0" step="1" placeholder="45" />
+          </div>
+        </div>
+
+        <div class="mm-field">
+          <label>Leak #3</label>
+          <div class="mm-input">
+            <span>€</span>
+            <input id="leak3" type="number" min="0" step="1" placeholder="60" />
+          </div>
+        </div>
+      </div>
+
+      <!-- RETURN SLIDER -->
+      <div class="mm-sliderRow">
+        <div class="mm-sliderLabel">
+          <span>Assumed annual return</span>
+          <strong><span id="rLabel">6</span>%</strong>
+        </div>
+
+        <div class="mm-note mm-noteTight">
+          We assume you redirect this leak monthly into wealth building.
+        </div>
+
+        <input id="rSlider" type="range" min="3" max="10" step="0.5" value="6" />
+
+        <div class="mm-sliderHint">
+          Adjust responsibly. Higher assumptions increase volatility risk.
+        </div>
+      </div>
+
+      <!-- IMPACT -->
+      <div class="mm-impact">
+        <div class="mm-impactMain" id="impact20">
+          Redirecting €—/month → €— in 20 years
+        </div>
+        <div class="mm-impactSub" id="impact10">10-year impact: €—</div>
+        <div class="mm-note">Small leaks. Structural consequences.</div>
+      </div>
+
+      <!-- SHIFT -->
+      <div class="mm-shift" id="shiftLine">
+        Wealth allocation increases from —% to —%.
+      </div>
+    </div>
+
+    <!-- PREMIUM -->
+    <div id="premiumCard" class="mm-premium mm-hidden">
+      <div class="mm-premiumTop">
+        <div>
+          <div class="mm-sectionTitle">Advanced Structural Insight</div>
+          <div class="mm-sectionSub">Optimize your wealth allocation strategically.</div>
+        </div>
+        <button id="trialBtn" class="mm-btn mm-btnGhost">Start 7-day trial</button>
+      </div>
+
+      <div id="premiumLayer" class="mm-hidden">
+        <div class="mm-premiumGrid">
+          <div class="mm-premBox">
+            <div class="mm-premTitle">Structural Benchmark</div>
+            <div class="mm-premText" id="benchText">—</div>
+          </div>
+          <div class="mm-premBox">
+            <div class="mm-premTitle">Allocation Score</div>
+            <div class="mm-premText" id="scoreText">—</div>
+          </div>
+        </div>
+
+        <div class="mm-premBox mm-mt">
+          <div class="mm-premTitle">Target Allocation Simulator</div>
+
+          <div class="mm-targetRow">
+            <label>Target wealth allocation</label>
+            <div class="mm-targetInput">
+              <input id="targetPct" type="number" min="5" max="80" step="1" value="25" />
+              <span>%</span>
+            </div>
+          </div>
+
+          <div class="mm-premText" id="targetOut">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mm-footerNote">
+      <span>MoneyMind • Advanced Insight</span>
+      <span class="mm-dot">•</span>
+      <span>No hype. Just structure.</span>
+    </div>
+
+  </div>
+</div>
+
+
+    <script src="./app.js" defer></script>
   </body>
 </html>
