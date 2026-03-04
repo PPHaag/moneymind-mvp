@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     alert("calcBtn click works ✅");
   });
 
+  
 console.log("MoneyMind Allocation JS loaded ✅");
 window.addEventListener("error", (e) => console.error("MoneyMind JS error:", e.error || e.message));
 window.addEventListener("unhandledrejection", (e) => console.error("MoneyMind Promise rejection:", e.reason));
