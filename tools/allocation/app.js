@@ -1,3 +1,8 @@
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.querySelector("button");
+  if (!btn) return;
+  btn.addEventListener("click", () => alert("JS is connected ✅"));
+});
 
 console.log("MoneyMind Allocation JS loaded ✅");
 window.addEventListener("error", (e) => console.error("MoneyMind JS error:", e.error || e.message));
