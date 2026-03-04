@@ -1,4 +1,13 @@
-alert("app.js loaded ✅");
+document.addEventListener("DOMContentLoaded", () => {
+  const calcBtn = document.getElementById("calcBtn");
+  if (!calcBtn) {
+    alert("calcBtn not found ❌");
+    return;
+  }
+  calcBtn.addEventListener("click", () => {
+    alert("calcBtn click works ✅");
+  });
+});
 document.addEventListener("DOMContentLoaded", () => {
   const btn = document.querySelector("button");
   if (!btn) return;
