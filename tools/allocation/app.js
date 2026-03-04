@@ -1,29 +1,3 @@
-function mmShowError(msg) {
-  const box = document.getElementById("mmErrorBox");
-  if (!box) return;
-  box.style.display = "block";
-  box.textContent = "MoneyMind error:\n" + msg;
-}
-
-window.addEventListener("error", (e) => {
-  mmShowError((e.error && e.error.stack) ? e.error.stack : (e.message || "Unknown error"));
-});
-
-window.addEventListener("unhandledrejection", (e) => {
-  mmShowError(e.reason?.stack || String(e.reason || "Unhandled promise rejection"));
-});
-
-// DOM-safe init wrapper (prevents 'null.addEventListener' nuking your whole app)
-function mmSafeInit(initFn) {
-  try { initFn(); } catch (err) { mmShowError(err?.stack || String(err)); }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  mmSafeInit(() => {
-    // ↓↓↓ PLAK HIERONDER je bestaande CodePen JS (of laat je bestaande code staan,
-    // maar zet AL je event-listeners / init logica binnen deze wrapper)
-  });
-});
 
 console.log("MoneyMind Allocation JS loaded ✅");
 window.addEventListener("error", (e) => console.error("MoneyMind JS error:", e.error || e.message));
