@@ -1,11 +1,110 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>MoneyMind Leakage Tool</title>
+<meta charset="UTF-8">
+<title>MoneyMind – Wealth Leakage</title>
+
+<link rel="stylesheet" href="./style.css">
+
 </head>
 <body>
 
-Leakage tool loading…
+<div id="mmErrorBox" style="display:none; margin:12px; padding:12px; border-radius:12px; border:1px solid rgba(255,80,80,.35); background: rgba(255,80,80,.12); color:#ffd1d1; font-family: ui-sans-serif,system-ui; white-space: pre-wrap;"></div>
+
+<a class="mm-back" href="https://codepen.io/PPHaagie/full/NPRqMpy">← Back to Hub</a>
+
+
+<h1>👋 MoneyMind</h1>
+<div class="app">
+  <header>
+    <h1>Wealth Leakage Check</h1>
+    <p class="sub">Zie hoeveel vermogen je verliest door jaarlijkse kosten (fees) over tijd.</p>
+  </header>
+
+  <section class="card">
+    <div class="grid">
+      <label>
+        Startkapitaal (€)
+        <input id="initial" type="number" value="10000" min="0" step="100" />
+      </label>
+
+      <label>
+        Maandelijkse inleg (€)
+        <input id="monthly" type="number" value="500" min="0" step="10" />
+      </label>
+
+      <label>
+        Looptijd (jaren)
+        <input id="years" type="number" value="20" min="1" step="1" />
+      </label>
+
+      <label>
+        Verwacht rendement (% per jaar)
+        <input id="returnRate" type="number" value="7" step="0.1" />
+      </label>
+
+      <label>
+        Jaarlijkse kosten / fee (% per jaar)
+        <input id="feeRate" type="number" value="1" step="0.01" />
+      </label>
+
+      <label>
+        Inflatie (% per jaar) (optioneel)
+        <input id="inflationRate" type="number" value="0" step="0.1" />
+      </label>
+    </div>
+
+    <div class="actions">
+      <button id="calculateBtn">Bereken</button>
+      <button id="resetBtn" class="secondary">Reset</button>
+    </div>
+
+    <p class="note">
+      MVP-aanname: rendement en fee worden maandelijks “verrekend” (benadering die goed genoeg is voor inzicht).
+    </p>
+  </section>
+
+  <section class="card" id="results" aria-live="polite">
+    <h2>Resultaat</h2>
+    <div class="resultsGrid">
+      <div class="resultBox">
+        <div class="label">Eindwaarde zonder fee</div>
+        <div class="value" id="noFeeValue">—</div>
+      </div>
+
+      <div class="resultBox">
+        <div class="label">Eindwaarde mét fee</div>
+        <div class="value" id="withFeeValue">—</div>
+      </div>
+
+      <div class="resultBox highlight">
+        <div class="label">Wealth leakage (verschil)</div>
+        <div class="value" id="leakageValue">—</div>
+        <div class="small" id="leakagePct">—</div>
+      </div>
+
+      <div class="resultBox">
+        <div class="label">Totaal ingelegd</div>
+        <div class="value" id="contributedValue">—</div>
+      </div>
+    </div>
+
+    <details class="details">
+      <summary>Toon aannames & uitleg</summary>
+      <ul>
+        <li>Maandrendement = (1 + jaarrendement)^(1/12) - 1</li>
+        <li>Maandfee = (1 + jaarfee)^(1/12) - 1</li>
+        <li>Inflatie corrigeert de eindwaarde naar “koopkracht van vandaag” (optioneel).</li>
+      </ul>
+    </details>
+  </section>
+
+  <footer class="footer">
+    <span>MoneyMind MVP tool • Wealth Leakage Check</span>
+  </footer>
+</div>
+
+<script src="./app.js" defer></script>
 
 </body>
 </html>
