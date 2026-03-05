@@ -1,19 +1,283 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-  <title>MoneyMind Hub</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MoneyMind • Hub</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f172a;
+      --text:#e2e8f0;
+      --muted:#94a3b8;
+      --line:rgba(148,163,184,.18);
+      --accent:#2dd4bf;
+      --accent2:#22c55e;
+      --warn:#fb923c;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      padding:28px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background:
+        radial-gradient(1200px 800px at 20% 0%, rgba(45,212,191,.12), transparent 60%),
+        radial-gradient(1000px 700px at 80% 10%, rgba(34,197,94,.10), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
+    .hub-wrap{max-width:920px; margin:0 auto;}
+    .hub-card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border-radius:22px;
+      padding:22px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    }
+
+    .hub-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:14px;
+    }
+    .brand{display:flex; gap:12px; align-items:center;}
+    .logo{
+      width:42px; height:42px;
+      border-radius:14px;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:900; letter-spacing:-.4px;
+      background: linear-gradient(135deg, rgba(45,212,191,.25), rgba(34,197,94,.18));
+      border: 1px solid rgba(45,212,191,.25);
+    }
+    .brand-name{font-weight:800; font-size:18px; line-height:1.1}
+    .brand-tag{color:var(--muted); font-size:13px; margin-top:2px}
+    .status{display:flex; flex-direction:column; align-items:flex-end; gap:8px}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(45,212,191,.25);
+      background: rgba(45,212,191,.07);
+      color: var(--text);
+      font-size:12px;
+      font-weight:700;
+    }
+    .meta{color:var(--muted); font-size:12px}
+
+    .hero{margin-top:18px; padding:14px 2px 6px}
+    .hero h1{margin:0; font-size:26px; letter-spacing:-.4px}
+    .hero p{margin:8px 0 0; color:var(--muted); max-width:62ch}
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:14px;
+    }
+    @media (max-width:760px){
+      .grid{grid-template-columns:1fr}
+      body{padding:18px}
+    }
+
+    .tool{
+      display:block;
+      text-decoration:none;
+      border-radius:18px;
+      padding:16px;
+      border:1px solid var(--line);
+      background: rgba(15,23,42,.55);
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+      position:relative;
+      overflow:hidden;
+      color: var(--text);
+    }
+    .tool:hover{
+      transform: translateY(-1px);
+      border-color: rgba(45,212,191,.25);
+      background: rgba(15,23,42,.72);
+    }
+    .tool-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:8px;
+    }
+    .tool-title{font-weight:850; letter-spacing:-.2px}
+    .tool-chip{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.22);
+      color:var(--muted);
+      background: rgba(148,163,184,.06);
+      white-space:nowrap;
+    }
+    .tool-sub{color:var(--muted); font-size:13px; line-height:1.35; margin-top:2px}
+    .tool-cta{margin-top:12px; font-weight:800; font-size:13px; color:rgba(45,212,191,.95)}
+
+    .tool-primary{
+      border-color: rgba(45,212,191,.25);
+      background: linear-gradient(180deg, rgba(45,212,191,.10), rgba(15,23,42,.62));
+    }
+    .tool-primary .tool-chip{
+      border-color: rgba(45,212,191,.25);
+      color: rgba(226,232,240,.95);
+      background: rgba(45,212,191,.08);
+    }
+    .tool-primary .tool-cta{color: rgba(34,197,94,.95)}
+
+    .tool-muted{
+      opacity:.92;
+      border-style:dashed;
+    }
+
+    .tool-static{
+      cursor:default;
+    }
+    .tool-static:hover{transform:none}
+
+    details.more{
+      margin-top:14px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:12px 14px;
+      background: rgba(15,23,42,.40);
+    }
+    details.more summary{
+      cursor:pointer;
+      font-weight:800;
+      color: rgba(226,232,240,.95);
+      user-select:none;
+    }
+    .grid-2{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:14px;
+    }
+    @media (max-width:760px){ .grid-2{grid-template-columns:1fr} }
+
+    .footer{
+      margin-top:16px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:var(--muted);
+      font-size:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+      opacity:.95;
+    }
+    .dot{opacity:.6}
+
+    /* “Coming soon” lock */
+    .is-locked{
+      opacity:.72;
+      border-style:dashed;
+    }
+    .is-locked .tool-cta{color: rgba(148,163,184,.85)}
+  </style>
 </head>
-<body style="background:#0b1220;color:white;padding:60px;font-family:sans-serif;">
-  <h1>MoneyMind Hub</h1>
-  <p>Select a tool:</p>
 
-  <p><a href="https://codepen.io/PPHaagie/full/OPRLygO" style="color:#2dd4bf;">Boarding</a></p>
-  <p><a href="https://codepen.io/PPHaagie/full/GgjKjQw" style="color:#2dd4bf;">Wealth Snapshot</a></p>
+<body>
+  <div class="hub-wrap">
+    <div class="hub-card">
+      <div class="hub-top">
+        <div class="brand">
+          <div class="logo">M</div>
+          <div class="brand-text">
+            <div class="brand-name">MoneyMind</div>
+            <div class="brand-tag">MVP Hub • No hype. Just structure.</div>
+          </div>
+        </div>
+        <div class="status">
+          <div class="pill">MVP Mode</div>
+          <div class="meta">Stable links • Low drama</div>
+        </div>
+      </div>
 
-<a class="tool-card" href="/tools/allocation/">
-<a class="tool-card" href="/tools/leakage/">  
+      <div class="hero">
+        <h1>Fix your personal wealth infrastructure.</h1>
+        <p>Pick one. Get insight in minutes. No accounts. No noise.</p>
+      </div>
 
+      <div class="grid">
+        <!-- 1) Boarding -->
+        <!-- If your boarding page is named differently, change ONLY this href -->
+        <a class="tool" href="/boarding.html" rel="noopener">
+          <div class="tool-head">
+            <div class="tool-title">Boarding</div>
+            <div class="tool-chip">Start here</div>
+          </div>
+          <div class="tool-sub">Create a quick profile so the tools feel personalized.</div>
+          <div class="tool-cta">Open →</div>
+        </a>
 
-  
+        <!-- 2) Wealth Snapshot (not migrated yet) -->
+        <a class="tool is-locked" href="#" onclick="alert('Snapshot: coming soon on Vercel.'); return false;">
+          <div class="tool-head">
+            <div class="tool-title">Wealth Snapshot</div>
+            <div class="tool-chip">Context</div>
+          </div>
+          <div class="tool-sub">See your capital buckets + net worth structure in 60 seconds.</div>
+          <div class="tool-cta">Coming soon →</div>
+        </a>
+
+        <!-- 3) Wealth Leakage (migrated) -->
+        <a class="tool" href="/tools/leakage/">
+          <div class="tool-head">
+            <div class="tool-title">Wealth Leakage Check</div>
+            <div class="tool-chip">Quick win</div>
+          </div>
+          <div class="tool-sub">Find the silent costs that keep you “busy” but not richer.</div>
+          <div class="tool-cta">Open →</div>
+        </a>
+
+        <!-- 4) Allocation / Structural Insight (migrated) -->
+        <a class="tool tool-primary" href="/tools/allocation/">
+          <div class="tool-head">
+            <div class="tool-title">Allocation Reality Check</div>
+            <div class="tool-chip">Core</div>
+          </div>
+          <div class="tool-sub">Income doesn’t build wealth. Allocation does.</div>
+          <div class="tool-cta">Run Allocation Check →</div>
+        </a>
+      </div>
+
+      <details class="more">
+        <summary>More tools (optional)</summary>
+        <div class="grid grid-2">
+          <!-- Compound / Builder (not migrated yet) -->
+          <a class="tool tool-muted is-locked" href="#" onclick="alert('Builder: coming soon on Vercel.'); return false;">
+            <div class="tool-head">
+              <div class="tool-title">Compound / Wealth Builder</div>
+              <div class="tool-chip">Projection</div>
+            </div>
+            <div class="tool-sub">Turn small improvements into 10–20 year outcomes.</div>
+            <div class="tool-cta">Coming soon →</div>
+          </a>
+
+          <div class="tool tool-muted tool-static" role="note" aria-label="Tester instructions">
+            <div class="tool-head">
+              <div class="tool-title">Tester flow</div>
+              <div class="tool-chip">2 min</div>
+            </div>
+            <div class="tool-sub">
+              Do: pick 1 tool, use real numbers, then tell us what surprised you and what felt confusing.
+            </div>
+            <div class="tool-cta">That’s it.</div>
+          </div>
+        </div>
+      </details>
+
+      <div class="footer">
+        <div>We fix personal wealth infrastructure for independents.</div>
+        <div class="dot">•</div>
+        <div>Build fast. Learn faster.</div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
