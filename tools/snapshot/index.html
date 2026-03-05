@@ -1,2 +1,95 @@
-<!doctype html>
-<html><body>Snapshot loading…</body></html>
+<link rel="stylesheet" href="./style.css">
+<a class="mm-back" href="https://codepen.io/PPHaagie/full/NPRqMpy">← Back to Hub</a>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="mark">⚡</div>
+      <div>
+        <div class="title">Wealth Snapshot</div>
+        <div class="sub">Your profile in one glance</div>
+      </div>
+    </div>
+
+    <div class="badges">
+      <span class="badge">Tool</span>
+      <span class="badge accent">MVP</span>
+      <button class="ghost" id="reloadBtn">Reload profile</button>
+    </div>
+  </header>
+
+  <section class="card">
+    <div class="row">
+      <div class="kpi">
+        <div class="klabel">Profile type</div>
+        <div class="kvalue" id="kProfileType">—</div>
+      </div>
+      <div class="kpi">
+        <div class="klabel">Primary focus</div>
+        <div class="kvalue" id="kPrimaryFocus">—</div>
+      </div>
+      <div class="kpi">
+        <div class="klabel">Next best move</div>
+        <div class="kvalue" id="kNextMove">—</div>
+        <div class="kmini" id="kNextMoveNote">—</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="grid">
+      <div class="box">
+        <h3>Quick inputs (optional)</h3>
+        <p class="muted">This is saved locally in your browser for now.</p>
+
+        <label>Investable capital (€)</label>
+        <input id="capital" type="number" min="0" placeholder="e.g. 25000"/>
+
+        <label>Monthly contribution (€)</label>
+        <input id="monthly" type="number" min="0" placeholder="e.g. 750"/>
+
+        <label>Target passive income / month (€)</label>
+        <input id="income" type="number" min="0" placeholder="e.g. 2000"/>
+
+        <div class="actions">
+          <button id="saveBtn">Save inputs</button>
+          <button class="secondary" id="clearBtn">Clear</button>
+        </div>
+      </div>
+
+      <div class="box">
+        <h3>Passive income reality check</h3>
+        <p class="muted">Educational scenarios (not advice). Assumes steady yield.</p>
+
+        <div class="miniTable">
+          <div class="miniRow miniHead">
+            <div>Yield</div><div>Needed capital</div>
+          </div>
+          <div class="miniRow"><div>4%</div><div id="cap4">—</div></div>
+          <div class="miniRow"><div>6%</div><div id="cap6">—</div></div>
+          <div class="miniRow"><div>8%</div><div id="cap8">—</div></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h3>Go to tools</h3>
+        <p class="muted">Uses your saved MoneyMind profile.</p>
+        <div class="actions">
+          <button id="goBuilder">Open Wealth Builder</button>
+          <button class="secondary" id="goLeakage">Open Wealth Leakage</button>
+          <button class="secondary" id="goBoarding">Open Boarding</button>
+        </div>
+
+        <details class="details">
+          <summary>Show raw profile JSON</summary>
+          <pre id="raw" class="code">—</pre>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>MVP • Wealth Snapshot</span>
+  </footer>
+</div>
+<script src="./app.js" defer></script>
