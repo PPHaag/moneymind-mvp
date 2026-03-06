@@ -27,13 +27,14 @@ function calculateCapitalMap() {
   document.getElementById("directCapitalValue").innerText = formatCurrency(directCapital);
   document.getElementById("accessibleCapitalValue").innerText = formatCurrency(accessibleCapital);
   document.getElementById("lockedCapitalValue").innerText = formatCurrency(lockedCapital);
-if(netWorth < 0){
-  document.getElementById("netWorthValue").innerText =
-    "-" + formatCurrency(Math.abs(netWorth));
-}else{
-  document.getElementById("netWorthValue").innerText =
-    formatCurrency(netWorth);
-}
+
+  if (netWorth < 0) {
+    document.getElementById("netWorthValue").innerText =
+      "-€" + Math.round(Math.abs(netWorth)).toLocaleString("nl-NL");
+  } else {
+    document.getElementById("netWorthValue").innerText =
+      formatCurrency(netWorth);
+  }
 
   let insight = "";
 
@@ -52,8 +53,13 @@ if(netWorth < 0){
     insightEl.innerText = insight;
   }
 
-  document.getElementById("resultBlock").style.display = "block";
+  const resultBlock = document.getElementById("resultBlock");
+  resultBlock.style.display = "block";
+
+  resultBlock.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
 }
 
-document.getElementById("resultBlock").style.display = "block";
-
+document.getElementById("calculateBtn").addEventListener("click", calculateCapitalMap);
