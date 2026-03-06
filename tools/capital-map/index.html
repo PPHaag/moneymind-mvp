@@ -1,123 +1,126 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MoneyMind – Capital Map</title>
-  <link rel="stylesheet" href="./style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MoneyMind • Cost of Delay</title>
+
+<link rel="stylesheet" href="style.css">
+
 </head>
+
 <body>
 
-<div id="mmErrorBox" style="display:none; margin:12px; padding:12px; border-radius:12px; border:1px solid rgba(255,80,80,.35); background: rgba(255,80,80,.12); color:#ffd1d1; font-family: ui-sans-serif,system-ui; white-space: pre-wrap;"></div>
+<div class="mm-wrap">
 
-<div class="mm-tool-header">
-  <a class="mm-nav-btn" href="/tools/boarding/">← Boarding</a>
-  <div class="mm-tool-title">Capital Map</div>
-  <a class="mm-nav-btn" href="/tools/allocation/">Allocation →</a>
+  <div class="mm-card mm-hero">
+
+    <h1>Cost of Delay</h1>
+
+    <p>
+      See what waiting could cost your future wealth.
+      Compounding rewards time — delaying reduces its power.
+    </p>
+
+
+    <!-- INPUTS -->
+
+    <div class="mm-grid mm-grid3">
+
+      <div class="mm-field">
+        <label>Monthly Investment</label>
+        <div class="mm-input">
+          <span>€</span>
+          <input id="monthly" type="number" value="500">
+        </div>
+      </div>
+
+      <div class="mm-field">
+        <label>Expected Annual Return</label>
+        <div class="mm-input">
+          <input id="return" type="number" value="7">
+          <span>%</span>
+        </div>
+      </div>
+
+      <div class="mm-field">
+        <label>Target Age</label>
+        <div class="mm-input">
+          <input id="targetAge" type="number" value="65">
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="mm-grid mm-grid3">
+
+      <div class="mm-field">
+        <label>Start Age</label>
+        <div class="mm-input">
+          <input id="startAge" type="number" value="30">
+        </div>
+      </div>
+
+      <div class="mm-field">
+        <label>Delayed Start Age</label>
+        <div class="mm-input">
+          <input id="delayAge" type="number" value="40">
+        </div>
+      </div>
+
+      <div class="mm-field">
+        <label>&nbsp;</label>
+        <button class="mm-btn" id="calculateBtn">
+          Calculate Cost of Waiting
+        </button>
+      </div>
+
+    </div>
+
+
+    <!-- RESULT -->
+
+    <div id="resultBlock" class="mm-result" style="display:none;">
+
+      <div class="mm-resultRow">
+
+        <div class="mm-metric">
+          <div class="mm-big" id="startNowValue">€0</div>
+          <div class="mm-sub">Start Now</div>
+        </div>
+
+        <div class="mm-divider"></div>
+
+        <div class="mm-metric">
+          <div class="mm-big" id="startLaterValue">€0</div>
+          <div class="mm-sub">Start Later</div>
+        </div>
+
+      </div>
+
+      <div class="mm-impact">
+
+        <div class="mm-impactMain" id="delayImpact">
+          Waiting could cost you €0 in future wealth.
+        </div>
+
+        <div class="mm-impactSub">
+          Time is the most powerful factor in wealth building.
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
 </div>
 
-<section class="hero">
-  <h1>Map your capital</h1>
-  <p class="sub">
-    See what part of your wealth is directly deployable, what is accessible with effort,
-    and what is locked for the long term.
-  </p>
-</section>
 
-<section class="card">
-  <h2>Enter your capital</h2>
+<script src="app.js"></script>
 
-  <div class="grid">
-    <label>
-      <span>Cash / Savings</span>
-      <input id="cash" type="number" min="0" step="100" placeholder="0">
-    </label>
-
-    <label>
-      <span>Investments (stocks / ETFs)</span>
-      <input id="investments" type="number" min="0" step="100" placeholder="0">
-    </label>
-
-    <label>
-      <span>Crypto</span>
-      <input id="crypto" type="number" min="0" step="100" placeholder="0">
-    </label>
-
-    <label>
-      <span>Precious Metals</span>
-      <input id="metals" type="number" min="0" step="100" placeholder="0">
-    </label>
-
-    <label>
-      <span>Home Equity</span>
-      <input id="equity" type="number" min="0" step="100" placeholder="0">
-    </label>
-
-    <label>
-      <span>Pension / Retirement</span>
-      <input id="pension" type="number" min="0" step="100" placeholder="0">
-    </label>
-
-    <label>
-      <span>Other Assets</span>
-      <input id="otherAssets" type="number" min="0" step="100" placeholder="0">
-    </label>
-
-    <label>
-      <span>Debt</span>
-      <input id="debt" type="number" min="0" step="100" placeholder="0">
-    </label>
-  </div>
-
-  <div class="actions">
-    <button id="calcBtn">Build Capital Map</button>
-    <button id="resetBtn" class="secondary" type="button">Reset</button>
-  </div>
-
-  <p class="note">
-    MoneyMind groups your assets into Direct Capital, Accessible Capital and Locked Capital.
-  </p>
-</section>
-
-<section class="card" id="resultCard" style="display:none;">
-  <h2>Your Capital Map</h2>
-
-  <div class="resultsGrid">
-    <div class="resultBox">
-      <div class="label">Total Net Worth</div>
-      <div class="value" id="totalNetWorth">—</div>
-    </div>
-
-    <div class="resultBox highlight">
-      <div class="label">Direct Capital</div>
-      <div class="value" id="directCapital">—</div>
-      <div class="small">Immediately deployable capital.</div>
-    </div>
-
-    <div class="resultBox">
-      <div class="label">Accessible Capital</div>
-      <div class="value" id="accessibleCapital">—</div>
-      <div class="small">Reachable with effort or friction.</div>
-    </div>
-
-    <div class="resultBox">
-      <div class="label">Locked Capital</div>
-      <div class="value" id="lockedCapital">—</div>
-      <div class="small">Illiquid or long-term capital.</div>
-    </div>
-  </div>
-
-  <div class="insightBox">
-    <div class="label">MoneyMind Insight</div>
-    <div class="value" id="insightText">—</div>
-  </div>
-
-  <div class="actions">
-    <a class="mm-btn" href="/tools/allocation/">Continue to Allocation</a>
-    <a class="mm-btn secondary" href="/hub.html">Back to Hub</a>
-  </div>
-</section>
-
-<script src="./app.js" defer></script>
 </body>
 </html>
