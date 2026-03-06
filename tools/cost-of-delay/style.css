@@ -1,1 +1,154 @@
+/* MoneyMind Tool Layout */
 
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+  background: #f4f7f6;
+  color: #0f172a;
+}
+
+/* Container */
+
+.container {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+}
+
+/* Cards */
+
+.card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 22px;
+  margin-bottom: 18px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
+}
+
+/* Typography */
+
+h1 {
+  font-size: 28px;
+  margin: 0 0 8px 0;
+}
+
+h2 {
+  font-size: 20px;
+  margin: 0 0 14px 0;
+}
+
+p {
+  margin: 0;
+  color: #6b7280;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+/* Inputs */
+
+.input-group {
+  margin-bottom: 14px;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  font-size: 15px;
+  background: #fafafa;
+}
+
+input:focus {
+  outline: none;
+  border-color: #10b981;
+  background: #ffffff;
+}
+
+/* Button */
+
+button {
+  width: 100%;
+  border: none;
+  padding: 16px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+
+  background: linear-gradient(
+    135deg,
+    #10b981,
+    #0ea5a4
+  );
+
+  color: white;
+
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(16, 185, 129, 0.25);
+}
+
+/* Results */
+
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.result-box {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+}
+
+.value {
+  font-size: 20px;
+  font-weight: 800;
+  margin-top: 4px;
+}
+
+/* Delay Highlight */
+
+.delay-box {
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: 14px;
+
+  background: #fff4f4;
+  border: 1px solid #fee2e2;
+
+  color: #991b1b;
+  font-weight: 700;
+  text-align: center;
+  font-size: 18px;
+}
+
+/* Next Step Button */
+
+.next-btn {
+  margin-top: 10px;
+  background: #111827;
+}
+
+/* Mobile spacing */
+
+@media (max-width: 520px) {
+  .container {
+    padding: 20px 14px 30px;
+  }
+}
