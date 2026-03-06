@@ -166,3 +166,31 @@ body{
   color:var(--muted);
   font-size:12px;
 }
+.mm-toolnav{
+  display:flex;
+  gap:8px;
+  margin-bottom:14px;
+  flex-wrap:wrap;
+}
+
+.mm-toolnav a,
+.mm-toolnav span{
+  text-decoration:none;
+  font-size:12px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  color:var(--muted);
+  background:rgba(255,255,255,.03);
+}
+
+.mm-toolnav a:hover{
+  border-color:var(--accent);
+  color:var(--text);
+}
+
+.mm-toolnav .active{
+  border-color:var(--accent);
+  color:var(--text);
+  background:rgba(45,212,191,.08);
+}
