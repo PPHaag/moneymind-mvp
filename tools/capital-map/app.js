@@ -1,65 +1,34 @@
-function formatEUR(num){
-  return "€ " + num.toLocaleString("nl-NL");
+function formatCurrency(value) {
+  return "€" + Math.round(value).toLocaleString("nl-NL");
 }
 
-document.getElementById("calcBtn").onclick = () => {
-
+function calculateCapitalMap() {
   const cash = Number(document.getElementById("cash").value) || 0;
   const investments = Number(document.getElementById("investments").value) || 0;
   const crypto = Number(document.getElementById("crypto").value) || 0;
+
   const metals = Number(document.getElementById("metals").value) || 0;
+  const homeEquity = Number(document.getElementById("homeEquity").value) || 0;
   const equity = Number(document.getElementById("equity").value) || 0;
+
   const pension = Number(document.getElementById("pension").value) || 0;
+
   const otherAssets = Number(document.getElementById("otherAssets").value) || 0;
   const debt = Number(document.getElementById("debt").value) || 0;
 
-  const directCapital =
-    cash +
-    investments +
-    crypto +
-    metals;
+  const directCapital = cash + investments + crypto;
+  const accessibleCapital = metals + homeEquity + equity + otherAssets;
+  const lockedCapital = pension;
 
-  const accessibleCapital =
-    equity;
+  const totalAssets = directCapital + accessibleCapital + lockedCapital;
+  const netWorth = totalAssets - debt;
 
-  const lockedCapital =
-    pension +
-    otherAssets;
+  document.getElementById("directCapitalValue").innerText = formatCurrency(directCapital);
+  document.getElementById("accessibleCapitalValue").innerText = formatCurrency(accessibleCapital);
+  document.getElementById("lockedCapitalValue").innerText = formatCurrency(lockedCapital);
+  document.getElementById("netWorthValue").innerText = formatCurrency(netWorth);
 
-  const totalNetWorth =
-    directCapital +
-    accessibleCapital +
-    lockedCapital -
-    debt;
+  document.getElementById("resultBlock").style.display = "block";
+}
 
-  document.getElementById("totalNetWorth").textContent = formatEUR(totalNetWorth);
-  document.getElementById("directCapital").textContent = formatEUR(directCapital);
-  document.getElementById("accessibleCapital").textContent = formatEUR(accessibleCapital);
-  document.getElementById("lockedCapital").textContent = formatEUR(lockedCapital);
-
-  let deployablePercent = 0;
-
-  if(totalNetWorth > 0){
-    deployablePercent = Math.round((directCapital / totalNetWorth) * 100);
-  }
-
-  document.getElementById("insightText").textContent =
-    "Approximately " +
-    deployablePercent +
-    "% of your wealth is directly deployable capital.";
-
-  document.getElementById("resultCard").style.display = "block";
-
-};
-
-document.getElementById("resetBtn").onclick = () => {
-
-  const inputs = document.querySelectorAll("input");
-
-  inputs.forEach(i => {
-    i.value = "";
-  });
-
-  document.getElementById("resultCard").style.display = "none";
-
-};
+document.getElementById("calculateBtn").addEventListener("click", calculateCapitalMap);
