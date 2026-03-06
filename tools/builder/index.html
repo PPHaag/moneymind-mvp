@@ -10,7 +10,128 @@
 
 <div id="mmErrorBox" style="display:none; margin:12px; padding:12px; border-radius:12px; border:1px solid rgba(255,80,80,.35); background: rgba(255,80,80,.12); color:#ffd1d1; font-family: ui-sans-serif,system-ui; white-space: pre-wrap;"></div>
 
-<!-- PLAK HIER DE HTML UIT CODEPEN -->
+<a class="mm-back" href="https://codepen.io/PPHaagie/full/NPRqMpy">← Back to Hub</a>
+
+<div class="app">
+  
+  <header>
+    <h1>Wealth Builder Engine</h1>
+    <p class="sub">Bouw je vermogenspad met milestones en “financial freedom” datum.</p>
+  </header>
+
+  <section class="card">
+    <div class="grid">
+      <label>
+        Startkapitaal (€)
+        <input id="initial" type="number" value="10000" min="0" step="100" />
+      </label>
+
+      <label>
+        Maandelijkse inleg (€)
+        <input id="monthly" type="number" value="500" min="0" step="10" />
+      </label>
+
+      <label>
+        Looptijd (jaren)
+        <input id="years" type="number" value="30" min="1" step="1" />
+      </label>
+
+      <label>
+        Verwacht rendement (% per jaar)
+        <input id="returnRate" type="number" value="7" step="0.1" />
+      </label>
+
+      <label>
+        Jaarlijkse fee (% per jaar)
+        <input id="feeRate" type="number" value="0.6" step="0.01" />
+      </label>
+
+      <label>
+        Inflatie (% per jaar) (optioneel)
+        <input id="inflationRate" type="number" value="0" step="0.1" />
+      </label>
+
+      <label>
+        Vermogensdoel (€)
+        <input id="wealthGoal" type="number" value="500000" min="0" step="1000" />
+      </label>
+
+      <label>
+        Passive income doel (€ per maand)
+        <input id="incomeGoal" type="number" value="2000" min="0" step="50" />
+      </label>
+
+      <label>
+        Verwachte yield op eindvermogen (% per jaar)
+        <input id="yieldRate" type="number" value="4" step="0.1" />
+      </label>
+    </div>
+
+    <div class="actions">
+      <button id="calculateBtn">Bereken pad</button>
+      <button id="resetBtn" class="secondary">Reset</button>
+    </div>
+
+    <p class="note">
+      MVP-aanname: maandelijkse inleg aan begin van de maand. Rendement en fee worden maandelijks toegepast (benadering).
+    </p>
+  </section>
+
+  <section class="card">
+    <h2>Dashboard</h2>
+
+    <div class="resultsGrid">
+      <div class="resultBox">
+        <div class="label">Eindvermogen (met fee)</div>
+        <div class="value" id="endWithFee">—</div>
+        <div class="small" id="endWithFeeReal">—</div>
+      </div>
+
+      <div class="resultBox">
+        <div class="label">Eindvermogen (zonder fee)</div>
+        <div class="value" id="endNoFee">—</div>
+        <div class="small" id="endNoFeeReal">—</div>
+      </div>
+
+      <div class="resultBox highlight">
+        <div class="label">Years to wealth goal</div>
+        <div class="value" id="yearsToWealth">—</div>
+        <div class="small" id="wealthGoalNote">—</div>
+      </div>
+
+      <div class="resultBox highlight">
+        <div class="label">Years to financial freedom</div>
+        <div class="value" id="yearsToFreedom">—</div>
+        <div class="small" id="freedomNote">—</div>
+      </div>
+    </div>
+
+    <div class="chartWrap">
+      <div class="chartHeader">
+        <div>
+          <div class="chartTitle">Vermogenspad</div>
+          <div class="chartSub">Met fee vs zonder fee • milestones als lijnen</div>
+        </div>
+        <div class="pill" id="milestoneNext">Volgende milestone: —</div>
+      </div>
+
+      <canvas id="chart" height="120"></canvas>
+    </div>
+
+    <details class="details">
+      <summary>Toon milestones & aannames</summary>
+      <ul>
+        <li>Milestones: €100k, €250k, €500k, €1M (aanpasbaar in code later)</li>
+        <li>Financial freedom: benodigde kapitaal = (maanddoel × 12) / yield%</li>
+        <li>Inflatie (optioneel): toont ook “koopkracht vandaag” indicatie onder eindwaarden</li>
+      </ul>
+    </details>
+  </section>
+
+  <footer class="footer">
+    <span>MoneyMind MVP tool • Wealth Builder Engine</span>
+  </footer>
+</div>
 
 <script src="./app.js" defer></script>
 
