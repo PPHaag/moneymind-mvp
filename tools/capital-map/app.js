@@ -27,7 +27,13 @@ function calculateCapitalMap() {
   document.getElementById("directCapitalValue").innerText = formatCurrency(directCapital);
   document.getElementById("accessibleCapitalValue").innerText = formatCurrency(accessibleCapital);
   document.getElementById("lockedCapitalValue").innerText = formatCurrency(lockedCapital);
-  document.getElementById("netWorthValue").innerText = formatCurrency(netWorth);
+if(netWorth < 0){
+  document.getElementById("netWorthValue").innerText =
+    "-" + formatCurrency(Math.abs(netWorth));
+}else{
+  document.getElementById("netWorthValue").innerText =
+    formatCurrency(netWorth);
+}
 
   let insight = "";
 
