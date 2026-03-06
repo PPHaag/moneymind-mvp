@@ -15,61 +15,166 @@
 
 <div class="mm-wrap">
 
-  <div class="mm-card mm-hero">
+<div class="mm-card mm-hero">
 
-    <h1>Capital Map</h1>
+<h1>Capital Map</h1>
 
-    <p>
-      Understand where your capital currently sits. 
-      Mapping your assets is the first step toward building wealth.
-    </p>
+<p>
+Map where your capital currently sits. Understanding your asset base
+is the first step toward making better financial decisions.
+</p>
 
-    <div class="mm-grid mm-grid3">
+<!-- DIRECT CAPITAL -->
 
-      <div class="mm-field">
-        <label>Cash / Savings</label>
-        <div class="mm-input">
-          <span>€</span>
-          <input id="cash" type="number" value="10000">
-        </div>
-      </div>
+<h3>Direct Capital</h3>
 
-      <div class="mm-field">
-        <label>Investments</label>
-        <div class="mm-input">
-          <span>€</span>
-          <input id="investments" type="number" value="25000">
-        </div>
-      </div>
+<div class="mm-grid mm-grid3">
 
-      <div class="mm-field">
-        <label>Other Assets</label>
-        <div class="mm-input">
-          <span>€</span>
-          <input id="otherAssets" type="number" value="0">
-        </div>
-      </div>
+<div class="mm-field">
+<label>Cash / Savings</label>
+<div class="mm-input">
+<span>€</span>
+<input id="cash" type="number" value="0">
+</div>
+</div>
 
-    </div>
+<div class="mm-field">
+<label>Investments</label>
+<div class="mm-input">
+<span>€</span>
+<input id="investments" type="number" value="0">
+</div>
+</div>
 
-    <button class="mm-btn" id="calculateBtn">
-      Calculate Total Capital
-    </button>
+<div class="mm-field">
+<label>Crypto</label>
+<div class="mm-input">
+<span>€</span>
+<input id="crypto" type="number" value="0">
+</div>
+</div>
 
-    <div id="resultBlock" class="mm-result" style="display:none;">
+</div>
 
-      <div class="mm-resultRow">
 
-        <div class="mm-metric">
-          <div class="mm-big" id="totalCapital">€0</div>
-          <div class="mm-sub">Total Capital</div>
-        </div>
+<!-- ACCESSIBLE CAPITAL -->
 
-      </div>
+<h3>Accessible Capital</h3>
 
-    </div>
+<div class="mm-grid mm-grid3">
 
-  </div>
+<div class="mm-field">
+<label>Precious Metals</label>
+<div class="mm-input">
+<span>€</span>
+<input id="metals" type="number" value="0">
+</div>
+</div>
+
+<div class="mm-field">
+<label>Home Equity</label>
+<div class="mm-input">
+<span>€</span>
+<input id="homeEquity" type="number" value="0">
+</div>
+</div>
+
+<div class="mm-field">
+<label>Private Equity / Business</label>
+<div class="mm-input">
+<span>€</span>
+<input id="equity" type="number" value="0">
+</div>
+</div>
+
+</div>
+
+
+<!-- LOCKED CAPITAL -->
+
+<h3>Locked Capital</h3>
+
+<div class="mm-grid">
+
+<div class="mm-field">
+<label>Pension</label>
+<div class="mm-input">
+<span>€</span>
+<input id="pension" type="number" value="0">
+</div>
+</div>
+
+</div>
+
+
+<!-- OTHER -->
+
+<h3>Other</h3>
+
+<div class="mm-grid mm-grid3">
+
+<div class="mm-field">
+<label>Other Assets</label>
+<div class="mm-input">
+<span>€</span>
+<input id="otherAssets" type="number" value="0">
+</div>
+</div>
+
+<div class="mm-field">
+<label>Debt</label>
+<div class="mm-input">
+<span>€</span>
+<input id="debt" type="number" value="0">
+</div>
+</div>
+
+</div>
+
+
+<button class="mm-btn" id="calculateBtn">
+Calculate Capital Map
+</button>
+
+
+<div id="resultBlock" class="mm-result" style="display:none">
+
+<div class="mm-resultRow">
+
+<div class="mm-metric">
+<div class="mm-big" id="directCapitalValue">€0</div>
+<div class="mm-sub">Direct Capital</div>
+</div>
+
+<div class="mm-divider"></div>
+
+<div class="mm-metric">
+<div class="mm-big" id="accessibleCapitalValue">€0</div>
+<div class="mm-sub">Accessible Capital</div>
+</div>
+
+<div class="mm-divider"></div>
+
+<div class="mm-metric">
+<div class="mm-big" id="lockedCapitalValue">€0</div>
+<div class="mm-sub">Locked Capital</div>
+</div>
+
+</div>
+
+
+<div class="mm-resultRow">
+
+<div class="mm-metric">
+<div class="mm-big" id="netWorthValue">€0</div>
+<div class="mm-sub">Net Worth</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
 
 </div>
 
