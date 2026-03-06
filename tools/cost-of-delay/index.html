@@ -3,18 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MoneyMind – Cost of Delay</title>
+  <title>MoneyMind - Cost of Delay</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="mm-wrap">
-    <div class="mm-card mm-hero">
-      <h1>Cost of Delay</h1>
-      <p>See what waiting could cost your future wealth. Time is the most powerful factor in compounding.</p>
 
+    <!-- TOP NAV -->
+    <div class="mm-topbar">
+      <a href="../leakage/" class="mm-topbtn">← Back</a>
+      <a href="../wealth-builder/" class="mm-topbtn">Next →</a>
+    </div>
+
+    <!-- HERO / MAIN CARD -->
+    <div class="mm-card mm-hero">
+      <div class="mm-eyebrow">MoneyMind Tool</div>
+      <h1>Cost of Delay</h1>
+      <p>
+        See what waiting could cost your future wealth. The longer you delay,
+        the less compounding can work for you.
+      </p>
+
+      <!-- INPUTS -->
       <div class="mm-grid mm-grid3">
         <div class="mm-field">
-          <label>Monthly Investment</label>
+          <label for="monthly">Monthly Investment</label>
           <div class="mm-input">
             <span>€</span>
             <input id="monthly" type="number" value="500" />
@@ -22,7 +35,7 @@
         </div>
 
         <div class="mm-field">
-          <label>Expected Annual Return</label>
+          <label for="return">Expected Annual Return</label>
           <div class="mm-input">
             <input id="return" type="number" value="7" />
             <span>%</span>
@@ -30,119 +43,76 @@
         </div>
 
         <div class="mm-field">
-          <label>Target Age</label>
+          <label for="targetAge">Target Age</label>
           <div class="mm-input">
             <input id="targetAge" type="number" value="65" />
           </div>
         </div>
       </div>
 
-      <div class="mm-grid mm-grid3">
+      <div class="mm-grid mm-grid2">
         <div class="mm-field">
-          <label>Start Age</label>
+          <label for="startAge">Start Age</label>
           <div class="mm-input">
             <input id="startAge" type="number" value="30" />
           </div>
         </div>
 
         <div class="mm-field">
-          <label>Delayed Start Age</label>
+          <label for="delayAge">Delayed Start Age</label>
           <div class="mm-input">
             <input id="delayAge" type="number" value="40" />
           </div>
         </div>
-
-        <div class="mm-field">
-          <label>&nbsp;</label>
-          <button class="mm-btn" onclick="calculate()">Calculate Cost of Waiting</button>
-        </div>
       </div>
 
-      <div id="results" class="mm-result" style="display:none;">
+      <button id="calculateBtn" class="mm-btn">Calculate Cost of Waiting</button>
+
+      <!-- RESULT -->
+      <div id="resultBlock" class="mm-result" style="display:none;">
         <div class="mm-resultRow">
           <div class="mm-metric">
-            <div class="mm-big" id="nowResult">€0</div>
+            <div class="mm-big" id="startNowValue">€0</div>
             <div class="mm-sub">Start Now</div>
           </div>
 
           <div class="mm-divider"></div>
 
           <div class="mm-metric">
-            <div class="mm-big" id="laterResult">€0</div>
+            <div class="mm-big" id="startLaterValue">€0</div>
             <div class="mm-sub">Start Later</div>
           </div>
         </div>
 
         <div class="mm-impact">
-          <div class="mm-impactMain" id="delayCost">Waiting could cost you €0 in future wealth.</div>
-          <div class="mm-impactSub">Compounding rewards time. Delay quietly destroys future wealth.</div>
-        </div>
-      </div>
-
-      <div id="insight" class="mm-section" style="display:none;">
-        <div class="mm-sectionTitle">Insight</div>
-        <div class="mm-sectionSub">
-          Waiting reduces the most powerful factor in wealth building: time in the market.
-        </div>
-      </div>
-
-      <div id="next" class="mm-premium" style="display:none;">
-        <div class="mm-premiumTop">
-          <div>
-            <div class="mm-sectionTitle">Next Step</div>
-            <div class="mm-sectionSub">Now build your full wealth projection in the Wealth Builder Engine.</div>
+          <div class="mm-impactMain" id="delayImpact">
+            Waiting could cost you €0 in future wealth.
           </div>
-          <button class="mm-btn mm-btnGhost" onclick="location.href='../wealth-builder/'">
-            Open Wealth Builder
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script src="app.js"></script>
-</body>
-</html>        <label>Delayed Start Age</label>
-        <input id="delayAge" type="number" value="40" />
-      </div>
-
-      <div class="input-group">
-        <label>Target Age</label>
-        <input id="targetAge" type="number" value="65" />
-      </div>
-
-      <button onclick="calculate()">Calculate Cost of Waiting</button>
-    </div>
-
-    <div class="card" id="results" style="display:none">
-      <h2>Scenario Comparison</h2>
-
-      <div class="result-grid">
-        <div class="result-box">
-          Start Now
-          <div class="value" id="nowResult">€0</div>
-        </div>
-
-        <div class="result-box">
-          Start Later
-          <div class="value" id="laterResult">€0</div>
+          <div class="mm-impactSub">
+            Compounding needs time. Delaying reduces the power of every euro you invest later.
+          </div>
         </div>
       </div>
 
-      <div class="delay-box" id="delayCost"></div>
-    </div>
+      <!-- INSIGHT -->
+      <div id="insightBlock" class="mm-section" style="display:none;">
+        <div class="mm-sectionTitle">Insight</div>
+        <div class="mm-sectionSub" id="insightText">
+          Time matters more than most people think. Starting earlier often beats investing more later.
+        </div>
+      </div>
 
-    <div class="card" id="insight" style="display:none">
-      <h2>Insight</h2>
-      <p>Waiting reduces the most powerful factor in wealth building: time in the market. Compounding needs time to work.</p>
+      <!-- NEXT STEP -->
+      <div id="nextStepBlock" class="mm-next" style="display:none;">
+        <div>
+          <div class="mm-sectionTitle">Next Step</div>
+          <div class="mm-sectionSub">
+            Build your full future projection in the Wealth Builder.
+          </div>
+        </div>
+        <a href="../wealth-builder/" class="mm-btn mm-btnGhost">Open Wealth Builder</a>
+      </div>
     </div>
-
-    <div class="card" id="next" style="display:none">
-      <h2>Next Step</h2>
-      <p>Now build your full wealth projection using the Wealth Builder Engine.</p>
-      <button class="next-btn" onclick="location.href='../wealth-builder/'">Open Wealth Builder</button>
-    </div>
-
   </div>
 
   <script src="app.js"></script>
