@@ -1,6 +1,104 @@
 <!doctype html>
 <html>
-  <body>
-    Boarding loading…
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MoneyMind – Boarding</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+<div id="mmErrorBox" style="display:none; margin:12px; padding:12px; border-radius:12px; border:1px solid rgba(255,80,80,.35); background: rgba(255,80,80,.12); color:#ffd1d1; font-family: ui-sans-serif,system-ui; white-space: pre-wrap;"></div>
+
+<a class="mm-back" href="https://codepen.io/PPHaagie/full/NPRqMpy">← Back to Hub</a>
+
+  <header class="hero">
+    <h1>MoneyMind Boarding</h1>
+    <p class="sub">Bouw je profiel in 60 seconden. Geen login. Geen gedoe.</p>
+  </header>
+
+  <section class="card" id="wizardCard">
+    <div class="topbar">
+      <div class="progressWrap">
+        <div class="progressLabel">
+          <span id="stepLabel">Stap 1</span> van <span id="stepTotal">6</span>
+        </div>
+        <div class="progress">
+          <div class="progressFill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <button class="linkBtn" id="loadBtn" title="Laad eerder opgeslagen profiel">
+        Laad profiel
+      </button>
+    </div>
+
+    <div id="steps"></div>
+
+    <div class="nav">
+      <button id="backBtn" class="secondary">Terug</button>
+      <button id="nextBtn">Volgende</button>
+    </div>
+
+    <p class="note" id="note"></p>
+  </section>
+
+  <section class="card" id="resultCard" style="display:none;">
+    <h2>Jouw MoneyMind profiel</h2>
+
+    <div class="resultsGrid">
+      <div class="resultBox">
+        <div class="label">Profieltype</div>
+        <div class="value" id="profileType">—</div>
+      </div>
+
+      <div class="resultBox">
+        <div class="label">Primary focus</div>
+        <div class="value" id="primaryFocus">—</div>
+      </div>
+
+      <div class="resultBox highlight">
+        <div class="label">Aanbevolen volgende stap</div>
+        <div class="value" id="nextStep">—</div>
+        <div class="small" id="nextStepNote">—</div>
+      </div>
+
+      <div class="resultBox">
+        <div class="label">Opslag</div>
+        <div class="value" id="saveStatus">—</div>
+        <div class="small">Opgeslagen in je browser (localStorage).</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="copyProfileBtn">Kopieer profiel JSON</button>
+      <button id="restartBtn" class="secondary">Opnieuw</button>
+    </div>
+
+    <details class="details">
+      <summary>Toon ruwe profieldata</summary>
+      <pre id="profileJson" class="code">—</pre>
+    </details>
+
+    <div class="divider"></div>
+
+    <h3>Ga door naar tools</h3>
+    <p class="sub">Deze knoppen gebruiken je opgeslagen profiel om tools later te personaliseren.</p>
+    <div class="actions">
+      <button id="goWealthBuilderBtn">Open Wealth Builder</button>
+      <button id="goLeakageBtn" class="secondary">Open Wealth Leakage</button>
+    </div>
+
+    <p class="note">Tip: in V2 laten we tools automatisch prefillen op basis van dit profiel.</p>
+  </section>
+
+  <footer class="footer">
+    <span>MoneyMind MVP • Boarding Wizard</span>
+  </footer>
+</div>
+
+
+
+<script src="./app.js" defer></script>
+</body>
 </html>
