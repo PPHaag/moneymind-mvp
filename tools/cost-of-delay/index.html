@@ -1,227 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>MoneyMind – Cost of Delay</title>
-
-<style>
-:root{
---bg:#f5f7f6;
---card:#ffffff;
---text:#0f172a;
---muted:#6b7280;
---line:#e5e7eb;
---accent:#10b981;
---accent2:#0ea5a4;
-}
-
-*{box-sizing:border-box}
-
-body{
-margin:0;
-font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;
-background:var(--bg);
-color:var(--text);
-}
-
-.container{
-max-width:520px;
-margin:auto;
-padding:20px;
-}
-
-.card{
-background:var(--card);
-border:1px solid var(--line);
-border-radius:18px;
-padding:20px;
-margin-bottom:16px;
-box-shadow:0 10px 20px rgba(0,0,0,0.04);
-}
-
-h1{margin:0 0 10px;font-size:28px}
-
-h2{margin:0 0 12px;font-size:20px}
-
-p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
-
-.input-group{margin-bottom:14px}
-
-label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
-
-input{
-width:100%;
-padding:14px;
-border-radius:12px;
-border:1px solid var(--line);
-font-size:15px;
-}
-
-button{
-width:100%;
-border:none;
-background:linear-gradient(135deg,var(--accent),var(--accent2));
-color:white;
-padding:16px;
-border-radius:14px;
-font-weight:700;
-font-size:15px;
-cursor:pointer;
-margin-top:10px;
-}
-
-.result-grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px;
-margin-top:10px;
-}
-
-.result-box{
-background:#f9fafb;
-padding:14px;
-border-radius:12px;
-border:1px solid var(--line);
-}
-
-.value{
-font-size:20px;
-font-weight:800;
-margin-top:4px;
-}
-
-.delay-box{
-margin-top:14px;
-padding:16px;
-border-radius:14px;
-background:#fff4f4;
-border:1px solid #fee2e2;
-color:#991b1b;
-font-weight:700;
-text-align:center;
-font-size:18px;
-}
-
-.next-btn{
-margin-top:10px;
-background:#111827;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MoneyMind – Cost of Delay</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
 
-<div class="container">
+  <div class="container">
 
-<div class="card">
-<h1>Cost of Delay</h1>
-<p>See what waiting could cost your future wealth. Time is the most powerful factor in compounding.</p>
-</div>
+    <div class="card">
+      <h1>Cost of Delay</h1>
+      <p>See what waiting could cost your future wealth. Time is the most powerful factor in compounding.</p>
+    </div>
 
-<div class="card">
-<h2>Your Inputs</h2>
+    <div class="card">
+      <h2>Your Inputs</h2>
 
-<div class="input-group">
-<label>Monthly Investment (€)</label>
-<input id="monthly" type="number" value="500">
-</div>
+      <div class="input-group">
+        <label>Monthly Investment (€)</label>
+        <input id="monthly" type="number" value="500" />
+      </div>
 
-<div class="input-group">
-<label>Expected Annual Return (%)</label>
-<input id="return" type="number" value="7">
-</div>
+      <div class="input-group">
+        <label>Expected Annual Return (%)</label>
+        <input id="return" type="number" value="7" />
+      </div>
 
-<div class="input-group">
-<label>Start Age</label>
-<input id="startAge" type="number" value="30">
-</div>
+      <div class="input-group">
+        <label>Start Age</label>
+        <input id="startAge" type="number" value="30" />
+      </div>
 
-<div class="input-group">
-<label>Delayed Start Age</label>
-<input id="delayAge" type="number" value="40">
-</div>
+      <div class="input-group">
+        <label>Delayed Start Age</label>
+        <input id="delayAge" type="number" value="40" />
+      </div>
 
-<div class="input-group">
-<label>Target Age</label>
-<input id="targetAge" type="number" value="65">
-</div>
+      <div class="input-group">
+        <label>Target Age</label>
+        <input id="targetAge" type="number" value="65" />
+      </div>
 
-<button onclick="calculate()">Calculate Cost of Waiting</button>
+      <button onclick="calculate()">Calculate Cost of Waiting</button>
+    </div>
 
-</div>
+    <div class="card" id="results" style="display:none">
+      <h2>Scenario Comparison</h2>
 
-<div class="card" id="results" style="display:none">
-<h2>Scenario Comparison</h2>
+      <div class="result-grid">
+        <div class="result-box">
+          Start Now
+          <div class="value" id="nowResult">€0</div>
+        </div>
 
-<div class="result-grid">
+        <div class="result-box">
+          Start Later
+          <div class="value" id="laterResult">€0</div>
+        </div>
+      </div>
 
-<div class="result-box">
-Start Now
-<div class="value" id="nowResult">€0</div>
-</div>
+      <div class="delay-box" id="delayCost"></div>
+    </div>
 
-<div class="result-box">
-Start Later
-<div class="value" id="laterResult">€0</div>
-</div>
+    <div class="card" id="insight" style="display:none">
+      <h2>Insight</h2>
+      <p>Waiting reduces the most powerful factor in wealth building: time in the market. Compounding needs time to work.</p>
+    </div>
 
-</div>
+    <div class="card" id="next" style="display:none">
+      <h2>Next Step</h2>
+      <p>Now build your full wealth projection using the Wealth Builder Engine.</p>
+      <button class="next-btn" onclick="location.href='../wealth-builder/'">Open Wealth Builder</button>
+    </div>
 
-<div class="delay-box" id="delayCost"></div>
+  </div>
 
-</div>
-
-<div class="card" id="insight" style="display:none">
-<h2>Insight</h2>
-<p>Waiting reduces the most powerful factor in wealth building: time in the market. Compounding needs time to work.</p>
-</div>
-
-<div class="card" id="next" style="display:none">
-<h2>Next Step</h2>
-<p>Now build your full wealth projection using the Wealth Builder Engine.</p>
-<button class="next-btn" onclick="location.href='../wealth-builder/index.html'">Open Wealth Builder</button>
-</div>
-
-</div>
-
-<script>
-
-function futureValue(monthly,rate,months){
-if(rate===0) return monthly*months
-return monthly*((Math.pow(1+rate,months)-1)/rate)
-}
-
-function calculate(){
-
-let monthly=Number(document.getElementById("monthly").value)
-let annualReturn=Number(document.getElementById("return").value)/100
-let startAge=Number(document.getElementById("startAge").value)
-let delayAge=Number(document.getElementById("delayAge").value)
-let targetAge=Number(document.getElementById("targetAge").value)
-
-let monthlyRate=annualReturn/12
-
-let monthsNow=(targetAge-startAge)*12
-let monthsLater=(targetAge-delayAge)*12
-
-let nowValue=futureValue(monthly,monthlyRate,monthsNow)
-let laterValue=futureValue(monthly,monthlyRate,monthsLater)
-
-let delay=nowValue-laterValue
-
-results.style.display="block"
-insight.style.display="block"
-next.style.display="block"
-
-nowResult.innerText="€"+Math.round(nowValue).toLocaleString()
-laterResult.innerText="€"+Math.round(laterValue).toLocaleString()
-
-delayCost.innerText="Waiting could cost you €"+Math.round(delay).toLocaleString()+" in future wealth."
-
-}
-
-</script>
-
+  <script src="app.js"></script>
 </body>
 </html>
