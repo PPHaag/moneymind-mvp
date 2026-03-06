@@ -348,8 +348,13 @@ function finishWizard() {
 
   document.getElementById("restartBtn").onclick = () => location.reload();
 
-  document.getElementById("goWealthBuilderBtn").onclick = () => window.open(LINKS.wealthBuilder, "_blank");
-  document.getElementById("goLeakageBtn").onclick = () => window.open(LINKS.leakage, "_blank");
+document.getElementById("goWealthBuilderBtn").onclick = () => {
+  alert("Wealth Builder coming soon");
+};
+
+document.getElementById("goLeakageBtn").onclick = () => {
+  window.location.href = "/tools/leakage/";
+};
 }
 
 function next() {
