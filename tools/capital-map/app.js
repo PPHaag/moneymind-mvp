@@ -57,6 +57,3 @@ if(netWorth < 0){
 
 document.getElementById("resultBlock").style.display = "block";
 
-document.getElementById("resultBlock").scrollIntoView({
-  behavior:"smooth"
-});
