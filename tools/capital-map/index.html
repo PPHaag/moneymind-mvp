@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MoneyMind • Cost of Delay</title>
+<title>MoneyMind • Capital Map</title>
 
 <link rel="stylesheet" href="style.css">
 
@@ -17,98 +17,52 @@
 
   <div class="mm-card mm-hero">
 
-    <h1>Cost of Delay</h1>
+    <h1>Capital Map</h1>
 
     <p>
-      See what waiting could cost your future wealth.
-      Compounding rewards time — delaying reduces its power.
+      Understand where your capital currently sits. 
+      Mapping your assets is the first step toward building wealth.
     </p>
 
-
-    <!-- INPUTS -->
-
     <div class="mm-grid mm-grid3">
 
       <div class="mm-field">
-        <label>Monthly Investment</label>
+        <label>Cash / Savings</label>
         <div class="mm-input">
           <span>€</span>
-          <input id="monthly" type="number" value="500">
+          <input id="cash" type="number" value="10000">
         </div>
       </div>
 
       <div class="mm-field">
-        <label>Expected Annual Return</label>
+        <label>Investments</label>
         <div class="mm-input">
-          <input id="return" type="number" value="7">
-          <span>%</span>
+          <span>€</span>
+          <input id="investments" type="number" value="25000">
         </div>
       </div>
 
       <div class="mm-field">
-        <label>Target Age</label>
+        <label>Other Assets</label>
         <div class="mm-input">
-          <input id="targetAge" type="number" value="65">
+          <span>€</span>
+          <input id="otherAssets" type="number" value="0">
         </div>
       </div>
 
     </div>
 
-
-    <div class="mm-grid mm-grid3">
-
-      <div class="mm-field">
-        <label>Start Age</label>
-        <div class="mm-input">
-          <input id="startAge" type="number" value="30">
-        </div>
-      </div>
-
-      <div class="mm-field">
-        <label>Delayed Start Age</label>
-        <div class="mm-input">
-          <input id="delayAge" type="number" value="40">
-        </div>
-      </div>
-
-      <div class="mm-field">
-        <label>&nbsp;</label>
-        <button class="mm-btn" id="calculateBtn">
-          Calculate Cost of Waiting
-        </button>
-      </div>
-
-    </div>
-
-
-    <!-- RESULT -->
+    <button class="mm-btn" id="calculateBtn">
+      Calculate Total Capital
+    </button>
 
     <div id="resultBlock" class="mm-result" style="display:none;">
 
       <div class="mm-resultRow">
 
         <div class="mm-metric">
-          <div class="mm-big" id="startNowValue">€0</div>
-          <div class="mm-sub">Start Now</div>
-        </div>
-
-        <div class="mm-divider"></div>
-
-        <div class="mm-metric">
-          <div class="mm-big" id="startLaterValue">€0</div>
-          <div class="mm-sub">Start Later</div>
-        </div>
-
-      </div>
-
-      <div class="mm-impact">
-
-        <div class="mm-impactMain" id="delayImpact">
-          Waiting could cost you €0 in future wealth.
-        </div>
-
-        <div class="mm-impactSub">
-          Time is the most powerful factor in wealth building.
+          <div class="mm-big" id="totalCapital">€0</div>
+          <div class="mm-sub">Total Capital</div>
         </div>
 
       </div>
@@ -118,7 +72,6 @@
   </div>
 
 </div>
-
 
 <script src="app.js"></script>
 
