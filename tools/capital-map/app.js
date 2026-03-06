@@ -55,4 +55,8 @@ if(netWorth < 0){
   document.getElementById("resultBlock").style.display = "block";
 }
 
-document.getElementById("calculateBtn").addEventListener("click", calculateCapitalMap);
+document.getElementById("resultBlock").style.display = "block";
+
+document.getElementById("resultBlock").scrollIntoView({
+  behavior:"smooth"
+});
