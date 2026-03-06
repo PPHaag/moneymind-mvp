@@ -1,198 +1,198 @@
 <!DOCTYPE html>
-<div class="mm-toolnav">
-
-<a href="../capital-map/" class="active">Capital Map</a>
-
-<a href="../allocation/">Allocation</a>
-
-<a href="../leakage/">Leakage</a>
-
-<a href="../cost-of-delay/">Cost of Delay</a>
-
-<a href="../wealth-builder/">Builder</a>
-
-</div>
-
 <html lang="en">
 
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>MoneyMind • Capital Map</title>
-
-<link rel="stylesheet" href="style.css">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoneyMind • Capital Map</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="mm-wrap">
+  <div class="mm-wrap">
 
-<div class="mm-card mm-hero">
+    <!-- TOOL NAVIGATION -->
 
-<h1>Capital Map</h1>
-
-<p>
-Map where your capital currently sits. Understanding your asset base
-is the first step toward making better financial decisions.
-</p>
-
-<!-- DIRECT CAPITAL -->
-
-<h3>Direct Capital</h3>
-
-<div class="mm-grid mm-grid3">
-
-<div class="mm-field">
-<label>Cash / Savings</label>
-<div class="mm-input">
-<span>€</span>
-<input id="cash" type="number" value="0">
-</div>
-</div>
-
-<div class="mm-field">
-<label>Investments</label>
-<div class="mm-input">
-<span>€</span>
-<input id="investments" type="number" value="0">
-</div>
-</div>
-
-<div class="mm-field">
-<label>Crypto</label>
-<div class="mm-input">
-<span>€</span>
-<input id="crypto" type="number" value="0">
-</div>
-</div>
-
-</div>
+    <div class="mm-toolnav">
+      <a href="../capital-map/" class="active">Capital Map</a>
+      <a href="../allocation/">Allocation</a>
+      <a href="../leakage/">Leakage</a>
+      <a href="../cost-of-delay/">Cost of Delay</a>
+      <a href="../wealth-builder/">Builder</a>
+    </div>
 
 
-<!-- ACCESSIBLE CAPITAL -->
+    <!-- MAIN CARD -->
 
-<h3>Accessible Capital</h3>
+    <div class="mm-card mm-hero">
 
-<div class="mm-grid mm-grid3">
+      <h1>Capital Map</h1>
 
-<div class="mm-field">
-<label>Precious Metals</label>
-<div class="mm-input">
-<span>€</span>
-<input id="metals" type="number" value="0">
-</div>
-</div>
-
-<div class="mm-field">
-<label>Home Equity</label>
-<div class="mm-input">
-<span>€</span>
-<input id="homeEquity" type="number" value="0">
-</div>
-</div>
-
-<div class="mm-field">
-<label>Private Equity / Business</label>
-<div class="mm-input">
-<span>€</span>
-<input id="equity" type="number" value="0">
-</div>
-</div>
-
-</div>
+      <p>
+        Map where your capital currently sits. Understanding your asset base
+        is the first step toward making better financial decisions.
+      </p>
 
 
-<!-- LOCKED CAPITAL -->
+      <!-- DIRECT CAPITAL -->
 
-<h3>Locked Capital</h3>
+      <h3>Direct Capital</h3>
 
-<div class="mm-grid">
+      <div class="mm-grid mm-grid3">
 
-<div class="mm-field">
-<label>Pension</label>
-<div class="mm-input">
-<span>€</span>
-<input id="pension" type="number" value="0">
-</div>
-</div>
+        <div class="mm-field">
+          <label>Cash / Savings</label>
+          <div class="mm-input">
+            <span>€</span>
+            <input id="cash" type="number" value="0">
+          </div>
+        </div>
 
-</div>
+        <div class="mm-field">
+          <label>Investments</label>
+          <div class="mm-input">
+            <span>€</span>
+            <input id="investments" type="number" value="0">
+          </div>
+        </div>
 
+        <div class="mm-field">
+          <label>Crypto</label>
+          <div class="mm-input">
+            <span>€</span>
+            <input id="crypto" type="number" value="0">
+          </div>
+        </div>
 
-<!-- OTHER -->
-
-<h3>Other</h3>
-
-<div class="mm-grid mm-grid3">
-
-<div class="mm-field">
-<label>Other Assets</label>
-<div class="mm-input">
-<span>€</span>
-<input id="otherAssets" type="number" value="0">
-</div>
-</div>
-
-<div class="mm-field">
-<label>Debt</label>
-<div class="mm-input">
-<span>€</span>
-<input id="debt" type="number" value="0">
-</div>
-</div>
-
-</div>
+      </div>
 
 
-<button class="mm-btn" id="calculateBtn">
-Calculate Capital Map
-</button>
+      <!-- ACCESSIBLE CAPITAL -->
+
+      <h3>Accessible Capital</h3>
+
+      <div class="mm-grid mm-grid3">
+
+        <div class="mm-field">
+          <label>Precious Metals</label>
+          <div class="mm-input">
+            <span>€</span>
+            <input id="metals" type="number" value="0">
+          </div>
+        </div>
+
+        <div class="mm-field">
+          <label>Home Equity</label>
+          <div class="mm-input">
+            <span>€</span>
+            <input id="homeEquity" type="number" value="0">
+          </div>
+        </div>
+
+        <div class="mm-field">
+          <label>Private Equity / Business</label>
+          <div class="mm-input">
+            <span>€</span>
+            <input id="equity" type="number" value="0">
+          </div>
+        </div>
+
+      </div>
 
 
-<div id="resultBlock" class="mm-result" style="display:none">
+      <!-- LOCKED CAPITAL -->
 
-<div class="mm-resultRow">
+      <h3>Locked Capital</h3>
 
-<div class="mm-metric">
-<div class="mm-big" id="directCapitalValue">€0</div>
-<div class="mm-sub">Direct Capital</div>
-</div>
+      <div class="mm-grid">
 
-<div class="mm-divider"></div>
+        <div class="mm-field">
+          <label>Pension</label>
+          <div class="mm-input">
+            <span>€</span>
+            <input id="pension" type="number" value="0">
+          </div>
+        </div>
 
-<div class="mm-metric">
-<div class="mm-big" id="accessibleCapitalValue">€0</div>
-<div class="mm-sub">Accessible Capital</div>
-</div>
-
-<div class="mm-divider"></div>
-
-<div class="mm-metric">
-<div class="mm-big" id="lockedCapitalValue">€0</div>
-<div class="mm-sub">Locked Capital</div>
-</div>
-
-</div>
+      </div>
 
 
-<div class="mm-resultRow">
+      <!-- OTHER -->
 
-<div class="mm-metric">
-<div class="mm-big" id="netWorthValue">€0</div>
-<div class="mm-sub">Net Worth</div>
-</div>
+      <h3>Other</h3>
 
-</div>
+      <div class="mm-grid mm-grid3">
 
-</div>
+        <div class="mm-field">
+          <label>Other Assets</label>
+          <div class="mm-input">
+            <span>€</span>
+            <input id="otherAssets" type="number" value="0">
+          </div>
+        </div>
 
-</div>
+        <div class="mm-field">
+          <label>Debt</label>
+          <div class="mm-input">
+            <span>€</span>
+            <input id="debt" type="number" value="0">
+          </div>
+        </div>
 
-</div>
+      </div>
 
-<script src="app.js"></script>
+
+      <!-- CALCULATE BUTTON -->
+
+      <button class="mm-btn" id="calculateBtn">
+        Calculate Capital Map
+      </button>
+
+
+      <!-- RESULT -->
+
+      <div id="resultBlock" class="mm-result" style="display:none">
+
+        <div class="mm-resultRow">
+
+          <div class="mm-metric">
+            <div class="mm-big" id="directCapitalValue">€0</div>
+            <div class="mm-sub">Direct Capital</div>
+          </div>
+
+          <div class="mm-divider"></div>
+
+          <div class="mm-metric">
+            <div class="mm-big" id="accessibleCapitalValue">€0</div>
+            <div class="mm-sub">Accessible Capital</div>
+          </div>
+
+          <div class="mm-divider"></div>
+
+          <div class="mm-metric">
+            <div class="mm-big" id="lockedCapitalValue">€0</div>
+            <div class="mm-sub">Locked Capital</div>
+          </div>
+
+        </div>
+
+        <div class="mm-resultRow">
+
+          <div class="mm-metric">
+            <div class="mm-big" id="netWorthValue">€0</div>
+            <div class="mm-sub">Net Worth</div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
 
 </body>
 </html>
