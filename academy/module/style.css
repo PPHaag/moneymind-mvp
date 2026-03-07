@@ -28,12 +28,28 @@
   line-height:1.5;
 }
 
+.mm-nav-card{
+  margin-top:0;
+}
+
 .mm-module-nav{
   display:flex;
   justify-content:center;
+  align-items:center;
   margin-top:8px;
 }
 
 .mm-module-nav .mm-btn{
+  width:100%;
   max-width:280px;
+  min-height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+
+.mm-btnGhost{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.03);
 }
