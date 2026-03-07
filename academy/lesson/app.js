@@ -1,3 +1,5 @@
+let currentLessonId = null;
+
 function getLessonIdFromUrl() {
   const params = new URLSearchParams(window.location.search);
   return params.get("id");
@@ -82,9 +84,23 @@ function updateLessonStatus(lessonId) {
   }
 }
 
+function markCurrentLessonComplete() {
+  if (!currentLessonId) return;
+
+  const completedLessons = getCompletedLessons();
+
+  if (!completedLessons.includes(currentLessonId)) {
+    completedLessons.push(currentLessonId);
+    saveCompletedLessons(completedLessons);
+  }
+
+  updateLessonStatus(currentLessonId);
+}
+
 async function loadLesson() {
   try {
     const lessonId = getLessonIdFromUrl();
+    currentLessonId = lessonId;
 
     const lessonResponse = await fetch("/academy/lessons.json");
     const lessons = await lessonResponse.json();
@@ -144,24 +160,12 @@ async function loadLesson() {
     });
 
     updateLessonStatus(lesson.id);
-
-    const completeBtn = document.getElementById("completeLessonBtn");
-    if (completeBtn) {
-      completeBtn.onclick = function () {
-        const completedLessons = getCompletedLessons();
-
-        if (!completedLessons.includes(lesson.id)) {
-          completedLessons.push(lesson.id);
-          saveCompletedLessons(completedLessons);
-        }
-
-        updateLessonStatus(lesson.id);
-      };
-    }
   } catch (error) {
     console.error("Failed to load lesson:", error);
     document.getElementById("lessonTitle").innerText = "Something went wrong";
   }
 }
+
+window.markCurrentLessonComplete = markCurrentLessonComplete;
 
 loadLesson();
