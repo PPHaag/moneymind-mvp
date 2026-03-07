@@ -18,26 +18,25 @@
   <div class="mm-card mm-hero">
 
     <div class="mm-lesson-meta">
-      <span class="mm-meta-pill">Financial Foundations</span>
-      <span class="mm-meta-pill">Money Fundamentals</span>
-      <span class="mm-meta-pill">5–7 min read</span>
+      <span class="mm-meta-pill" id="phasePill">Financial Foundations</span>
+      <span class="mm-meta-pill" id="modulePill">Money Fundamentals</span>
+      <span class="mm-meta-pill" id="durationPill">5–7 min read</span>
     </div>
 
-    <h1>Net Worth vs Deployable Capital</h1>
+    <h1 id="lessonTitle">Net Worth vs Deployable Capital</h1>
 
-    <p>
+    <p id="lessonIntro">
       A high net worth does not automatically mean high financial flexibility.
       This lesson explains why usable capital matters more than most people realize.
     </p>
 
   </div>
 
-
   <div class="mm-card">
 
     <h2>Concept</h2>
 
-    <p>
+    <p id="conceptText">
       Net worth is the total value of your assets minus your liabilities.
       It tells you how much wealth you own on paper.
       But deployable capital is different. It represents the capital you can
@@ -46,12 +45,11 @@
 
   </div>
 
-
   <div class="mm-card">
 
     <h2>Why it matters</h2>
 
-    <p>
+    <p id="whyText">
       Many people think they are financially stronger than they really are
       because much of their wealth is locked in pensions, property or illiquid assets.
       That means they may have wealth, but not flexibility.
@@ -59,12 +57,11 @@
 
   </div>
 
-
   <div class="mm-card">
 
     <h2>Real-world example</h2>
 
-    <p>
+    <p id="exampleText">
       Someone may have a home worth €500,000 with €150,000 in equity,
       but only €8,000 in cash. On paper this person has meaningful net worth,
       but in practice very little directly available capital.
@@ -72,100 +69,75 @@
 
   </div>
 
-
   <div class="mm-card">
 
     <h2>Key insight</h2>
 
-    <div class="mm-key-insight">
+    <div class="mm-key-insight" id="keyInsightText">
       Net worth is not the same as deployable capital.
     </div>
 
   </div>
 
-
   <div class="mm-card">
 
     <h2>Reflection</h2>
 
-    <p>
+    <p id="reflectionText">
       How much of your current wealth could you actually use today if you wanted
       to make a financial decision, invest, or absorb a shock?
     </p>
 
   </div>
 
-
   <div class="mm-card">
 
     <h2>Related Tool</h2>
 
-    <p>
+    <p id="toolText">
       Use Capital Map to see how much of your wealth is direct, accessible or locked.
     </p>
 
-    <a class="mm-btn" href="../../tools/capital-map/">
+    <a class="mm-btn" id="toolLink" href="/tools/capital-map/">
       Open Capital Map
     </a>
 
   </div>
 
-<div class="mm-card">
-  <h2>Lesson Progress</h2>
+  <div class="mm-card">
 
-  <p id="lessonStatusText">
-    This lesson is not completed yet.
-  </p>
+    <h2>Lesson Progress</h2>
 
-  <button class="mm-btn" id="completeLessonBtn" type="button" onclick="markCurrentLessonComplete()">
-    Mark Lesson as Complete
-  </button>
-</div>
-  <div class="mm-lesson-nav">
-    <a class="mm-btn mm-btnGhost" href="../module/">
-      Back to Module
-    </a>
+    <p id="lessonStatusText">
+      This lesson is not completed yet.
+    </p>
 
-    <a class="mm-btn" href="../">
-      Next Lesson
-    </a>
+    <button class="mm-btn" id="completeLessonBtn" type="button" onclick="markCurrentLessonComplete()">
+      Mark Lesson as Complete
+    </button>
+
   </div>
 
-</div>
-<div class="mm-card">
+  <div class="mm-card">
 
-  <h2>Continue Learning</h2>
+    <h2>Continue Learning</h2>
 
-  <div class="mm-lesson-nav">
+    <div class="mm-lesson-nav">
 
-    <a class="mm-btn mm-btnGhost" id="prevLessonBtn" href="#">
-      ← Previous Lesson
-    </a>
+      <a class="mm-btn mm-btnGhost" id="prevLessonBtn" href="#">
+        ← Previous Lesson
+      </a>
 
-    <a class="mm-btn" id="nextLessonBtn" href="#">
-      Next Lesson →
-    </a>
+      <a class="mm-btn" id="nextLessonBtn" href="#">
+        Next Lesson →
+      </a>
+
+    </div>
 
   </div>
 
 </div>
-<div class="mm-card">
 
-  <h2>Continue Learning</h2>
-
-  <div class="mm-lesson-nav">
-
-    <a class="mm-btn mm-btnGhost" id="prevLessonBtn" href="#">
-      ← Previous Lesson
-    </a>
-
-    <a class="mm-btn" id="nextLessonBtn" href="#">
-      Next Lesson →
-    </a>
-
-  </div>
-
-</div>
 <script src="app.js"></script>
 
 </body>
