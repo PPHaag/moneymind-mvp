@@ -1,1 +1,104 @@
-
+[
+  {
+    "id": "phase-1-foundations",
+    "title": "Financial Foundations",
+    "order": 1,
+    "description": "Understanding how money and financial systems work.",
+    "modules": [
+      {
+        "id": "money-fundamentals",
+        "title": "Money Fundamentals",
+        "order": 1,
+        "phase": "Financial Foundations",
+        "description": "Core concepts around money, wealth, discipline and financial clarity."
+      },
+      {
+        "id": "banking-system",
+        "title": "Banking System",
+        "order": 2,
+        "phase": "Financial Foundations",
+        "description": "How banks work, how money is created and why debt drives the system."
+      },
+      {
+        "id": "inflation",
+        "title": "Inflation",
+        "order": 3,
+        "phase": "Financial Foundations",
+        "description": "Why purchasing power declines and why inflation matters for wealth building."
+      },
+      {
+        "id": "currency-systems",
+        "title": "Currency Systems",
+        "order": 4,
+        "phase": "Financial Foundations",
+        "description": "How fiat currencies work and why currency systems affect wealth."
+      }
+    ]
+  },
+  {
+    "id": "phase-2-building-wealth",
+    "title": "Building Wealth",
+    "order": 2,
+    "description": "Understanding how capital grows and how assets behave over time.",
+    "modules": [
+      {
+        "id": "investing-equity-markets",
+        "title": "Investing & Equity Markets",
+        "order": 5,
+        "phase": "Building Wealth",
+        "description": "How equities, ETFs, compounding and long-term investing build wealth."
+      },
+      {
+        "id": "crypto-digital-assets",
+        "title": "Crypto & Digital Assets",
+        "order": 6,
+        "phase": "Building Wealth",
+        "description": "Understanding crypto assets, market cycles, custody and portfolio role."
+      },
+      {
+        "id": "precious-metals",
+        "title": "Precious Metals",
+        "order": 7,
+        "phase": "Building Wealth",
+        "description": "The role of gold and silver in preservation, allocation and monetary history."
+      }
+    ]
+  },
+  {
+    "id": "phase-3-wealth-architecture",
+    "title": "Wealth Architecture",
+    "order": 3,
+    "description": "Understanding how wealth is structured, allocated and optimized.",
+    "modules": [
+      {
+        "id": "fiscal-strategy",
+        "title": "Fiscal Strategy",
+        "order": 8,
+        "phase": "Wealth Architecture",
+        "description": "Understanding taxes, tax drag and how fiscal structures affect wealth."
+      },
+      {
+        "id": "wealth-architecture",
+        "title": "Wealth Architecture",
+        "order": 9,
+        "phase": "Wealth Architecture",
+        "description": "How different assets, structures and income layers form a personal wealth system."
+      }
+    ]
+  },
+  {
+    "id": "phase-4-wealth-protection",
+    "title": "Wealth Protection",
+    "order": 4,
+    "description": "Understanding how wealth is preserved and protected over time.",
+    "modules": [
+      {
+        "id": "wealth-preservation-protection",
+        "title": "Wealth Preservation & Protection",
+        "order": 10,
+        "phase": "Wealth Protection",
+        "description": "Inflation protection, counterparty risk, jurisdiction risk and long-term preservation."
+      }
+    ]
+  }
+]
