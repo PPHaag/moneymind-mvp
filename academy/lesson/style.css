@@ -29,27 +29,19 @@
   line-height:1.4;
 }
 
-.mm-lesson-nav{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-@media (max-width: 760px){
-  .mm-lesson-nav{
-    grid-template-columns:1fr;
-  }
-}
-
 .mm-btnGhost{
   border:1px solid var(--line);
   background:rgba(255,255,255,.03);
 }
+
 .mm-lesson-nav{
-  display:grid;
-  grid-template-columns:1fr 1fr;
+  display:flex;
   gap:12px;
-  align-items:stretch;
+  margin-top:12px;
+}
+
+.mm-lesson-nav a{
+  flex:1;
 }
 
 .mm-lesson-nav .mm-btn,
@@ -62,12 +54,8 @@
   text-align:center;
 }
 
-@media (max-width: 760px){
+@media (max-width:760px){
   .mm-lesson-nav{
-    grid-template-columns:1fr;
+    flex-direction:column;
   }
-}
-.mm-btnGhost{
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.03);
 }
