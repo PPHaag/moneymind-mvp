@@ -160,6 +160,7 @@ async function loadLesson() {
     });
 
     updateLessonStatus(lesson.id);
+    setupLessonFlow(lesson, lessons);
   } catch (error) {
     console.error("Failed to load lesson:", error);
     document.getElementById("lessonTitle").innerText = "Something went wrong";
