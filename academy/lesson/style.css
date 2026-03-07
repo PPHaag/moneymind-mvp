@@ -45,3 +45,29 @@
   border:1px solid var(--line);
   background:rgba(255,255,255,.03);
 }
+.mm-lesson-nav{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  align-items:stretch;
+}
+
+.mm-lesson-nav .mm-btn,
+.mm-lesson-nav .mm-btnGhost{
+  width:100%;
+  min-height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+
+@media (max-width: 760px){
+  .mm-lesson-nav{
+    grid-template-columns:1fr;
+  }
+}
+.mm-btnGhost{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.03);
+}
