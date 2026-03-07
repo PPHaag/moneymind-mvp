@@ -27,3 +27,13 @@
   color:var(--muted);
   line-height:1.5;
 }
+
+.mm-module-nav{
+  display:flex;
+  justify-content:center;
+  margin-top:8px;
+}
+
+.mm-module-nav .mm-btn{
+  max-width:280px;
+}
