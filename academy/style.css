@@ -1,3 +1,4 @@
+@import "../style.css";
 :root{
   --bg:#0b1220;
   --bgGlow1:rgba(45,212,191,.12);
@@ -157,5 +158,34 @@ p{
 .mm-phase-desc{
   color:var(--muted);
   font-size:13px;
+  line-height:1.5;
+}
+
+
+.mm-module{
+  display:block;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.02);
+  border-radius:18px;
+  padding:18px;
+  text-decoration:none;
+  color:var(--text);
+  transition:.18s ease;
+}
+
+.mm-module:hover{
+  transform:translateY(-2px);
+  border-color:var(--accent);
+}
+
+.mm-module-title{
+  font-size:16px;
+  font-weight:700;
+  margin-bottom:6px;
+}
+
+.mm-module-desc{
+  font-size:13px;
+  color:var(--muted);
   line-height:1.5;
 }
