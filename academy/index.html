@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MoneyMind • Academy Modules</title>
+<title>MoneyMind • Academy</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -13,29 +13,80 @@
 <div class="mm-wrap">
 
   <div class="mm-card mm-hero">
-    <h1>Academy Modules</h1>
+    <h1>MoneyMind Academy</h1>
     <p>
-      Explore the MoneyMind learning modules. Each module focuses on
-      a specific financial concept to help you understand how wealth
-      systems actually work.
+      Build financial understanding step by step.
+      The Academy helps you understand how money works,
+      how wealth is built and how financial behavior affects long-term outcomes.
     </p>
   </div>
 
   <div class="mm-card">
-    <h2 id="phaseTitle">Loading phase...</h2>
+    <h2>Continue Learning</h2>
 
-    <div id="moduleGrid" class="mm-grid">
-      <!-- modules render here -->
+    <div class="mm-continue">
+      <div>
+        <div class="mm-label">Current Phase</div>
+        <div class="mm-value" id="currentPhaseValue">Financial Foundations</div>
+      </div>
+
+      <div>
+        <div class="mm-label">Next Lesson</div>
+        <div class="mm-value" id="nextLessonValue">Net Worth vs Deployable Capital</div>
+      </div>
     </div>
+
+    <a class="mm-btn" id="continueLearningBtn" href="/academy/lesson/?id=net-worth-vs-deployable-capital">
+      Continue Learning
+    </a>
   </div>
 
   <div class="mm-card">
-    <h2>Navigation</h2>
+    <h2>Explore Academy</h2>
 
-    <div class="mm-module-nav">
-      <a class="mm-btn mm-btnGhost" href="/academy/">
-        ← Back to Academy
-      </a>
+    <p>
+      Browse all learning modules and explore financial concepts
+      across investing, macro systems and wealth architecture.
+    </p>
+
+    <a class="mm-btn" href="/academy/module/">
+      Explore Modules
+    </a>
+  </div>
+
+  <div class="mm-card">
+    <h2>Learning Phases</h2>
+
+    <div class="mm-grid">
+
+      <div class="mm-phase">
+        <div class="mm-phase-title">Financial Foundations</div>
+        <div class="mm-phase-desc">
+          Understand how money and financial systems actually work.
+        </div>
+      </div>
+
+      <div class="mm-phase">
+        <div class="mm-phase-title">Building Wealth</div>
+        <div class="mm-phase-desc">
+          Learn how capital grows and how investment assets behave.
+        </div>
+      </div>
+
+      <div class="mm-phase">
+        <div class="mm-phase-title">Wealth Architecture</div>
+        <div class="mm-phase-desc">
+          Understand how wealth structures and allocations work.
+        </div>
+      </div>
+
+      <div class="mm-phase">
+        <div class="mm-phase-title">Wealth Protection</div>
+        <div class="mm-phase-desc">
+          Learn how wealth is preserved and protected over time.
+        </div>
+      </div>
+
     </div>
   </div>
 
