@@ -69,6 +69,8 @@ function updateLessonStatus(lessonId) {
   const statusText = document.getElementById("lessonStatusText");
   const completeBtn = document.getElementById("completeLessonBtn");
 
+  if (!statusText || !completeBtn) return;
+
   if (completedLessons.includes(lessonId)) {
     statusText.innerText = "This lesson has been completed.";
     completeBtn.innerText = "Lesson Completed";
@@ -109,9 +111,10 @@ async function loadLesson() {
       });
     });
 
-    const relatedTool = lesson.toolLinks && lesson.toolLinks.length > 0
-      ? lesson.toolLinks[0]
-      : "capital-map";
+    const relatedTool =
+      lesson.toolLinks && lesson.toolLinks.length > 0
+        ? lesson.toolLinks[0]
+        : "capital-map";
 
     document.getElementById("phasePill").innerText = phaseTitle;
     document.getElementById("modulePill").innerText = moduleTitle;
@@ -142,17 +145,19 @@ async function loadLesson() {
 
     updateLessonStatus(lesson.id);
 
-    document.getElementById("completeLessonBtn").addEventListener("click", () => {
-      const completedLessons = getCompletedLessons();
+    const completeBtn = document.getElementById("completeLessonBtn");
+    if (completeBtn) {
+      completeBtn.onclick = function () {
+        const completedLessons = getCompletedLessons();
 
-      if (!completedLessons.includes(lesson.id)) {
-        completedLessons.push(lesson.id);
-        saveCompletedLessons(completedLessons);
-      }
+        if (!completedLessons.includes(lesson.id)) {
+          completedLessons.push(lesson.id);
+          saveCompletedLessons(completedLessons);
+        }
 
-      updateLessonStatus(lesson.id);
-    });
-
+        updateLessonStatus(lesson.id);
+      };
+    }
   } catch (error) {
     console.error("Failed to load lesson:", error);
     document.getElementById("lessonTitle").innerText = "Something went wrong";
