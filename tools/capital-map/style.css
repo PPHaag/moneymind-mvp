@@ -104,3 +104,66 @@ body{
   font-size:12px;
   color:var(--muted);
 }
+.mm-aiInsight{
+  margin-top:16px;
+  padding-top:16px;
+  border-top:1px solid var(--line);
+}
+
+.mm-aiHeader{
+  margin-bottom:12px;
+}
+
+.mm-aiTitle{
+  font-size:16px;
+  font-weight:800;
+  letter-spacing:-.02em;
+}
+
+.mm-aiSub{
+  margin-top:6px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.45;
+}
+
+.mm-aiBtn{
+  margin-top:4px;
+}
+
+.mm-aiLoading{
+  margin-top:12px;
+  padding:12px 14px;
+  border-radius:16px;
+  border:1px dashed rgba(45,212,191,.35);
+  background:rgba(45,212,191,.06);
+  color:var(--text);
+  font-size:13px;
+}
+
+.mm-aiResult{
+  margin-top:12px;
+  display:grid;
+  gap:12px;
+}
+
+.mm-aiResultBlock{
+  padding:14px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.02);
+}
+
+.mm-aiLabel{
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:6px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+
+.mm-aiText{
+  font-size:14px;
+  line-height:1.5;
+  color:var(--text);
+}
