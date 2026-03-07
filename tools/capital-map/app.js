@@ -63,3 +63,42 @@ function calculateCapitalMap() {
 }
 
 document.getElementById("calculateBtn").addEventListener("click", calculateCapitalMap);
+
+function showMockAiInsight() {
+
+  const aiLoading = document.getElementById("aiLoading");
+  const aiResult = document.getElementById("aiResult");
+  const aiSummaryText = document.getElementById("aiSummaryText");
+  const aiWhyText = document.getElementById("aiWhyText");
+  const aiNextText = document.getElementById("aiNextText");
+
+  if (!aiLoading || !aiResult || !aiSummaryText || !aiWhyText || !aiNextText) {
+    return;
+  }
+
+  aiResult.style.display = "none";
+  aiLoading.style.display = "block";
+
+  setTimeout(() => {
+
+    aiLoading.style.display = "none";
+    aiResult.style.display = "grid";
+
+    aiSummaryText.innerText =
+      "Your capital structure suggests that a large portion of your wealth may be tied up in longer-term assets.";
+
+    aiWhyText.innerText =
+      "This means your financial flexibility could be lower than your net worth suggests.";
+
+    aiNextText.innerText =
+      "Net Worth vs Deployable Capital";
+
+  }, 900);
+}
+
+const aiExplainBtn = document.getElementById("aiExplainBtn");
+
+if (aiExplainBtn) {
+  aiExplainBtn.addEventListener("click", showMockAiInsight);
+}
+
