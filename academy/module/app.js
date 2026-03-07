@@ -1,10 +1,15 @@
 async function loadModules() {
+  const phaseTitle = document.getElementById("phaseTitle");
+  const moduleGrid = document.getElementById("moduleGrid");
+
+  // Stop meteen als we niet op de module page zitten
+  if (!phaseTitle || !moduleGrid) {
+    return;
+  }
+
   try {
     const response = await fetch("/academy/modules.json");
     const phases = await response.json();
-
-    const phaseTitle = document.getElementById("phaseTitle");
-    const moduleGrid = document.getElementById("moduleGrid");
 
     if (!phases || phases.length === 0) {
       phaseTitle.innerText = "No phases found";
@@ -45,8 +50,8 @@ async function loadModules() {
   } catch (error) {
     console.error("Failed to load modules:", error);
 
-    document.getElementById("phaseTitle").innerText = "Failed to load modules";
-    document.getElementById("moduleGrid").innerHTML = `
+    phaseTitle.innerText = "Failed to load modules";
+    moduleGrid.innerHTML = `
       <div class="mm-module">
         <div class="mm-module-title">Something went wrong</div>
         <div class="mm-module-desc">Please check modules.json and try again.</div>
