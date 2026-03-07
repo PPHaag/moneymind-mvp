@@ -128,7 +128,9 @@ body{
 }
 
 .mm-aiBtn{
-  margin-top:4px;
+  margin-top:10px;
+  width:100%;
+  justify-content:center;
 }
 
 .mm-aiLoading{
