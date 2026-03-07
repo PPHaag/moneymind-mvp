@@ -1,1 +1,47 @@
+@import "../style.css";
 
+.mm-lesson-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:14px;
+}
+
+.mm-meta-pill{
+  display:inline-flex;
+  align-items:center;
+  padding:7px 10px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.03);
+  color:var(--muted);
+  font-size:12px;
+  font-weight:650;
+}
+
+.mm-key-insight{
+  border:1px dashed rgba(45,212,191,.35);
+  background:rgba(45,212,191,.06);
+  border-radius:18px;
+  padding:16px;
+  font-size:18px;
+  font-weight:750;
+  line-height:1.4;
+}
+
+.mm-lesson-nav{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+@media (max-width: 760px){
+  .mm-lesson-nav{
+    grid-template-columns:1fr;
+  }
+}
+
+.mm-btnGhost{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.03);
+}
