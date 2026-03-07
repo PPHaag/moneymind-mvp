@@ -51,6 +51,35 @@ function toolIdToPath(toolId) {
   return paths[toolId] || "/academy/";
 }
 
+function getCompletedLessons() {
+  const raw = localStorage.getItem("mm_completed_lessons");
+  return raw ? JSON.parse(raw) : [];
+}
+
+function saveCompletedLessons(completedLessons) {
+  localStorage.setItem("mm_completed_lessons", JSON.stringify(completedLessons));
+}
+
+function saveLastLesson(data) {
+  localStorage.setItem("mm_last_lesson", JSON.stringify(data));
+}
+
+function updateLessonStatus(lessonId) {
+  const completedLessons = getCompletedLessons();
+  const statusText = document.getElementById("lessonStatusText");
+  const completeBtn = document.getElementById("completeLessonBtn");
+
+  if (completedLessons.includes(lessonId)) {
+    statusText.innerText = "This lesson has been completed.";
+    completeBtn.innerText = "Lesson Completed";
+    completeBtn.disabled = true;
+  } else {
+    statusText.innerText = "This lesson is not completed yet.";
+    completeBtn.innerText = "Mark Lesson as Complete";
+    completeBtn.disabled = false;
+  }
+}
+
 async function loadLesson() {
   try {
     const lessonId = getLessonIdFromUrl();
@@ -101,6 +130,29 @@ async function loadLesson() {
 
     document.getElementById("toolLink").href = toolIdToPath(relatedTool);
     document.getElementById("toolLink").innerText = `Open ${toolIdToLabel(relatedTool)}`;
+
+    saveLastLesson({
+      id: lesson.id,
+      title: lesson.title,
+      moduleId: lesson.moduleId,
+      moduleTitle,
+      phaseTitle,
+      durationMin: lesson.durationMin
+    });
+
+    updateLessonStatus(lesson.id);
+
+    document.getElementById("completeLessonBtn").addEventListener("click", () => {
+      const completedLessons = getCompletedLessons();
+
+      if (!completedLessons.includes(lesson.id)) {
+        completedLessons.push(lesson.id);
+        saveCompletedLessons(completedLessons);
+      }
+
+      updateLessonStatus(lesson.id);
+    });
+
   } catch (error) {
     console.error("Failed to load lesson:", error);
     document.getElementById("lessonTitle").innerText = "Something went wrong";
