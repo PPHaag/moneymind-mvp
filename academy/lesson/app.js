@@ -165,7 +165,37 @@ async function loadLesson() {
     document.getElementById("lessonTitle").innerText = "Something went wrong";
   }
 }
+function setupLessonFlow(lesson, lessons) {
+  const prevBtn = document.getElementById("prevLessonBtn");
+  const nextBtn = document.getElementById("nextLessonBtn");
 
+  if (!prevBtn || !nextBtn) return;
+
+  const moduleLessons = lessons
+    .filter((item) => item.moduleId === lesson.moduleId)
+    .sort((a, b) => a.order - b.order);
+
+  const currentIndex = moduleLessons.findIndex((item) => item.id === lesson.id);
+
+  const previousLesson = currentIndex > 0 ? moduleLessons[currentIndex - 1] : null;
+  const nextLesson = currentIndex < moduleLessons.length - 1 ? moduleLessons[currentIndex + 1] : null;
+
+  if (previousLesson) {
+    prevBtn.href = `/academy/lesson/?id=${previousLesson.id}`;
+    prevBtn.innerText = `← ${previousLesson.title}`;
+  } else {
+    prevBtn.href = "/academy/module/";
+    prevBtn.innerText = "← Back to Module";
+  }
+
+  if (nextLesson) {
+    nextBtn.href = `/academy/lesson/?id=${nextLesson.id}`;
+    nextBtn.innerText = `${nextLesson.title} →`;
+  } else {
+    nextBtn.href = "/academy/module/";
+    nextBtn.innerText = "Module Complete →";
+  }
+}
 window.markCurrentLessonComplete = markCurrentLessonComplete;
 
 loadLesson();
