@@ -1,20 +1,30 @@
-function formatCurrency(value) {
-  return "€" + Math.round(value).toLocaleString("nl-NL");
+function getNumber(id) {
+  const el = document.getElementById(id);
+  const value = Number(el?.value || 0);
+  return Number.isFinite(value) && value >= 0 ? value : 0;
 }
 
-function calculateCapitalMap() {
-  const cash = Number(document.getElementById("cash").value) || 0;
-  const investments = Number(document.getElementById("investments").value) || 0;
-  const crypto = Number(document.getElementById("crypto").value) || 0;
+function formatCurrency(value) {
+  return new Intl.NumberFormat("nl-NL", {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 0
+  }).format(value);
+}
 
-  const metals = Number(document.getElementById("metals").value) || 0;
-  const homeEquity = Number(document.getElementById("homeEquity").value) || 0;
-  const equity = Number(document.getElementById("equity").value) || 0;
+function calculateCapitalMapData() {
+  const cash = getNumber("cash");
+  const investments = getNumber("investments");
+  const crypto = getNumber("crypto");
 
-  const pension = Number(document.getElementById("pension").value) || 0;
+  const metals = getNumber("metals");
+  const homeEquity = getNumber("homeEquity");
+  const equity = getNumber("equity");
 
-  const otherAssets = Number(document.getElementById("otherAssets").value) || 0;
-  const debt = Number(document.getElementById("debt").value) || 0;
+  const pension = getNumber("pension");
+
+  const otherAssets = getNumber("otherAssets");
+  const debt = getNumber("debt");
 
   const directCapital = cash + investments + crypto;
   const accessibleCapital = metals + homeEquity + equity + otherAssets;
@@ -24,81 +34,173 @@ function calculateCapitalMap() {
   const netWorth = totalAssets - debt;
   const deployableCapital = directCapital - debt;
 
-  document.getElementById("directCapitalValue").innerText = formatCurrency(directCapital);
-  document.getElementById("accessibleCapitalValue").innerText = formatCurrency(accessibleCapital);
-  document.getElementById("lockedCapitalValue").innerText = formatCurrency(lockedCapital);
+  return {
+    cash,
+    investments,
+    crypto,
+    metals,
+    homeEquity,
+    equity,
+    pension,
+    otherAssets,
+    debt,
+    directCapital,
+    accessibleCapital,
+    lockedCapital,
+    totalAssets,
+    netWorth,
+    deployableCapital
+  };
+}
 
-  if (netWorth < 0) {
-    document.getElementById("netWorthValue").innerText =
-      "-€" + Math.round(Math.abs(netWorth)).toLocaleString("nl-NL");
-  } else {
-    document.getElementById("netWorthValue").innerText =
-      formatCurrency(netWorth);
+function getCapitalInsight(data) {
+  const {
+    netWorth,
+    deployableCapital,
+    directCapital,
+    accessibleCapital,
+    lockedCapital
+  } = data;
+
+  if (netWorth <= 0) {
+    return "Your capital structure is still under pressure. Before optimization comes stability.";
   }
-
-  let insight = "";
 
   if (deployableCapital <= 0) {
-    insight = "Your deployable capital is currently zero or negative. Debt is eating your flexibility.";
-  } else if (deployableCapital < 5000) {
-    insight = "Most of your capital is locked. You own value, but you cannot move much of it.";
-  } else if (deployableCapital < 25000) {
-    insight = "You have some deployable capital, but much of your wealth still sits outside direct reach.";
-  } else {
-    insight = "You have meaningful deployable capital. That gives you room to build with intent.";
+    return "Debt is currently eating your flexibility. Net worth may exist on paper, but usable capital is under pressure.";
   }
+
+  if (lockedCapital > directCapital + accessibleCapital) {
+    return "A large share of your wealth is locked. Long-term strength is building, but flexibility is limited.";
+  }
+
+  if (accessibleCapital > directCapital && accessibleCapital > lockedCapital) {
+    return "Your structure leans toward accessible wealth, but not all of it is instantly deployable.";
+  }
+
+  if (deployableCapital < 5000) {
+    return "You own value, but not much of it is ready to move. That limits speed when opportunity appears.";
+  }
+
+  if (deployableCapital < 25000) {
+    return "You have some deployable capital, but much of your wealth still sits outside direct reach.";
+  }
+
+  return "You have meaningful deployable capital. That gives you room to act with intent instead of reacting late.";
+}
+
+function resetAIState() {
+  const aiLoading = document.getElementById("aiLoading");
+  const aiResult = document.getElementById("aiResult");
+  const aiError = document.getElementById("aiError");
+
+  if (aiLoading) aiLoading.style.display = "none";
+  if (aiResult) aiResult.style.display = "none";
+  if (aiError) aiError.style.display = "none";
+
+  const aiWhatText = document.getElementById("aiWhatText");
+  const aiWhyText = document.getElementById("aiWhyText");
+  const aiViewText = document.getElementById("aiViewText");
+  const aiReflectionText = document.getElementById("aiReflectionText");
+
+  if (aiWhatText) aiWhatText.innerText = "";
+  if (aiWhyText) aiWhyText.innerText = "";
+  if (aiViewText) aiViewText.innerText = "";
+  if (aiReflectionText) aiReflectionText.innerText = "";
+}
+
+function calculateCapitalMap() {
+  const data = calculateCapitalMapData();
+
+  document.getElementById("directCapitalValue").innerText = formatCurrency(data.directCapital);
+  document.getElementById("accessibleCapitalValue").innerText = formatCurrency(data.accessibleCapital);
+  document.getElementById("lockedCapitalValue").innerText = formatCurrency(data.lockedCapital);
+  document.getElementById("netWorthValue").innerText = formatCurrency(data.netWorth);
 
   const insightEl = document.getElementById("capitalInsight");
   if (insightEl) {
-    insightEl.innerText = insight;
+    insightEl.innerText = getCapitalInsight(data);
   }
 
   const resultBlock = document.getElementById("resultBlock");
-  resultBlock.style.display = "block";
+  if (resultBlock) {
+    resultBlock.style.display = "block";
+    resultBlock.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
 
-  resultBlock.scrollIntoView({
-    behavior: "smooth",
-    block: "start"
-  });
+  resetAIState();
 }
 
-document.getElementById("calculateBtn").addEventListener("click", calculateCapitalMap);
-
-function showMockAiInsight() {
-
+async function fetchAIInsight() {
+  const aiExplainBtn = document.getElementById("aiExplainBtn");
   const aiLoading = document.getElementById("aiLoading");
   const aiResult = document.getElementById("aiResult");
-  const aiSummaryText = document.getElementById("aiSummaryText");
-  const aiWhyText = document.getElementById("aiWhyText");
-  const aiNextText = document.getElementById("aiNextText");
+  const aiError = document.getElementById("aiError");
 
-  if (!aiLoading || !aiResult || !aiSummaryText || !aiWhyText || !aiNextText) {
+  const aiWhatText = document.getElementById("aiWhatText");
+  const aiWhyText = document.getElementById("aiWhyText");
+  const aiViewText = document.getElementById("aiViewText");
+  const aiReflectionText = document.getElementById("aiReflectionText");
+
+  if (!aiExplainBtn || !aiLoading || !aiResult || !aiError || !aiWhatText || !aiWhyText || !aiViewText || !aiReflectionText) {
+    console.error("AI UI elements not found.");
     return;
   }
 
-  aiResult.style.display = "none";
+  const data = calculateCapitalMapData();
+
+  aiExplainBtn.disabled = true;
+  aiExplainBtn.innerText = "Analyzing...";
   aiLoading.style.display = "block";
+  aiResult.style.display = "none";
+  aiError.style.display = "none";
 
-  setTimeout(() => {
+  try {
+    const response = await fetch("/api/ai-insight", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        tool: "capital-map",
+        data
+      })
+    });
 
-    aiLoading.style.display = "none";
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "AI request failed");
+    }
+
+    aiWhatText.innerText = result.what_stands_out || "";
+    aiWhyText.innerText = result.why_it_matters || "";
+    aiViewText.innerText = result.moneymind_view || "";
+    aiReflectionText.innerText = result.reflection || "";
+
     aiResult.style.display = "grid";
-
-    aiSummaryText.innerText =
-      "Your capital structure suggests that a large portion of your wealth may be tied up in longer-term assets.";
-
-    aiWhyText.innerText =
-      "This means your financial flexibility could be lower than your net worth suggests.";
-
-    aiNextText.innerText =
-      "Net Worth vs Deployable Capital";
-
-  }, 900);
+  } catch (error) {
+    console.error("AI insight error:", error);
+    aiError.style.display = "block";
+  } finally {
+    aiLoading.style.display = "none";
+    aiExplainBtn.disabled = false;
+    aiExplainBtn.innerText = "Explain My Results";
+  }
 }
 
-const aiExplainBtn = document.getElementById("aiExplainBtn");
+document.addEventListener("DOMContentLoaded", function () {
+  const calculateBtn = document.getElementById("calculateBtn");
+  const aiExplainBtn = document.getElementById("aiExplainBtn");
 
-if (aiExplainBtn) {
-  aiExplainBtn.addEventListener("click", showMockAiInsight);
-}
+  if (calculateBtn) {
+    calculateBtn.addEventListener("click", calculateCapitalMap);
+  }
 
+  if (aiExplainBtn) {
+    aiExplainBtn.addEventListener("click", fetchAIInsight);
+  }
+});
