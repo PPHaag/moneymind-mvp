@@ -13,7 +13,6 @@
   <div class="mm-wrap">
 
     <!-- TOOL NAVIGATION -->
-
     <div class="mm-toolnav">
       <a href="../capital-map/" class="active">Capital Map</a>
       <a href="../allocation/">Allocation</a>
@@ -22,9 +21,7 @@
       <a href="../builder/">Builder</a>
     </div>
 
-
     <!-- MAIN CARD -->
-
     <div class="mm-card mm-hero">
 
       <h1>Capital Map</h1>
@@ -34,18 +31,15 @@
         is the first step toward making better financial decisions.
       </p>
 
-
       <!-- DIRECT CAPITAL -->
-
       <h3>Direct Capital</h3>
 
       <div class="mm-grid mm-grid3">
-
         <div class="mm-field">
           <label>Cash / Savings</label>
           <div class="mm-input">
             <span>€</span>
-            <input id="cash" type="number" value="0">
+            <input id="cash" type="number" value="0" min="0">
           </div>
         </div>
 
@@ -53,7 +47,7 @@
           <label>Investments</label>
           <div class="mm-input">
             <span>€</span>
-            <input id="investments" type="number" value="0">
+            <input id="investments" type="number" value="0" min="0">
           </div>
         </div>
 
@@ -61,24 +55,20 @@
           <label>Crypto</label>
           <div class="mm-input">
             <span>€</span>
-            <input id="crypto" type="number" value="0">
+            <input id="crypto" type="number" value="0" min="0">
           </div>
         </div>
-
       </div>
 
-
       <!-- ACCESSIBLE CAPITAL -->
-
       <h3>Accessible Capital</h3>
 
       <div class="mm-grid mm-grid3">
-
         <div class="mm-field">
           <label>Precious Metals</label>
           <div class="mm-input">
             <span>€</span>
-            <input id="metals" type="number" value="0">
+            <input id="metals" type="number" value="0" min="0">
           </div>
         </div>
 
@@ -86,7 +76,7 @@
           <label>Home Equity</label>
           <div class="mm-input">
             <span>€</span>
-            <input id="homeEquity" type="number" value="0">
+            <input id="homeEquity" type="number" value="0" min="0">
           </div>
         </div>
 
@@ -94,41 +84,33 @@
           <label>Private Equity / Business</label>
           <div class="mm-input">
             <span>€</span>
-            <input id="equity" type="number" value="0">
+            <input id="equity" type="number" value="0" min="0">
           </div>
         </div>
-
       </div>
 
-
       <!-- LOCKED CAPITAL -->
-
       <h3>Locked Capital</h3>
 
       <div class="mm-grid">
-
         <div class="mm-field">
           <label>Pension</label>
           <div class="mm-input">
             <span>€</span>
-            <input id="pension" type="number" value="0">
+            <input id="pension" type="number" value="0" min="0">
           </div>
         </div>
-
       </div>
 
-
       <!-- OTHER -->
-
       <h3>Other</h3>
 
       <div class="mm-grid mm-grid3">
-
         <div class="mm-field">
           <label>Other Assets</label>
           <div class="mm-input">
             <span>€</span>
-            <input id="otherAssets" type="number" value="0">
+            <input id="otherAssets" type="number" value="0" min="0">
           </div>
         </div>
 
@@ -136,60 +118,20 @@
           <label>Debt</label>
           <div class="mm-input">
             <span>€</span>
-            <input id="debt" type="number" value="0">
+            <input id="debt" type="number" value="0" min="0">
           </div>
         </div>
-
       </div>
 
-
       <!-- CALCULATE BUTTON -->
-
-      <button class="mm-btn" id="calculateBtn">
+      <button class="mm-btn" id="calculateBtn" type="button">
         Calculate Capital Map
       </button>
 
-
       <!-- RESULT -->
+      <div id="resultBlock" class="mm-result" style="display:none;">
 
-      <div id="resultBlock" class="mm-result" style="display:none">
-<div class="mm-aiInsight">
-
-  <div class="mm-aiHeader">
-    <div class="mm-aiTitle">AI Insight</div>
-    <div class="mm-aiSub">
-      Let MoneyMind explain what your capital structure actually means.
-    </div>
-  </div>
-
-  <button class="mm-btn mm-aiBtn" id="aiExplainBtn" type="button">
-    Explain My Result
-  </button>
-
-  <div class="mm-aiLoading" id="aiLoading" style="display:none;">
-    Analyzing your capital structure...
-  </div>
-
-  <div class="mm-aiResult" id="aiResult" style="display:none;">
-    <div class="mm-aiResultBlock">
-      <div class="mm-aiLabel">Summary</div>
-      <div class="mm-aiText" id="aiSummaryText"></div>
-    </div>
-
-    <div class="mm-aiResultBlock">
-      <div class="mm-aiLabel">Why it matters</div>
-      <div class="mm-aiText" id="aiWhyText"></div>
-    </div>
-
-    <div class="mm-aiResultBlock">
-      <div class="mm-aiLabel">Suggested next lesson</div>
-      <div class="mm-aiText" id="aiNextText"></div>
-    </div>
-  </div>
-
-</div>
         <div class="mm-resultRow">
-
           <div class="mm-metric">
             <div class="mm-big" id="directCapitalValue">€0</div>
             <div class="mm-sub">Direct Capital</div>
@@ -208,23 +150,64 @@
             <div class="mm-big" id="lockedCapitalValue">€0</div>
             <div class="mm-sub">Locked Capital</div>
           </div>
-
         </div>
 
         <div class="mm-resultRow">
-
           <div class="mm-metric">
             <div class="mm-big" id="netWorthValue">€0</div>
             <div class="mm-sub">Net Worth</div>
+
             <div class="mm-impact">
+              <div class="mm-impactMain" id="capitalInsight"></div>
+              <div class="mm-impactSub">
+                Capital awareness comes before allocation. First map it. Then optimize it.
+              </div>
+            </div>
+          </div>
+        </div>
 
-<div class="mm-impactMain" id="capitalInsight"></div>
+        <!-- AI INSIGHT -->
+        <div class="mm-aiInsight">
 
-<div class="mm-impactSub">
-Capital awareness comes before allocation. First map it. Then optimize it.
-</div>
+          <div class="mm-aiHeader">
+            <div class="mm-aiTitle">AI Insight</div>
+            <div class="mm-aiSub">
+              Let MoneyMind explain what your capital structure actually means.
+            </div>
+          </div>
 
-</div>
+          <button class="mm-btn mm-aiBtn" id="aiExplainBtn" type="button">
+            Explain My Results
+          </button>
+
+          <div class="mm-aiLoading" id="aiLoading" style="display:none;">
+            Analyzing your capital structure...
+          </div>
+
+          <div class="mm-aiError" id="aiError" style="display:none;">
+            AI Insight is temporarily unavailable. Please try again.
+          </div>
+
+          <div class="mm-aiResult" id="aiResult" style="display:none;">
+            <div class="mm-aiResultBlock">
+              <div class="mm-aiLabel">What stands out</div>
+              <div class="mm-aiText" id="aiWhatText"></div>
+            </div>
+
+            <div class="mm-aiResultBlock">
+              <div class="mm-aiLabel">Why it matters</div>
+              <div class="mm-aiText" id="aiWhyText"></div>
+            </div>
+
+            <div class="mm-aiResultBlock">
+              <div class="mm-aiLabel">MoneyMind view</div>
+              <div class="mm-aiText" id="aiViewText"></div>
+            </div>
+
+            <div class="mm-aiResultBlock">
+              <div class="mm-aiLabel">Reflection</div>
+              <div class="mm-aiText" id="aiReflectionText"></div>
+            </div>
           </div>
 
         </div>
@@ -235,7 +218,150 @@ Capital awareness comes before allocation. First map it. Then optimize it.
 
   </div>
 
-  <script src="app.js"></script>
+  <script>
+    const calculateBtn = document.getElementById("calculateBtn");
+    const resultBlock = document.getElementById("resultBlock");
+    const aiExplainBtn = document.getElementById("aiExplainBtn");
+    const aiLoading = document.getElementById("aiLoading");
+    const aiResult = document.getElementById("aiResult");
+    const aiError = document.getElementById("aiError");
+
+    function getNumber(id) {
+      const value = Number(document.getElementById(id).value);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    }
+
+    function formatCurrency(value) {
+      return new Intl.NumberFormat("en-EN", {
+        style: "currency",
+        currency: "EUR",
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+
+    function calculateCapitalMapData() {
+      const cash = getNumber("cash");
+      const investments = getNumber("investments");
+      const crypto = getNumber("crypto");
+      const metals = getNumber("metals");
+      const homeEquity = getNumber("homeEquity");
+      const equity = getNumber("equity");
+      const pension = getNumber("pension");
+      const otherAssets = getNumber("otherAssets");
+      const debt = getNumber("debt");
+
+      const directCapital = cash + investments + crypto;
+      const accessibleCapital = metals + homeEquity + equity + otherAssets;
+      const lockedCapital = pension;
+      const netWorth = directCapital + accessibleCapital + lockedCapital - debt;
+
+      return {
+        cash,
+        investments,
+        crypto,
+        metals,
+        homeEquity,
+        equity,
+        pension,
+        otherAssets,
+        debt,
+        directCapital,
+        accessibleCapital,
+        lockedCapital,
+        netWorth
+      };
+    }
+
+    function getCapitalInsight(data) {
+      const { directCapital, accessibleCapital, lockedCapital, netWorth } = data;
+
+      if (netWorth <= 0) {
+        return "Your capital structure is still in early formation.";
+      }
+
+      if (directCapital > accessibleCapital && directCapital > lockedCapital) {
+        return "Your structure is relatively liquid. Flexibility is a current strength.";
+      }
+
+      if (lockedCapital > directCapital + accessibleCapital) {
+        return "A large share of your wealth is locked. Long-term strength, lower short-term flexibility.";
+      }
+
+      if (accessibleCapital > directCapital && accessibleCapital > lockedCapital) {
+        return "Your structure leans toward accessible wealth, but not all of it is instantly deployable.";
+      }
+
+      return "Your capital is spread across multiple layers. The next question is how deployable it really is.";
+    }
+
+    function renderCapitalMap() {
+      const data = calculateCapitalMapData();
+
+      document.getElementById("directCapitalValue").textContent = formatCurrency(data.directCapital);
+      document.getElementById("accessibleCapitalValue").textContent = formatCurrency(data.accessibleCapital);
+      document.getElementById("lockedCapitalValue").textContent = formatCurrency(data.lockedCapital);
+      document.getElementById("netWorthValue").textContent = formatCurrency(data.netWorth);
+      document.getElementById("capitalInsight").textContent = getCapitalInsight(data);
+
+      resultBlock.style.display = "block";
+
+      aiResult.style.display = "none";
+      aiError.style.display = "none";
+      aiLoading.style.display = "none";
+
+      document.getElementById("aiWhatText").textContent = "";
+      document.getElementById("aiWhyText").textContent = "";
+      document.getElementById("aiViewText").textContent = "";
+      document.getElementById("aiReflectionText").textContent = "";
+    }
+
+    async function fetchAIInsight() {
+      const data = calculateCapitalMapData();
+
+      aiExplainBtn.disabled = true;
+      aiExplainBtn.textContent = "Analyzing...";
+      aiLoading.style.display = "block";
+      aiResult.style.display = "none";
+      aiError.style.display = "none";
+
+      try {
+        const response = await fetch("/api/ai-insight", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            tool: "capital-map",
+            data
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || "AI request failed");
+        }
+
+        document.getElementById("aiWhatText").textContent = result.what_stands_out || "";
+        document.getElementById("aiWhyText").textContent = result.why_it_matters || "";
+        document.getElementById("aiViewText").textContent = result.moneymind_view || "";
+        document.getElementById("aiReflectionText").textContent = result.reflection || "";
+
+        aiResult.style.display = "block";
+      } catch (error) {
+        console.error("AI insight error:", error);
+        aiError.style.display = "block";
+      } finally {
+        aiLoading.style.display = "none";
+        aiExplainBtn.disabled = false;
+        aiExplainBtn.textContent = "Explain My Results";
+      }
+    }
+
+    calculateBtn.addEventListener("click", renderCapitalMap);
+    aiExplainBtn.addEventListener("click", fetchAIInsight);
+  </script>
 
 </body>
+
 </html>
