@@ -28,19 +28,23 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing data payload" });
     }
 
-    const { directCapital, accessibleCapital, lockedCapital, age } = data;
+    const {
+  directCapital,
+  accessibleCapital,
+  lockedCapital,
+  age = "not provided",
+} = data;
 
-    if (
-      directCapital === undefined ||
-      accessibleCapital === undefined ||
-      lockedCapital === undefined ||
-      age === undefined
-    ) {
-      return res.status(400).json({
-        error: "Missing capital fields",
-        received: { directCapital, accessibleCapital, lockedCapital, age },
-      });
-    }
+if (
+  directCapital === undefined ||
+  accessibleCapital === undefined ||
+  lockedCapital === undefined
+) {
+  return res.status(400).json({
+    error: "Missing capital fields",
+    received: { directCapital, accessibleCapital, lockedCapital, age },
+  });
+}
 
     const prompt = `
 You are the MoneyMind Financial Intelligence Engine.
