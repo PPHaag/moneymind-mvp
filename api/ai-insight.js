@@ -1,7 +1,18 @@
 import OpenAI from "openai";
 
 export default async function handler(req, res) {
-console.log("API KEY:", process.env.OPENAI_API_KEY);
+
+  // Alleen POST toestaan
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  // Check of API key bestaat
+  if (!process.env.OPENAI_API_KEY) {
+    console.error("OPENAI_API_KEY missing");
+    return res.status(500).json({ error: "OpenAI API key missing" });
+  }
+
   const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
   });
@@ -9,6 +20,16 @@ console.log("API KEY:", process.env.OPENAI_API_KEY);
   try {
 
     const { directCapital, accessibleCapital, lockedCapital, age } = req.body;
+
+    // simpele check
+    if (
+      directCapital === undefined ||
+      accessibleCapital === undefined ||
+      lockedCapital === undefined ||
+      age === undefined
+    ) {
+      return res.status(400).json({ error: "Missing input values" });
+    }
 
     const prompt = `
 You are the MoneyMind Financial Intelligence Engine.
@@ -20,13 +41,13 @@ Accessible Capital: €${accessibleCapital}
 Locked Capital: €${lockedCapital}
 Age: ${age}
 
-Structure:
+Structure your answer like this:
 
-Financial Structure Insight
-What stands out
-Why it matters
-MoneyMind view
-Reflection
+1. Financial Structure Insight
+2. What stands out
+3. Why it matters
+4. MoneyMind view
+5. Reflection
 
 Tone:
 Clear, intelligent, calm, slightly sharp.
@@ -34,19 +55,25 @@ No financial advice.
 `;
 
     const response = await openai.responses.create({
-      model: "gpt-4.1-mini",
+      model: "gpt-4o-mini",
       input: prompt
     });
 
-    res.status(200).json({
-      insight: response.output_text
+    const aiText = response.output_text;
+
+    return res.status(200).json({
+      insight: aiText
     });
 
   } catch (error) {
 
-    res.status(500).json({
-      error: "AI request failed"
-    });
+    console.error("OPENAI ERROR:", error);
+    console.error("MESSAGE:", error?.message);
+    console.error("STATUS:", error?.status);
 
+    return res.status(500).json({
+      error: "AI request failed",
+      details: error?.message || "Unknown error"
+    });
   }
 }
