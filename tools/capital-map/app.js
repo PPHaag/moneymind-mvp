@@ -177,7 +177,7 @@ const response = await fetch("/api/ai-insight", {
 
 const result = await response.json();
 console.log("AI RESULT:", result);
-
+alert(result.insight || "No insight received");
 if (!response.ok) {
   throw new Error(result.details || result.error || "AI request failed");
 }
