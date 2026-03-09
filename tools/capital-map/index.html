@@ -315,49 +315,63 @@
       document.getElementById("aiReflectionText").textContent = "";
     }
 
-    async function fetchAIInsight() {
-      const data = calculateCapitalMapData();
+async function fetchAIInsight() {
+  const data = calculateCapitalMapData();
 
-      aiExplainBtn.disabled = true;
-      aiExplainBtn.textContent = "Analyzing...";
-      aiLoading.style.display = "block";
-      aiResult.style.display = "none";
-      aiError.style.display = "none";
+  aiExplainBtn.disabled = true;
+  aiExplainBtn.textContent = "Analyzing...";
+  aiLoading.style.display = "block";
+  aiResult.style.display = "none";
+  aiError.style.display = "none";
 
-      try {
-        const response = await fetch("/api/ai-insight", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            tool: "capital-map",
-            data
-          })
-        });
+  try {
+    const response = await fetch("/api/ai-insight", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        tool: "capital-map",
+        data
+      })
+    });
 
-        const result = await response.json();
+    const result = await response.json();
+    console.log("AI RESULT:", result);
 
-        if (!response.ok) {
-          throw new Error(result.error || "AI request failed");
-        }
-
-        document.getElementById("aiWhatText").textContent = result.what_stands_out || "";
-        document.getElementById("aiWhyText").textContent = result.why_it_matters || "";
-        document.getElementById("aiViewText").textContent = result.moneymind_view || "";
-        document.getElementById("aiReflectionText").textContent = result.reflection || "";
-
-        aiResult.style.display = "block";
-      } catch (error) {
-        console.error("AI insight error:", error);
-        aiError.style.display = "block";
-      } finally {
-        aiLoading.style.display = "none";
-        aiExplainBtn.disabled = false;
-        aiExplainBtn.textContent = "Explain My Results";
-      }
+    if (!response.ok) {
+      throw new Error(result.details || result.error || "AI request failed");
     }
 
+    const insightText = result.insight || "";
+
+    const whatMatch = insightText.match(/What stands out[:\s]*([\s\S]*?)(?=Why it matters|MoneyMind view|Reflection|$)/i);
+    const whyMatch = insightText.match(/Why it matters[:\s]*([\s\S]*?)(?=MoneyMind view|Reflection|$)/i);
+    const viewMatch = insightText.match(/MoneyMind view[:\s]*([\s\S]*?)(?=Reflection|$)/i);
+    const reflectionMatch = insightText.match(/Reflection[:\s]*([\s\S]*?)$/i);
+
+    document.getElementById("aiWhatText").textContent =
+      whatMatch?.[1]?.trim() || "No section returned.";
+
+    document.getElementById("aiWhyText").textContent =
+      whyMatch?.[1]?.trim() || "No section returned.";
+
+    document.getElementById("aiViewText").textContent =
+      viewMatch?.[1]?.trim() || "No section returned.";
+
+    document.getElementById("aiReflectionText").textContent =
+      reflectionMatch?.[1]?.trim() || "No section returned.";
+
+    aiResult.style.display = "block";
+  } catch (error) {
+    console.error("AI insight error:", error);
+    aiError.style.display = "block";
+  } finally {
+    aiLoading.style.display = "none";
+    aiExplainBtn.disabled = false;
+    aiExplainBtn.textContent = "Explain My Results";
+  }
+}
     calculateBtn.addEventListener("click", renderCapitalMap);
     aiExplainBtn.addEventListener("click", fetchAIInsight);
   </script>
