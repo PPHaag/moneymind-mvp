@@ -159,7 +159,7 @@ async function fetchAIInsight() {
   aiError.style.display = "none";
 
   try {
-    const response = await fetch("/api/ai-insight", {
+const response = await fetch("/api/ai-insight", {
   method: "POST",
   headers: {
     "Content-Type": "application/json"
@@ -176,10 +176,14 @@ async function fetchAIInsight() {
 });
 
 const result = await response.json();
+console.log("AI RESULT:", result);
 
-    if (!response.ok) {
-      throw new Error(result.error || "AI request failed");
-    }
+if (!response.ok) {
+  throw new Error(result.details || result.error || "AI request failed");
+}
+
+// voorbeeld:
+document.getElementById("aiInsightOutput").textContent = result.insight;
 
     aiWhatText.innerText = result.what_stands_out || "";
     aiWhyText.innerText = result.why_it_matters || "";
