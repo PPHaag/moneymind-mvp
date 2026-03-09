@@ -1,5 +1,19 @@
 import OpenAI from "openai";
 
+function extractSection(text, sectionName, nextSections = []) {
+  const nextPattern = nextSections.length
+    ? `(?=${nextSections.join("|")}|$)`
+    : `(?=$)`;
+
+  const regex = new RegExp(
+    `${sectionName}[:\\s]*([\\s\\S]*?)${nextPattern}`,
+    "i"
+  );
+
+  const match = text.match(regex);
+  return match?.[1]?.trim() || "";
+}
+
 export default async function handler(req, res) {
   console.log("METHOD:", req.method);
 
@@ -12,7 +26,9 @@ export default async function handler(req, res) {
 
   if (!process.env.OPENAI_API_KEY) {
     console.error("OPENAI_API_KEY missing");
-    return res.status(500).json({ error: "OpenAI API key missing" });
+    return res.status(500).json({
+      error: "OpenAI API key missing",
+    });
   }
 
   const openai = new OpenAI({
@@ -20,52 +36,46 @@ export default async function handler(req, res) {
   });
 
   try {
-    const { tool, data } = req.body;
+    const { tool, data } = req.body || {};
 
     console.log("REQ BODY:", JSON.stringify(req.body, null, 2));
 
     if (!data) {
-      return res.status(400).json({ error: "Missing data payload" });
+      return res.status(400).json({
+        error: "Missing data payload",
+      });
     }
 
-    const {
-  directCapital,
-  accessibleCapital,
-  lockedCapital,
-  age = "not provided",
-} = data;
-
-if (
-  directCapital === undefined ||
-  accessibleCapital === undefined ||
-  lockedCapital === undefined
-) {
-  return res.status(400).json({
-    error: "Missing capital fields",
-    received: { directCapital, accessibleCapital, lockedCapital, age },
-  });
-}
+    const directCapital = Number(data.directCapital ?? 0);
+    const accessibleCapital = Number(data.accessibleCapital ?? 0);
+    const lockedCapital = Number(data.lockedCapital ?? 0);
+    const age = data.age ?? "not provided";
 
     const prompt = `
 You are the MoneyMind Financial Intelligence Engine.
 
-Explain the user's capital structure.
+The user completed the Capital Map tool.
+Tool: ${tool || "capital-map"}
 
+Capital structure:
 Direct Capital: €${directCapital}
 Accessible Capital: €${accessibleCapital}
 Locked Capital: €${lockedCapital}
 Age: ${age}
 
-Structure:
-1. Financial Structure Insight
-2. What stands out
-3. Why it matters
-4. MoneyMind view
-5. Reflection
+Write the response using EXACTLY these section headers and nothing else:
 
-Tone:
-Clear, intelligent, calm, slightly sharp.
-No financial advice.
+What stands out
+Why it matters
+MoneyMind view
+Reflection
+
+Rules:
+- Clear, intelligent, calm, practical.
+- Slightly sharp is fine.
+- No hype.
+- No financial advice.
+- Keep each section short and useful.
 `;
 
     const response = await openai.responses.create({
@@ -73,19 +83,70 @@ No financial advice.
       input: prompt,
     });
 
-    console.log("OPENAI RESPONSE:", JSON.stringify(response, null, 2));
-
-    const insight =
+    const insightText =
       response.output_text ||
-      response.output?.[0]?.content?.[0]?.text ||
-      "No insight returned.";
+      response.output
+        ?.map((item) =>
+          (item.content || [])
+            .map((c) => c.text || c.content || "")
+            .join("")
+        )
+        .join("\n")
+        .trim() ||
+      "";
 
-    return res.status(200).json({ insight });
+    console.log("RAW AI TEXT:", insightText);
+
+    if (!insightText) {
+      return res.status(500).json({
+        error: "No insight returned from AI",
+      });
+    }
+
+    const what_stands_out = extractSection(insightText, "What stands out", [
+      "Why it matters",
+      "MoneyMind view",
+      "Reflection",
+    ]);
+
+    const why_it_matters = extractSection(insightText, "Why it matters", [
+      "MoneyMind view",
+      "Reflection",
+    ]);
+
+    const moneymind_view = extractSection(insightText, "MoneyMind view", [
+      "Reflection",
+    ]);
+
+    const reflection = extractSection(insightText, "Reflection", []);
+
+    console.log("PARSED SECTIONS:", {
+      what_stands_out,
+      why_it_matters,
+      moneymind_view,
+      reflection,
+    });
+
+    return res.status(200).json({
+      success: true,
+      what_stands_out: what_stands_out || "No section returned.",
+      why_it_matters: why_it_matters || "No section returned.",
+      moneymind_view: moneymind_view || "No section returned.",
+      reflection: reflection || "No section returned.",
+      raw_insight: insightText,
+    });
   } catch (error) {
     console.error("OPENAI ERROR FULL:", error);
     console.error("OPENAI ERROR MESSAGE:", error?.message);
     console.error("OPENAI ERROR STATUS:", error?.status);
-    console.error("OPENAI ERROR DETAILS:", error?.response?.data);
+
+    if (error?.status === 429) {
+      return res.status(500).json({
+        error: "OpenAI quota exceeded",
+        details:
+          "The OpenAI API key is connected, but the project has no available quota or billing is not active.",
+      });
+    }
 
     return res.status(500).json({
       error: "AI request failed",
