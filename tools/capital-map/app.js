@@ -160,17 +160,22 @@ async function fetchAIInsight() {
 
   try {
     const response = await fetch("/api/ai-insight", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        tool: "capital-map",
-        data
-      })
-    });
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    tool: "capital-map",
+    data: {
+      directCapital,
+      accessibleCapital,
+      lockedCapital,
+      age
+    }
+  })
+});
 
-    const result = await response.json();
+const result = await response.json();
 
     if (!response.ok) {
       throw new Error(result.error || "AI request failed");
