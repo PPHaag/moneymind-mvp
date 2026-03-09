@@ -1,13 +1,15 @@
 import OpenAI from "openai";
 
 export default async function handler(req, res) {
+  console.log("METHOD:", req.method);
 
-  // Alleen POST toestaan
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({
+      error: "Method not allowed",
+      receivedMethod: req.method
+    });
   }
 
-  // Check of API key bestaat
   if (!process.env.OPENAI_API_KEY) {
     console.error("OPENAI_API_KEY missing");
     return res.status(500).json({ error: "OpenAI API key missing" });
@@ -18,10 +20,8 @@ export default async function handler(req, res) {
   });
 
   try {
-
     const { directCapital, accessibleCapital, lockedCapital, age } = req.body;
 
-    // simpele check
     if (
       directCapital === undefined ||
       accessibleCapital === undefined ||
@@ -56,24 +56,20 @@ No financial advice.
 
     const response = await openai.responses.create({
       model: "gpt-4o-mini",
-      input: prompt
+      input: prompt,
     });
-
-    const aiText = response.output_text;
 
     return res.status(200).json({
-      insight: aiText
+      insight: response.output_text,
     });
-
   } catch (error) {
-
     console.error("OPENAI ERROR:", error);
     console.error("MESSAGE:", error?.message);
     console.error("STATUS:", error?.status);
 
     return res.status(500).json({
       error: "AI request failed",
-      details: error?.message || "Unknown error"
+      details: error?.message || "Unknown error",
     });
   }
 }
