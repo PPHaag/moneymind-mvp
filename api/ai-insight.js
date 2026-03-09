@@ -1,7 +1,6 @@
 import OpenAI from "openai";
 
 export default async function handler(req, res) {
-
   console.log("METHOD:", req.method);
 
   if (req.method !== "POST") {
@@ -21,21 +20,27 @@ export default async function handler(req, res) {
   });
 
   try {
-
     const { tool, data } = req.body;
 
-    console.log("AI REQUEST:", tool, data);
+    console.log("REQ BODY:", JSON.stringify(req.body, null, 2));
 
     if (!data) {
       return res.status(400).json({ error: "Missing data payload" });
     }
 
-    const {
-      directCapital,
-      accessibleCapital,
-      lockedCapital,
-      age
-    } = data;
+    const { directCapital, accessibleCapital, lockedCapital, age } = data;
+
+    if (
+      directCapital === undefined ||
+      accessibleCapital === undefined ||
+      lockedCapital === undefined ||
+      age === undefined
+    ) {
+      return res.status(400).json({
+        error: "Missing capital fields",
+        received: { directCapital, accessibleCapital, lockedCapital, age },
+      });
+    }
 
     const prompt = `
 You are the MoneyMind Financial Intelligence Engine.
@@ -48,12 +53,11 @@ Locked Capital: €${lockedCapital}
 Age: ${age}
 
 Structure:
-
-Financial Structure Insight
-What stands out
-Why it matters
-MoneyMind view
-Reflection
+1. Financial Structure Insight
+2. What stands out
+3. Why it matters
+4. MoneyMind view
+5. Reflection
 
 Tone:
 Clear, intelligent, calm, slightly sharp.
@@ -62,21 +66,26 @@ No financial advice.
 
     const response = await openai.responses.create({
       model: "gpt-4o-mini",
-      input: prompt
+      input: prompt,
     });
 
-    return res.status(200).json({
-      insight: response.output_text
-    });
+    console.log("OPENAI RESPONSE:", JSON.stringify(response, null, 2));
 
+    const insight =
+      response.output_text ||
+      response.output?.[0]?.content?.[0]?.text ||
+      "No insight returned.";
+
+    return res.status(200).json({ insight });
   } catch (error) {
-
-    console.error("OPENAI ERROR:", error);
-    console.error("MESSAGE:", error?.message);
+    console.error("OPENAI ERROR FULL:", error);
+    console.error("OPENAI ERROR MESSAGE:", error?.message);
+    console.error("OPENAI ERROR STATUS:", error?.status);
+    console.error("OPENAI ERROR DETAILS:", error?.response?.data);
 
     return res.status(500).json({
       error: "AI request failed",
-      details: error?.message || "Unknown error"
+      details: error?.message || "Unknown error",
     });
   }
 }
