@@ -1,17 +1,23 @@
 import OpenAI from "openai";
 
-function extractSection(text, sectionName, nextSections = []) {
-  const nextPattern = nextSections.length
-    ? `(?=${nextSections.join("|")}|$)`
-    : `(?=$)`;
+function safeParseJSON(text) {
+  if (!text) return null;
 
-  const regex = new RegExp(
-    `${sectionName}[:\\s]*([\\s\\S]*?)${nextPattern}`,
-    "i"
-  );
+  try {
+    return JSON.parse(text);
+  } catch (_) {
+    // probeer code fences weg te halen
+    const cleaned = text
+      .replace(/```json/gi, "")
+      .replace(/```/g, "")
+      .trim();
 
-  const match = text.match(regex);
-  return match?.[1]?.trim() || "";
+    try {
+      return JSON.parse(cleaned);
+    } catch (_) {
+      return null;
+    }
+  }
 }
 
 export default async function handler(req, res) {
@@ -58,24 +64,30 @@ The user completed the Capital Map tool.
 Tool: ${tool || "capital-map"}
 
 Capital structure:
-Direct Capital: €${directCapital}
-Accessible Capital: €${accessibleCapital}
-Locked Capital: €${lockedCapital}
-Age: ${age}
+- Direct Capital: €${directCapital}
+- Accessible Capital: €${accessibleCapital}
+- Locked Capital: €${lockedCapital}
+- Age: ${age}
 
-Write the response using EXACTLY these section headers and nothing else:
+Return ONLY valid JSON.
+Do not add markdown.
+Do not add explanation before or after the JSON.
 
-What stands out
-Why it matters
-MoneyMind view
-Reflection
+Use exactly this shape:
+
+{
+  "what_stands_out": "...",
+  "why_it_matters": "...",
+  "moneymind_view": "...",
+  "reflection": "..."
+}
 
 Rules:
 - Clear, intelligent, calm, practical.
 - Slightly sharp is fine.
 - No hype.
 - No financial advice.
-- Keep each section short and useful.
+- Each field should be 1-3 sentences.
 `;
 
     const response = await openai.responses.create({
@@ -83,7 +95,7 @@ Rules:
       input: prompt,
     });
 
-    const insightText =
+    const rawText =
       response.output_text ||
       response.output
         ?.map((item) =>
@@ -95,45 +107,24 @@ Rules:
         .trim() ||
       "";
 
-    console.log("RAW AI TEXT:", insightText);
+    console.log("RAW AI TEXT:", rawText);
 
-    if (!insightText) {
+    const parsed = safeParseJSON(rawText);
+
+    if (!parsed) {
+      console.error("JSON PARSE FAILED");
       return res.status(500).json({
-        error: "No insight returned from AI",
+        error: "AI returned invalid JSON",
+        raw_insight: rawText,
       });
     }
 
-    const what_stands_out = extractSection(insightText, "What stands out", [
-      "Why it matters",
-      "MoneyMind view",
-      "Reflection",
-    ]);
-
-    const why_it_matters = extractSection(insightText, "Why it matters", [
-      "MoneyMind view",
-      "Reflection",
-    ]);
-
-    const moneymind_view = extractSection(insightText, "MoneyMind view", [
-      "Reflection",
-    ]);
-
-    const reflection = extractSection(insightText, "Reflection", []);
-
-    console.log("PARSED SECTIONS:", {
-      what_stands_out,
-      why_it_matters,
-      moneymind_view,
-      reflection,
-    });
-
     return res.status(200).json({
       success: true,
-      what_stands_out: what_stands_out || "No section returned.",
-      why_it_matters: why_it_matters || "No section returned.",
-      moneymind_view: moneymind_view || "No section returned.",
-      reflection: reflection || "No section returned.",
-      raw_insight: insightText,
+      what_stands_out: parsed.what_stands_out || "No section returned.",
+      why_it_matters: parsed.why_it_matters || "No section returned.",
+      moneymind_view: parsed.moneymind_view || "No section returned.",
+      reflection: parsed.reflection || "No section returned.",
     });
   } catch (error) {
     console.error("OPENAI ERROR FULL:", error);
