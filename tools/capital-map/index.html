@@ -343,7 +343,21 @@ async function fetchAIInsight() {
       throw new Error(result.details || result.error || "AI request failed");
     }
 
-    const insightText = result.insight || "";
+    document.getElementById("aiWhatText").textContent = result.what_stands_out || "";
+    document.getElementById("aiWhyText").textContent = result.why_it_matters || "";
+    document.getElementById("aiViewText").textContent = result.moneymind_view || "";
+    document.getElementById("aiReflectionText").textContent = result.reflection || "";
+
+    aiResult.style.display = "block";
+  } catch (error) {
+    console.error("AI insight error:", error);
+    aiError.style.display = "block";
+  } finally {
+    aiLoading.style.display = "none";
+    aiExplainBtn.disabled = false;
+    aiExplainBtn.textContent = "Explain My Results";
+  }
+}    const insightText = result.insight || "";
 
     const whatMatch = insightText.match(/What stands out[:\s]*([\s\S]*?)(?=Why it matters|MoneyMind view|Reflection|$)/i);
     const whyMatch = insightText.match(/Why it matters[:\s]*([\s\S]*?)(?=MoneyMind view|Reflection|$)/i);
