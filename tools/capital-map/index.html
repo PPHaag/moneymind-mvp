@@ -31,73 +31,108 @@
         is the first step toward making better financial decisions.
       </p>
 
+      <p class="mm-helperIntro">
+        Enter the approximate current value of each category. MoneyMind maps where your wealth sits today —
+        from directly available capital to longer-term or less liquid assets.
+      </p>
+
       <!-- DIRECT CAPITAL -->
       <h3>Direct Capital</h3>
+      <div class="mm-sectionHelp">
+        Capital you can access or deploy immediately.
+      </div>
 
       <div class="mm-grid mm-grid3">
         <div class="mm-field">
-          <label>Cash / Savings</label>
+          <label for="cash">Cash / Savings</label>
+          <div class="mm-help">
+            Money in current or savings accounts that you can access immediately.
+          </div>
           <div class="mm-input">
             <span>€</span>
-            <input id="cash" type="number" value="0" min="0">
+            <input id="cash" type="number" value="0" min="0" placeholder="25000">
           </div>
         </div>
 
         <div class="mm-field">
-          <label>Investments</label>
+          <label for="investments">Investments</label>
+          <div class="mm-help">
+            Stocks, ETFs, funds or similar investments you can sell relatively easily.
+          </div>
           <div class="mm-input">
             <span>€</span>
-            <input id="investments" type="number" value="0" min="0">
+            <input id="investments" type="number" value="0" min="0" placeholder="40000">
           </div>
         </div>
 
         <div class="mm-field">
-          <label>Crypto</label>
+          <label for="crypto">Crypto</label>
+          <div class="mm-help">
+            Your cryptocurrency holdings at estimated current market value.
+          </div>
           <div class="mm-input">
             <span>€</span>
-            <input id="crypto" type="number" value="0" min="0">
+            <input id="crypto" type="number" value="0" min="0" placeholder="5000">
           </div>
         </div>
       </div>
 
       <!-- ACCESSIBLE CAPITAL -->
       <h3>Accessible Capital</h3>
+      <div class="mm-sectionHelp">
+        Assets with value, but not always instantly liquid or frictionless to use.
+      </div>
 
       <div class="mm-grid mm-grid3">
         <div class="mm-field">
-          <label>Precious Metals</label>
+          <label for="metals">Precious Metals</label>
+          <div class="mm-help">
+            Physical gold or silver you own directly, based on estimated current value.
+          </div>
           <div class="mm-input">
             <span>€</span>
-            <input id="metals" type="number" value="0" min="0">
+            <input id="metals" type="number" value="0" min="0" placeholder="10000">
           </div>
         </div>
 
         <div class="mm-field">
-          <label>Home Equity</label>
+          <label for="homeEquity">Home Equity</label>
+          <div class="mm-help">
+            Only your equity in the property: current home value minus remaining mortgage.
+          </div>
           <div class="mm-input">
             <span>€</span>
-            <input id="homeEquity" type="number" value="0" min="0">
+            <input id="homeEquity" type="number" value="0" min="0" placeholder="150000">
           </div>
         </div>
 
         <div class="mm-field">
-          <label>Private Equity / Business</label>
+          <label for="equity">Private Equity / Business</label>
+          <div class="mm-help">
+            Estimated value of your ownership in a private business or non-listed company.
+          </div>
           <div class="mm-input">
             <span>€</span>
-            <input id="equity" type="number" value="0" min="0">
+            <input id="equity" type="number" value="0" min="0" placeholder="50000">
           </div>
         </div>
       </div>
 
       <!-- LOCKED CAPITAL -->
       <h3>Locked Capital</h3>
+      <div class="mm-sectionHelp">
+        Capital that exists, but is structurally reserved for the long term.
+      </div>
 
       <div class="mm-grid">
         <div class="mm-field">
-          <label>Pension</label>
+          <label for="pension">Pension</label>
+          <div class="mm-help">
+            Retirement capital that is not freely accessible today.
+          </div>
           <div class="mm-input">
             <span>€</span>
-            <input id="pension" type="number" value="0" min="0">
+            <input id="pension" type="number" value="0" min="0" placeholder="80000">
           </div>
         </div>
       </div>
@@ -107,29 +142,39 @@
 
       <div class="mm-grid mm-grid3">
         <div class="mm-field">
-          <label>Other Assets</label>
+          <label for="otherAssets">Other Assets</label>
+          <div class="mm-help">
+            Other valuable assets not listed above, such as art, collectibles or other meaningful holdings.
+          </div>
           <div class="mm-input">
             <span>€</span>
-            <input id="otherAssets" type="number" value="0" min="0">
+            <input id="otherAssets" type="number" value="0" min="0" placeholder="15000">
           </div>
         </div>
 
-        <div class="mm-field">
-          <label>Debt</label>
+        <div class="mm-field mm-fieldDebt">
+          <label for="debt">Debt</label>
+          <div class="mm-help">
+            Total outstanding debt. Enter as a positive number — MoneyMind subtracts it from your net worth.
+          </div>
           <div class="mm-input">
             <span>€</span>
-            <input id="debt" type="number" value="0" min="0">
+            <input id="debt" type="number" value="0" min="0" placeholder="20000">
           </div>
         </div>
       </div>
 
       <!-- CALCULATE BUTTON -->
       <button class="mm-btn" id="calculateBtn" type="button">
-        Calculate Capital Map
+        Map My Capital
       </button>
 
       <!-- RESULT -->
       <div id="resultBlock" class="mm-result" style="display:none;">
+
+        <div class="mm-resultIntro">
+          Here is how your current capital structure is distributed across liquid, accessible and locked layers.
+        </div>
 
         <div class="mm-resultRow">
           <div class="mm-metric">
@@ -172,7 +217,7 @@
           <div class="mm-aiHeader">
             <div class="mm-aiTitle">AI Insight</div>
             <div class="mm-aiSub">
-              Let MoneyMind explain what your capital structure actually means.
+              MoneyMind translates your numbers into structural insight.
             </div>
           </div>
 
@@ -217,160 +262,163 @@
     </div>
 
   </div>
-<script>
-  const calculateBtn = document.getElementById("calculateBtn");
-  const resultBlock = document.getElementById("resultBlock");
-  const aiExplainBtn = document.getElementById("aiExplainBtn");
-  const aiLoading = document.getElementById("aiLoading");
-  const aiResult = document.getElementById("aiResult");
-  const aiError = document.getElementById("aiError");
 
-  function getNumber(id) {
-    const el = document.getElementById(id);
-    if (!el) return 0;
-    const value = Number(el.value);
-    return Number.isFinite(value) && value >= 0 ? value : 0;
-  }
+  <script>
+    const calculateBtn = document.getElementById("calculateBtn");
+    const resultBlock = document.getElementById("resultBlock");
+    const aiExplainBtn = document.getElementById("aiExplainBtn");
+    const aiLoading = document.getElementById("aiLoading");
+    const aiResult = document.getElementById("aiResult");
+    const aiError = document.getElementById("aiError");
 
-  function formatCurrency(value) {
-    return new Intl.NumberFormat("nl-NL", {
-      style: "currency",
-      currency: "EUR",
-      maximumFractionDigits: 0
-    }).format(value);
-  }
-
-  function calculateCapitalMapData() {
-    const cash = getNumber("cash");
-    const investments = getNumber("investments");
-    const crypto = getNumber("crypto");
-    const metals = getNumber("metals");
-    const homeEquity = getNumber("homeEquity");
-    const equity = getNumber("equity");
-    const pension = getNumber("pension");
-    const otherAssets = getNumber("otherAssets");
-    const debt = getNumber("debt");
-
-    const directCapital = cash + investments + crypto;
-    const accessibleCapital = metals + homeEquity + equity + otherAssets;
-    const lockedCapital = pension;
-    const netWorth = directCapital + accessibleCapital + lockedCapital - debt;
-
-    return {
-      cash,
-      investments,
-      crypto,
-      metals,
-      homeEquity,
-      equity,
-      pension,
-      otherAssets,
-      debt,
-      directCapital,
-      accessibleCapital,
-      lockedCapital,
-      netWorth
-    };
-  }
-
-  function getCapitalInsight(data) {
-    const { directCapital, accessibleCapital, lockedCapital, netWorth } = data;
-
-    if (netWorth <= 0) {
-      return "Your capital structure is still in early formation.";
+    function getNumber(id) {
+      const el = document.getElementById(id);
+      if (!el) return 0;
+      const value = Number(el.value);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
     }
 
-    if (directCapital > accessibleCapital && directCapital > lockedCapital) {
-      return "Your structure is relatively liquid. Flexibility is a current strength.";
+    function formatCurrency(value) {
+      return new Intl.NumberFormat("nl-NL", {
+        style: "currency",
+        currency: "EUR",
+        maximumFractionDigits: 0
+      }).format(value);
     }
 
-    if (lockedCapital > directCapital + accessibleCapital) {
-      return "A large share of your wealth is locked. Long-term strength, lower short-term flexibility.";
+    function calculateCapitalMapData() {
+      const cash = getNumber("cash");
+      const investments = getNumber("investments");
+      const crypto = getNumber("crypto");
+      const metals = getNumber("metals");
+      const homeEquity = getNumber("homeEquity");
+      const equity = getNumber("equity");
+      const pension = getNumber("pension");
+      const otherAssets = getNumber("otherAssets");
+      const debt = getNumber("debt");
+
+      const directCapital = cash + investments + crypto;
+      const accessibleCapital = metals + homeEquity + equity + otherAssets;
+      const lockedCapital = pension;
+      const netWorth = directCapital + accessibleCapital + lockedCapital - debt;
+
+      return {
+        cash,
+        investments,
+        crypto,
+        metals,
+        homeEquity,
+        equity,
+        pension,
+        otherAssets,
+        debt,
+        directCapital,
+        accessibleCapital,
+        lockedCapital,
+        netWorth
+      };
     }
 
-    if (accessibleCapital > directCapital && accessibleCapital > lockedCapital) {
-      return "Your structure leans toward accessible wealth, but not all of it is instantly deployable.";
-    }
+    function getCapitalInsight(data) {
+      const { directCapital, accessibleCapital, lockedCapital, netWorth } = data;
 
-    return "Your capital is spread across multiple layers. The next question is how deployable it really is.";
-  }
-
-  function resetAIBlocks() {
-    document.getElementById("aiWhatText").textContent = "";
-    document.getElementById("aiWhyText").textContent = "";
-    document.getElementById("aiViewText").textContent = "";
-    document.getElementById("aiReflectionText").textContent = "";
-
-    aiResult.style.display = "none";
-    aiError.style.display = "none";
-    aiLoading.style.display = "none";
-  }
-
-  function renderCapitalMap() {
-    const data = calculateCapitalMapData();
-
-    document.getElementById("directCapitalValue").textContent = formatCurrency(data.directCapital);
-    document.getElementById("accessibleCapitalValue").textContent = formatCurrency(data.accessibleCapital);
-    document.getElementById("lockedCapitalValue").textContent = formatCurrency(data.lockedCapital);
-    document.getElementById("netWorthValue").textContent = formatCurrency(data.netWorth);
-    document.getElementById("capitalInsight").textContent = getCapitalInsight(data);
-
-    resultBlock.style.display = "block";
-    resetAIBlocks();
-  }
-
-  async function fetchAIInsight() {
-    const data = calculateCapitalMapData();
-
-    aiExplainBtn.disabled = true;
-    aiExplainBtn.textContent = "Analyzing...";
-    aiLoading.style.display = "block";
-    aiResult.style.display = "none";
-    aiError.style.display = "none";
-
-    try {
-      const response = await fetch("/api/ai-insight", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          tool: "capital-map",
-          data
-        })
-      });
-
-      const result = await response.json();
-      console.log("AI RESULT FRONTEND:", result);
-
-      if (!response.ok) {
-        throw new Error(result.details || result.error || "AI request failed");
+      if (netWorth <= 0) {
+        return "Your capital structure is still in early formation.";
       }
 
-      document.getElementById("aiWhatText").textContent = result.what_stands_out || "No section returned.";
-      document.getElementById("aiWhyText").textContent = result.why_it_matters || "No section returned.";
-      document.getElementById("aiViewText").textContent = result.moneymind_view || "No section returned.";
-      document.getElementById("aiReflectionText").textContent = result.reflection || "No section returned.";
+      if (directCapital > accessibleCapital && directCapital > lockedCapital) {
+        return "Your structure is relatively liquid. Flexibility is a current strength.";
+      }
 
-      aiResult.style.display = "block";
-    } catch (error) {
-      console.error("AI insight error:", error);
-      aiError.style.display = "block";
-    } finally {
-      aiLoading.style.display = "none";
-      aiExplainBtn.disabled = false;
-      aiExplainBtn.textContent = "Explain My Results";
+      if (lockedCapital > directCapital + accessibleCapital) {
+        return "A large share of your wealth is locked. Long-term strength, lower short-term flexibility.";
+      }
+
+      if (accessibleCapital > directCapital && accessibleCapital > lockedCapital) {
+        return "Your structure leans toward accessible wealth, but not all of it is instantly deployable.";
+      }
+
+      return "Your capital is spread across multiple layers. The next question is how deployable it really is.";
     }
-  }
 
-  if (calculateBtn) {
-    calculateBtn.addEventListener("click", renderCapitalMap);
-  }
+    function resetAIBlocks() {
+      document.getElementById("aiWhatText").textContent = "";
+      document.getElementById("aiWhyText").textContent = "";
+      document.getElementById("aiViewText").textContent = "";
+      document.getElementById("aiReflectionText").textContent = "";
 
-  if (aiExplainBtn) {
-    aiExplainBtn.addEventListener("click", fetchAIInsight);
-  }
-</script><!-- <script src="app.js"></script> -->
+      aiResult.style.display = "none";
+      aiError.style.display = "none";
+      aiLoading.style.display = "none";
+    }
+
+    function renderCapitalMap() {
+      const data = calculateCapitalMapData();
+
+      document.getElementById("directCapitalValue").textContent = formatCurrency(data.directCapital);
+      document.getElementById("accessibleCapitalValue").textContent = formatCurrency(data.accessibleCapital);
+      document.getElementById("lockedCapitalValue").textContent = formatCurrency(data.lockedCapital);
+      document.getElementById("netWorthValue").textContent = formatCurrency(data.netWorth);
+      document.getElementById("capitalInsight").textContent = getCapitalInsight(data);
+
+      resultBlock.style.display = "block";
+      resetAIBlocks();
+    }
+
+    async function fetchAIInsight() {
+      const data = calculateCapitalMapData();
+
+      aiExplainBtn.disabled = true;
+      aiExplainBtn.textContent = "Analyzing...";
+      aiLoading.style.display = "block";
+      aiResult.style.display = "none";
+      aiError.style.display = "none";
+
+      try {
+        const response = await fetch("/api/ai-insight", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            tool: "capital-map",
+            data
+          })
+        });
+
+        const result = await response.json();
+        console.log("AI RESULT FRONTEND:", result);
+
+        if (!response.ok) {
+          throw new Error(result.details || result.error || "AI request failed");
+        }
+
+        document.getElementById("aiWhatText").textContent = result.what_stands_out || "No section returned.";
+        document.getElementById("aiWhyText").textContent = result.why_it_matters || "No section returned.";
+        document.getElementById("aiViewText").textContent = result.moneymind_view || "No section returned.";
+        document.getElementById("aiReflectionText").textContent = result.reflection || "No section returned.";
+
+        aiResult.style.display = "block";
+      } catch (error) {
+        console.error("AI insight error:", error);
+        aiError.style.display = "block";
+      } finally {
+        aiLoading.style.display = "none";
+        aiExplainBtn.disabled = false;
+        aiExplainBtn.textContent = "Explain My Results";
+      }
+    }
+
+    if (calculateBtn) {
+      calculateBtn.addEventListener("click", renderCapitalMap);
+    }
+
+    if (aiExplainBtn) {
+      aiExplainBtn.addEventListener("click", fetchAIInsight);
+    }
+  </script>
+
+  <!-- <script src="app.js"></script> -->
 </body>
 
 </html>
