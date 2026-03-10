@@ -1,194 +1,358 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Allocation Insight</title>
-    <link rel="stylesheet" href="./style.css" />
-  </head>
-  <body>
-<div id="mmErrorBox" style="display:none; margin:12px; padding:12px; border-radius:12px; border:1px solid rgba(255,80,80,.35); background: rgba(255,80,80,.12); color:#ffd1d1; font-family: ui-sans-serif,system-ui; white-space: pre-wrap;"></div>
-    
-<div class="mm-wrap">
-  <div class="mm-card">
-    
-    <!-- HERO -->
-    <div class="mm-hero">
-      <h1>Income is not a strategy. Allocation is.</h1>
-      <p>How much of your monthly cashflow structurally builds wealth?</p>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoneyMind • Allocation Reality Check</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="mm-wrap">
+
+    <!-- TOOL NAVIGATION -->
+    <div class="mm-toolnav">
+      <a href="../capital-map/">Capital Map</a>
+      <a href="../allocation/" class="active">Allocation</a>
+      <a href="../leakage/">Leakage</a>
+      <a href="../cost-of-delay/">Cost of Delay</a>
+      <a href="../builder/">Builder</a>
     </div>
 
-    <!-- CORE INPUTS -->
-    <div class="mm-grid">
-      <div class="mm-field">
-        <label>Monthly Net Income</label>
-        <div class="mm-input">
-          <span>€</span>
-          <input id="income" type="number" min="0" step="1" placeholder="4500" />
-        </div>
-      </div>
+    <!-- MAIN CARD -->
+    <div class="mm-card mm-hero">
 
-      <div class="mm-field">
-        <label>Fixed Structural Costs</label>
-        <div class="mm-input">
-          <span>€</span>
-          <input id="fixed" type="number" min="0" step="1" placeholder="2400" />
-        </div>
-      </div>
+      <h1>Allocation Reality Check</h1>
 
-      <div class="mm-field">
-        <label>Monthly Wealth Building</label>
-        <div class="mm-input">
-          <span>€</span>
-          <input id="wealth" type="number" min="0" step="1" placeholder="600" />
-        </div>
-      </div>
-    </div>
+      <p>
+        Income alone does not build wealth. Allocation does.
+      </p>
 
-    <button id="calcBtn" class="mm-btn">Calculate allocation</button>
+      <p class="mm-helperIntro">
+        Map how your monthly cashflow is structurally divided between fixed costs,
+        wealth building and flexible spending.
+      </p>
 
-    <!-- RESULT -->
-    <div id="result" class="mm-result mm-hidden">
-      <div class="mm-resultRow">
-        <div class="mm-metric">
-          <div class="mm-big" id="wealthPct">—%</div>
-          <div class="mm-sub">builds future wealth</div>
-        </div>
-
-        <div class="mm-divider"></div>
-
-        <div class="mm-metric">
-          <div class="mm-big" id="fixedPct">—%</div>
-          <div class="mm-sub">fixed cost load</div>
-        </div>
-
-        <div class="mm-divider"></div>
-
-        <div class="mm-metric">
-          <div class="mm-big" id="restPct">—%</div>
-          <div class="mm-sub">flex + lifestyle</div>
-        </div>
-      </div>
-
-      <div class="mm-note">Structure determines trajectory.</div>
-    </div>
-
-    <!-- SILENT LEAK -->
-    <div id="silentLeak" class="mm-section mm-hidden">
-      <div class="mm-sectionTitle">Allocation Upgrade: The Silent Leak</div>
-      <div class="mm-sectionSub">
-        Pick recurring costs you could redirect to wealth building — without real impact.
-      </div>
-
+      <!-- INPUTS -->
       <div class="mm-grid mm-grid3">
-        <div class="mm-field">
-          <label>Leak #1</label>
-          <div class="mm-input">
-            <span>€</span>
-            <input id="leak1" type="number" min="0" step="1" placeholder="25" />
-          </div>
-        </div>
 
         <div class="mm-field">
-          <label>Leak #2</label>
+          <label class="mm-label" for="income">
+            Monthly Net Income
+            <span class="mm-info" tabindex="0">?
+              <span class="mm-tooltip">
+                Your average monthly income after taxes and deductions.
+              </span>
+            </span>
+          </label>
           <div class="mm-input">
             <span>€</span>
-            <input id="leak2" type="number" min="0" step="1" placeholder="45" />
+            <input id="income" type="number" value="0" min="0" placeholder="4500">
           </div>
         </div>
 
         <div class="mm-field">
-          <label>Leak #3</label>
+          <label class="mm-label" for="fixed">
+            Fixed Structural Costs
+            <span class="mm-info" tabindex="0">?
+              <span class="mm-tooltip">
+                Monthly unavoidable costs such as housing, insurance, utilities and other recurring essentials.
+              </span>
+            </span>
+          </label>
           <div class="mm-input">
             <span>€</span>
-            <input id="leak3" type="number" min="0" step="1" placeholder="60" />
-          </div>
-        </div>
-      </div>
-
-      <!-- RETURN SLIDER -->
-      <div class="mm-sliderRow">
-        <div class="mm-sliderLabel">
-          <span>Assumed annual return</span>
-          <strong><span id="rLabel">6</span>%</strong>
-        </div>
-
-        <div class="mm-note mm-noteTight">
-          We assume you redirect this leak monthly into wealth building.
-        </div>
-
-        <input id="rSlider" type="range" min="3" max="10" step="0.5" value="6" />
-
-        <div class="mm-sliderHint">
-          Adjust responsibly. Higher assumptions increase volatility risk.
-        </div>
-      </div>
-
-      <!-- IMPACT -->
-      <div class="mm-impact">
-        <div class="mm-impactMain" id="impact20">
-          Redirecting €—/month → €— in 20 years
-        </div>
-        <div class="mm-impactSub" id="impact10">10-year impact: €—</div>
-        <div class="mm-note">Small leaks. Structural consequences.</div>
-      </div>
-
-      <!-- SHIFT -->
-      <div class="mm-shift" id="shiftLine">
-        Wealth allocation increases from —% to —%.
-      </div>
-    </div>
-
-    <!-- PREMIUM -->
-    <div id="premiumCard" class="mm-premium mm-hidden">
-      <div class="mm-premiumTop">
-        <div>
-          <div class="mm-sectionTitle">Advanced Structural Insight</div>
-          <div class="mm-sectionSub">Optimize your wealth allocation strategically.</div>
-        </div>
-        <button id="trialBtn" class="mm-btn mm-btnGhost">Start 7-day trial</button>
-      </div>
-
-      <div id="premiumLayer" class="mm-hidden">
-        <div class="mm-premiumGrid">
-          <div class="mm-premBox">
-            <div class="mm-premTitle">Structural Benchmark</div>
-            <div class="mm-premText" id="benchText">—</div>
-          </div>
-          <div class="mm-premBox">
-            <div class="mm-premTitle">Allocation Score</div>
-            <div class="mm-premText" id="scoreText">—</div>
+            <input id="fixed" type="number" value="0" min="0" placeholder="2400">
           </div>
         </div>
 
-        <div class="mm-premBox mm-mt">
-          <div class="mm-premTitle">Target Allocation Simulator</div>
+        <div class="mm-field">
+          <label class="mm-label" for="wealth">
+            Monthly Wealth Building
+            <span class="mm-info" tabindex="0">?
+              <span class="mm-tooltip">
+                Money you consistently direct toward savings, investing or long-term capital building.
+              </span>
+            </span>
+          </label>
+          <div class="mm-input">
+            <span>€</span>
+            <input id="wealth" type="number" value="0" min="0" placeholder="600">
+          </div>
+        </div>
 
-          <div class="mm-targetRow">
-            <label>Target wealth allocation</label>
-            <div class="mm-targetInput">
-              <input id="targetPct" type="number" min="5" max="80" step="1" value="25" />
-              <span>%</span>
+      </div>
+
+      <!-- CALCULATE BUTTON -->
+      <button class="mm-btn" id="calculateBtn" type="button">
+        Check My Allocation
+      </button>
+
+      <!-- RESULT -->
+      <div id="resultBlock" class="mm-result" style="display:none;">
+
+        <div class="mm-resultIntro">
+          Here is how your current monthly cashflow is structurally allocated.
+        </div>
+
+        <div class="mm-resultRow">
+
+          <div class="mm-metric">
+            <div class="mm-big" id="wealthPctValue">0%</div>
+            <div class="mm-sub">Wealth Building Ratio</div>
+          </div>
+
+          <div class="mm-divider"></div>
+
+          <div class="mm-metric">
+            <div class="mm-big" id="fixedPctValue">0%</div>
+            <div class="mm-sub">Structural Cost Load</div>
+          </div>
+
+          <div class="mm-divider"></div>
+
+          <div class="mm-metric">
+            <div class="mm-big" id="flexPctValue">0%</div>
+            <div class="mm-sub">Flexible Spend Share</div>
+          </div>
+
+        </div>
+
+        <div class="mm-resultRow">
+          <div class="mm-metric">
+            <div class="mm-big" id="wealthEuroValue">€0</div>
+            <div class="mm-sub">Monthly Wealth Building</div>
+
+            <div class="mm-impact">
+              <div class="mm-impactMain" id="allocationInsight"></div>
+              <div class="mm-impactSub">
+                Cashflow structure determines how fast capital can actually grow.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI INSIGHT -->
+        <div class="mm-aiInsight">
+
+          <div class="mm-aiHeader">
+            <div class="mm-aiTitle">AI Insight</div>
+            <div class="mm-aiSub">
+              MoneyMind interprets what your monthly allocation structure is really saying.
             </div>
           </div>
 
-          <div class="mm-premText" id="targetOut">—</div>
-        </div>
-      </div>
-    </div>
+          <button class="mm-btn mm-aiBtn" id="aiExplainBtn" type="button">
+            Explain My Allocation
+          </button>
 
-    <div class="mm-footerNote">
-      <span>MoneyMind • Advanced Insight</span>
-      <span class="mm-dot">•</span>
-      <span>No hype. Just structure.</span>
+          <div class="mm-aiLoading" id="aiLoading" style="display:none;">
+            Analyzing your allocation structure...
+          </div>
+
+          <div class="mm-aiError" id="aiError" style="display:none;">
+            AI Insight is temporarily unavailable. Please try again.
+          </div>
+
+          <div class="mm-aiResult" id="aiResult" style="display:none;">
+
+            <div class="mm-aiSignalRow">
+              <div class="mm-aiSignalBox">
+                <div class="mm-aiSignalLabel">Structure Signal</div>
+                <div class="mm-aiSignalValue" id="structureSignalText"></div>
+              </div>
+
+              <div class="mm-aiSignalBox">
+                <div class="mm-aiSignalLabel">Cashflow Signal</div>
+                <div class="mm-aiSignalValue" id="cashflowSignalText"></div>
+              </div>
+            </div>
+
+            <div class="mm-aiResultBlock">
+              <div class="mm-aiLabel">What stands out</div>
+              <div class="mm-aiText" id="aiWhatText"></div>
+            </div>
+
+            <div class="mm-aiResultBlock">
+              <div class="mm-aiLabel">Why it matters</div>
+              <div class="mm-aiText" id="aiWhyText"></div>
+            </div>
+
+            <div class="mm-aiResultBlock">
+              <div class="mm-aiLabel">MoneyMind view</div>
+              <div class="mm-aiText" id="aiViewText"></div>
+            </div>
+
+            <div class="mm-aiResultBlock">
+              <div class="mm-aiLabel">Reflection</div>
+              <div class="mm-aiText" id="aiReflectionText"></div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
 
   </div>
-</div>
 
+  <script>
+    const calculateBtn = document.getElementById("calculateBtn");
+    const resultBlock = document.getElementById("resultBlock");
+    const aiExplainBtn = document.getElementById("aiExplainBtn");
+    const aiLoading = document.getElementById("aiLoading");
+    const aiResult = document.getElementById("aiResult");
+    const aiError = document.getElementById("aiError");
 
-<script src="./app.js" defer></script>
-    
-    <script src="./app.js" defer></script>
-  </body>
+    function getNumber(id) {
+      const el = document.getElementById(id);
+      if (!el) return 0;
+      const value = Number(el.value);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    }
+
+    function formatCurrency(value) {
+      return new Intl.NumberFormat("nl-NL", {
+        style: "currency",
+        currency: "EUR",
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+
+    function formatPercent(value) {
+      return `${Math.round(value)}%`;
+    }
+
+    function calculateAllocationData() {
+      const income = getNumber("income");
+      const fixed = getNumber("fixed");
+      const wealth = getNumber("wealth");
+
+      const flex = Math.max(income - fixed - wealth, 0);
+
+      const wealthPct = income > 0 ? (wealth / income) * 100 : 0;
+      const fixedPct = income > 0 ? (fixed / income) * 100 : 0;
+      const flexPct = income > 0 ? (flex / income) * 100 : 0;
+
+      return {
+        income,
+        fixed,
+        wealth,
+        flex,
+        wealthPct,
+        fixedPct,
+        flexPct
+      };
+    }
+
+    function getAllocationInsight(data) {
+      const { wealthPct, fixedPct } = data;
+
+      if (wealthPct <= 5) {
+        return "Very little of your monthly cashflow currently builds long-term capital.";
+      }
+
+      if (wealthPct <= 15) {
+        return "Some capital building exists, but the structure still leans heavily toward present consumption.";
+      }
+
+      if (wealthPct <= 30) {
+        return "A meaningful share of your monthly cashflow supports long-term wealth creation.";
+      }
+
+      if (fixedPct >= 60) {
+        return "Your wealth-building effort is strong, but your structural cost load remains relatively heavy.";
+      }
+
+      return "Your monthly allocation structure strongly supports long-term capital formation.";
+    }
+
+    function resetAIBlocks() {
+      document.getElementById("structureSignalText").textContent = "";
+      document.getElementById("cashflowSignalText").textContent = "";
+      document.getElementById("aiWhatText").textContent = "";
+      document.getElementById("aiWhyText").textContent = "";
+      document.getElementById("aiViewText").textContent = "";
+      document.getElementById("aiReflectionText").textContent = "";
+
+      aiResult.style.display = "none";
+      aiError.style.display = "none";
+      aiLoading.style.display = "none";
+    }
+
+    function renderAllocation() {
+      const data = calculateAllocationData();
+
+      document.getElementById("wealthPctValue").textContent = formatPercent(data.wealthPct);
+      document.getElementById("fixedPctValue").textContent = formatPercent(data.fixedPct);
+      document.getElementById("flexPctValue").textContent = formatPercent(data.flexPct);
+      document.getElementById("wealthEuroValue").textContent = formatCurrency(data.wealth);
+      document.getElementById("allocationInsight").textContent = getAllocationInsight(data);
+
+      resultBlock.style.display = "block";
+      resetAIBlocks();
+    }
+
+    async function fetchAIInsight() {
+      const data = calculateAllocationData();
+
+      aiExplainBtn.disabled = true;
+      aiExplainBtn.textContent = "Analyzing...";
+      aiLoading.style.display = "block";
+      aiResult.style.display = "none";
+      aiError.style.display = "none";
+
+      try {
+        const response = await fetch("/api/ai-insight", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            tool: "allocation-reality-check",
+            data
+          })
+        });
+
+        const result = await response.json();
+        console.log("AI RESULT FRONTEND:", result);
+
+        if (!response.ok) {
+          throw new Error(result.details || result.error || "AI request failed");
+        }
+
+        document.getElementById("structureSignalText").textContent = result.structure_signal || "";
+        document.getElementById("cashflowSignalText").textContent = result.liquidity_signal || "";
+        document.getElementById("aiWhatText").textContent = result.what_stands_out || "No section returned.";
+        document.getElementById("aiWhyText").textContent = result.why_it_matters || "No section returned.";
+        document.getElementById("aiViewText").textContent = result.moneymind_view || "No section returned.";
+        document.getElementById("aiReflectionText").textContent = result.reflection || "No section returned.";
+
+        aiResult.style.display = "block";
+      } catch (error) {
+        console.error("AI insight error:", error);
+        aiError.style.display = "block";
+      } finally {
+        aiLoading.style.display = "none";
+        aiExplainBtn.disabled = false;
+        aiExplainBtn.textContent = "Explain My Allocation";
+      }
+    }
+
+    if (calculateBtn) {
+      calculateBtn.addEventListener("click", renderAllocation);
+    }
+
+    if (aiExplainBtn) {
+      aiExplainBtn.addEventListener("click", fetchAIInsight);
+    }
+  </script>
+
+  <!-- <script src="app.js"></script> -->
+</body>
+
 </html>
