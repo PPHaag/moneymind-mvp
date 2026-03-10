@@ -248,3 +248,82 @@ input[type="range"]{width:100%; margin-top:10px}
     left: -20px;
   }
 }
+.mm-resultIntro {
+  margin-bottom: 18px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.68);
+}
+
+.mm-aiHeader {
+  margin-bottom: 14px;
+}
+
+.mm-aiTitle {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #fff;
+}
+
+.mm-aiSub {
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.68);
+}
+
+.mm-aiSignalRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0 18px;
+}
+
+.mm-aiSignalBox {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.mm-aiSignalLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.58);
+  margin-bottom: 6px;
+}
+
+.mm-aiSignalValue {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #fff;
+}
+
+.mm-aiResultBlock {
+  margin-bottom: 16px;
+}
+
+.mm-aiLabel {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.58);
+  margin-bottom: 8px;
+}
+
+.mm-aiText {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.9);
+}
+
+@media (max-width: 768px) {
+  .mm-aiSignalRow {
+    grid-template-columns: 1fr;
+  }
+}
