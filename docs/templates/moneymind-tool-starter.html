@@ -1,1 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoneyMind • [TOOL NAME]</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+
+  <div class="mm-wrap">
+
+    <!-- TOOL NAVIGATION -->
+    <div class="mm-toolnav">
+      <a href="../capital-map/">Capital Map</a>
+      <a href="../allocation/">Allocation Check</a>
+      <a href="../leakage/">Wealth Leakage</a>
+      <a href="../cost-of-delay/">Cost of Delay</a>
+      <a href="../builder/">Wealth Builder</a>
+    </div>
+
+    <!-- MAIN CARD -->
+    <div class="mm-card mm-hero">
+
+      <h1>[TOOL NAME]</h1>
+
+      <p>
+        [Short, sharp explanation of what this tool helps the user understand.]
+      </p>
+
+      <p class="mm-helperIntro">
+        [Optional supporting sentence that explains what the user should enter or expect.]
+      </p>
+
+      <!-- INPUT SECTION -->
+      <div class="mm-grid mm-grid3">
+
+        <div class="mm-field">
+          <label class="mm-label" for="field1">
+            [Field Label 1]
+            <span class="mm-info" tabindex="0">?
+              <span class="mm-tooltip">
+                [Short tooltip explanation.]
+              </span>
+            </span>
+          </label>
+          <div class="mm-input">
+            <span>€</span>
+            <input id="field1" type="number" value="0" min="0" placeholder="1000">
+          </div>
+        </div>
+
+        <div class="mm-field">
+          <label class="mm-label" for="field2">
+            [Field Label 2]
+            <span class="mm-info" tabindex="0">?
+              <span class="mm-tooltip">
+                [Short tooltip explanation.]
+              </span>
+            </span>
+          </label>
+          <div class="mm-input">
+            <span>€</span>
+            <input id="field2" type="number" value="0" min="0" placeholder="1000">
+          </div>
+        </div>
+
+        <div class="mm-field">
+          <label class="mm-label" for="field3">
+            [Field Label 3]
+            <span class="mm-info" tabindex="0">?
+              <span class="mm-tooltip">
+                [Short tooltip explanation.]
+              </span>
+            </span>
+          </label>
+          <div class="mm-input">
+            <span>€</span>
+            <input id="field3" type="number" value="0" min="0" placeholder="1000">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PRIMARY ACTION -->
+      <button class="mm-btn" id="calculateBtn" type="button">
+        [Primary CTA]
+      </button>
+
+      <!-- RESULT BLOCK -->
+      <div id="resultBlock" class="mm-result" style="display:none;">
+
+        <div class="mm-resultIntro">
+          [Short introduction to the result block.]
+        </div>
+
+        <div class="mm-resultRow">
+
+          <div class="mm-metric">
+            <div class="mm-big" id="metric1Value">0</div>
+            <div class="mm-sub">[Metric Label 1]</div>
+          </div>
+
+          <div class="mm-divider"></div>
+
+          <div class="mm-metric">
+            <div class="mm-big" id="metric2Value">0</div>
+            <div class="mm-sub">[Metric Label 2]</div>
+          </div>
+
+          <div class="mm-divider"></div>
+
+          <div class="mm-metric">
+            <div class="mm-big" id="metric3Value">0</div>
+            <div class="mm-sub">[Metric Label 3]</div>
+          </div>
+
+        </div>
+
+        <div class="mm-resultRow">
+          <div class="mm-metric">
+            <div class="mm-big" id="headlineValue">—</div>
+            <div class="mm-sub">[Headline Metric]</div>
+
+            <div class="mm-impact">
+              <div class="mm-impactMain" id="toolInsight"></div>
+              <div class="mm-impactSub">
+                [Short supporting interpretation line.]
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI INSIGHT -->
+        <div class="mm-aiInsight">
+
+          <div class="mm-aiHeader">
+            <div class="mm-aiTitle">AI Insight</div>
+            <div class="mm-aiSub">
+              MoneyMind translates your numbers into structural insight.
+            </div>
+          </div>
+
+          <button class="mm-btn mm-aiBtn" id="aiExplainBtn" type="button">
+            [AI CTA]
+          </button>
+
+          <div class="mm-aiLoading" id="aiLoading" style="display:none;">
+            Analyzing your structure...
+          </div>
+
+          <div class="mm-aiError" id="aiError" style="display:none;">
+            AI Insight is temporarily unavailable. Please try again.
+          </div>
+
+          <div class="mm-aiResult" id="aiResult" style="display:none;">
+
+            <div class="mm-aiSignalRow">
+              <div class="mm-aiSignalBox">
+                <div class="mm-aiSignalLabel">Structure Signal</div>
+                <div class="mm-aiSignalValue" id="structureSignalText"></div>
+              </div>
+
+              <div class="mm-aiSignalBox">
+                <div class="mm-aiSignalLabel">System Signal</div>
+                <div class="mm-aiSignalValue" id="systemSignalText"></div>
+              </div>
+            </div>
+
+            <div class="mm-aiResultBlock">
+              <div class="mm-aiLabel">What stands out</div>
+              <div class="mm-aiText" id="aiWhatText"></div>
+            </div>
+
+            <div class="mm-aiResultBlock">
+              <div class="mm-aiLabel">Why it matters</div>
+              <div class="mm-aiText" id="aiWhyText"></div>
+            </div>
+
+            <div class="mm-aiResultBlock">
+              <div class="mm-aiLabel">MoneyMind view</div>
+              <div class="mm-aiText" id="aiViewText"></div>
+            </div>
+
+            <div class="mm-aiResultBlock">
+              <div class="mm-aiLabel">Reflection</div>
+              <div class="mm-aiText" id="aiReflectionText"></div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    const calculateBtn = document.getElementById("calculateBtn");
+    const resultBlock = document.getElementById("resultBlock");
+    const aiExplainBtn = document.getElementById("aiExplainBtn");
+    const aiLoading = document.getElementById("aiLoading");
+    const aiResult = document.getElementById("aiResult");
+    const aiError = document.getElementById("aiError");
+
+    function getNumber(id) {
+      const el = document.getElementById(id);
+      if (!el) return 0;
+      const value = Number(el.value);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    }
+
+    function formatCurrency(value) {
+      return new Intl.NumberFormat("nl-NL", {
+        style: "currency",
+        currency: "EUR",
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+
+    function formatPercent(value) {
+      return `${Math.round(value)}%`;
+    }
+
+    function calculateToolData() {
+      const field1 = getNumber("field1");
+      const field2 = getNumber("field2");
+      const field3 = getNumber("field3");
+
+      return {
+        field1,
+        field2,
+        field3,
+        metric1: field1,
+        metric2: field2,
+        metric3: field3,
+        headline: field1 + field2 + field3
+      };
+    }
+
+    function getToolInsight(data) {
+      return "[Replace with tool-specific interpretation logic.]";
+    }
+
+    function resetAIBlocks() {
+      document.getElementById("structureSignalText").textContent = "";
+      document.getElementById("systemSignalText").textContent = "";
+      document.getElementById("aiWhatText").textContent = "";
+      document.getElementById("aiWhyText").textContent = "";
+      document.getElementById("aiViewText").textContent = "";
+      document.getElementById("aiReflectionText").textContent = "";
+
+      aiResult.style.display = "none";
+      aiError.style.display = "none";
+      aiLoading.style.display = "none";
+    }
+
+    function renderTool() {
+      const data = calculateToolData();
+
+      document.getElementById("metric1Value").textContent = data.metric1;
+      document.getElementById("metric2Value").textContent = data.metric2;
+      document.getElementById("metric3Value").textContent = data.metric3;
+      document.getElementById("headlineValue").textContent = data.headline;
+      document.getElementById("toolInsight").textContent = getToolInsight(data);
+
+      resultBlock.style.display = "block";
+      resetAIBlocks();
+    }
+
+    async function fetchAIInsight() {
+      const data = calculateToolData();
+
+      aiExplainBtn.disabled = true;
+      aiExplainBtn.textContent = "Analyzing...";
+      aiLoading.style.display = "block";
+      aiResult.style.display = "none";
+      aiError.style.display = "none";
+
+      try {
+        const response = await fetch("/api/ai-insight", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            tool: "[tool-slug]",
+            data
+          })
+        });
+
+        const result = await response.json();
+        console.log("AI RESULT FRONTEND:", result);
+
+        if (!response.ok) {
+          throw new Error(result.details || result.error || "AI request failed");
+        }
+
+        document.getElementById("structureSignalText").textContent = result.structure_signal || "";
+        document.getElementById("systemSignalText").textContent = result.liquidity_signal || "";
+        document.getElementById("aiWhatText").textContent = result.what_stands_out || "No section returned.";
+        document.getElementById("aiWhyText").textContent = result.why_it_matters || "No section returned.";
+        document.getElementById("aiViewText").textContent = result.moneymind_view || "No section returned.";
+        document.getElementById("aiReflectionText").textContent = result.reflection || "No section returned.";
+
+        aiResult.style.display = "block";
+      } catch (error) {
+        console.error("AI insight error:", error);
+        aiError.style.display = "block";
+      } finally {
+        aiLoading.style.display = "none";
+        aiExplainBtn.disabled = false;
+        aiExplainBtn.textContent = "[AI CTA]";
+      }
+    }
+
+    if (calculateBtn) {
+      calculateBtn.addEventListener("click", renderTool);
+    }
+
+    if (aiExplainBtn) {
+      aiExplainBtn.addEventListener("click", fetchAIInsight);
+    }
+  </script>
+
+  <!-- <script src="app.js"></script> -->
+</body>
+
+</html>
