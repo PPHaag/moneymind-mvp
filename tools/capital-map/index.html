@@ -217,179 +217,160 @@
     </div>
 
   </div>
+<script>
+  const calculateBtn = document.getElementById("calculateBtn");
+  const resultBlock = document.getElementById("resultBlock");
+  const aiExplainBtn = document.getElementById("aiExplainBtn");
+  const aiLoading = document.getElementById("aiLoading");
+  const aiResult = document.getElementById("aiResult");
+  const aiError = document.getElementById("aiError");
 
-  <script>
-    const calculateBtn = document.getElementById("calculateBtn");
-    const resultBlock = document.getElementById("resultBlock");
-    const aiExplainBtn = document.getElementById("aiExplainBtn");
-    const aiLoading = document.getElementById("aiLoading");
-    const aiResult = document.getElementById("aiResult");
-    const aiError = document.getElementById("aiError");
+  function getNumber(id) {
+    const el = document.getElementById(id);
+    if (!el) return 0;
+    const value = Number(el.value);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
+  }
 
-    function getNumber(id) {
-      const value = Number(document.getElementById(id).value);
-      return Number.isFinite(value) && value >= 0 ? value : 0;
+  function formatCurrency(value) {
+    return new Intl.NumberFormat("nl-NL", {
+      style: "currency",
+      currency: "EUR",
+      maximumFractionDigits: 0
+    }).format(value);
+  }
+
+  function calculateCapitalMapData() {
+    const cash = getNumber("cash");
+    const investments = getNumber("investments");
+    const crypto = getNumber("crypto");
+    const metals = getNumber("metals");
+    const homeEquity = getNumber("homeEquity");
+    const equity = getNumber("equity");
+    const pension = getNumber("pension");
+    const otherAssets = getNumber("otherAssets");
+    const debt = getNumber("debt");
+
+    const directCapital = cash + investments + crypto;
+    const accessibleCapital = metals + homeEquity + equity + otherAssets;
+    const lockedCapital = pension;
+    const netWorth = directCapital + accessibleCapital + lockedCapital - debt;
+
+    return {
+      cash,
+      investments,
+      crypto,
+      metals,
+      homeEquity,
+      equity,
+      pension,
+      otherAssets,
+      debt,
+      directCapital,
+      accessibleCapital,
+      lockedCapital,
+      netWorth
+    };
+  }
+
+  function getCapitalInsight(data) {
+    const { directCapital, accessibleCapital, lockedCapital, netWorth } = data;
+
+    if (netWorth <= 0) {
+      return "Your capital structure is still in early formation.";
     }
 
-    function formatCurrency(value) {
-      return new Intl.NumberFormat("en-EN", {
-        style: "currency",
-        currency: "EUR",
-        maximumFractionDigits: 0
-      }).format(value);
+    if (directCapital > accessibleCapital && directCapital > lockedCapital) {
+      return "Your structure is relatively liquid. Flexibility is a current strength.";
     }
 
-    function calculateCapitalMapData() {
-      const cash = getNumber("cash");
-      const investments = getNumber("investments");
-      const crypto = getNumber("crypto");
-      const metals = getNumber("metals");
-      const homeEquity = getNumber("homeEquity");
-      const equity = getNumber("equity");
-      const pension = getNumber("pension");
-      const otherAssets = getNumber("otherAssets");
-      const debt = getNumber("debt");
-
-      const directCapital = cash + investments + crypto;
-      const accessibleCapital = metals + homeEquity + equity + otherAssets;
-      const lockedCapital = pension;
-      const netWorth = directCapital + accessibleCapital + lockedCapital - debt;
-
-      return {
-        cash,
-        investments,
-        crypto,
-        metals,
-        homeEquity,
-        equity,
-        pension,
-        otherAssets,
-        debt,
-        directCapital,
-        accessibleCapital,
-        lockedCapital,
-        netWorth
-      };
+    if (lockedCapital > directCapital + accessibleCapital) {
+      return "A large share of your wealth is locked. Long-term strength, lower short-term flexibility.";
     }
 
-    function getCapitalInsight(data) {
-      const { directCapital, accessibleCapital, lockedCapital, netWorth } = data;
-
-      if (netWorth <= 0) {
-        return "Your capital structure is still in early formation.";
-      }
-
-      if (directCapital > accessibleCapital && directCapital > lockedCapital) {
-        return "Your structure is relatively liquid. Flexibility is a current strength.";
-      }
-
-      if (lockedCapital > directCapital + accessibleCapital) {
-        return "A large share of your wealth is locked. Long-term strength, lower short-term flexibility.";
-      }
-
-      if (accessibleCapital > directCapital && accessibleCapital > lockedCapital) {
-        return "Your structure leans toward accessible wealth, but not all of it is instantly deployable.";
-      }
-
-      return "Your capital is spread across multiple layers. The next question is how deployable it really is.";
+    if (accessibleCapital > directCapital && accessibleCapital > lockedCapital) {
+      return "Your structure leans toward accessible wealth, but not all of it is instantly deployable.";
     }
 
-    function renderCapitalMap() {
-      const data = calculateCapitalMapData();
+    return "Your capital is spread across multiple layers. The next question is how deployable it really is.";
+  }
 
-      document.getElementById("directCapitalValue").textContent = formatCurrency(data.directCapital);
-      document.getElementById("accessibleCapitalValue").textContent = formatCurrency(data.accessibleCapital);
-      document.getElementById("lockedCapitalValue").textContent = formatCurrency(data.lockedCapital);
-      document.getElementById("netWorthValue").textContent = formatCurrency(data.netWorth);
-      document.getElementById("capitalInsight").textContent = getCapitalInsight(data);
+  function resetAIBlocks() {
+    document.getElementById("aiWhatText").textContent = "";
+    document.getElementById("aiWhyText").textContent = "";
+    document.getElementById("aiViewText").textContent = "";
+    document.getElementById("aiReflectionText").textContent = "";
 
-      resultBlock.style.display = "block";
+    aiResult.style.display = "none";
+    aiError.style.display = "none";
+    aiLoading.style.display = "none";
+  }
 
-      aiResult.style.display = "none";
-      aiError.style.display = "none";
+  function renderCapitalMap() {
+    const data = calculateCapitalMapData();
+
+    document.getElementById("directCapitalValue").textContent = formatCurrency(data.directCapital);
+    document.getElementById("accessibleCapitalValue").textContent = formatCurrency(data.accessibleCapital);
+    document.getElementById("lockedCapitalValue").textContent = formatCurrency(data.lockedCapital);
+    document.getElementById("netWorthValue").textContent = formatCurrency(data.netWorth);
+    document.getElementById("capitalInsight").textContent = getCapitalInsight(data);
+
+    resultBlock.style.display = "block";
+    resetAIBlocks();
+  }
+
+  async function fetchAIInsight() {
+    const data = calculateCapitalMapData();
+
+    aiExplainBtn.disabled = true;
+    aiExplainBtn.textContent = "Analyzing...";
+    aiLoading.style.display = "block";
+    aiResult.style.display = "none";
+    aiError.style.display = "none";
+
+    try {
+      const response = await fetch("/api/ai-insight", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          tool: "capital-map",
+          data
+        })
+      });
+
+      const result = await response.json();
+      console.log("AI RESULT FRONTEND:", result);
+
+      if (!response.ok) {
+        throw new Error(result.details || result.error || "AI request failed");
+      }
+
+      document.getElementById("aiWhatText").textContent = result.what_stands_out || "No section returned.";
+      document.getElementById("aiWhyText").textContent = result.why_it_matters || "No section returned.";
+      document.getElementById("aiViewText").textContent = result.moneymind_view || "No section returned.";
+      document.getElementById("aiReflectionText").textContent = result.reflection || "No section returned.";
+
+      aiResult.style.display = "block";
+    } catch (error) {
+      console.error("AI insight error:", error);
+      aiError.style.display = "block";
+    } finally {
       aiLoading.style.display = "none";
-
-      document.getElementById("aiWhatText").textContent = "";
-      document.getElementById("aiWhyText").textContent = "";
-      document.getElementById("aiViewText").textContent = "";
-      document.getElementById("aiReflectionText").textContent = "";
+      aiExplainBtn.disabled = false;
+      aiExplainBtn.textContent = "Explain My Results";
     }
-
-async function fetchAIInsight() {
-  const data = calculateCapitalMapData();
-
-  aiExplainBtn.disabled = true;
-  aiExplainBtn.textContent = "Analyzing...";
-  aiLoading.style.display = "block";
-  aiResult.style.display = "none";
-  aiError.style.display = "none";
-
-  try {
-    const response = await fetch("/api/ai-insight", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        tool: "capital-map",
-        data
-      })
-    });
-
-    const result = await response.json();
-    console.log("AI RESULT:", result);
-
-    if (!response.ok) {
-      throw new Error(result.details || result.error || "AI request failed");
-    }
-
-    document.getElementById("aiWhatText").textContent = result.what_stands_out || "";
-    document.getElementById("aiWhyText").textContent = result.why_it_matters || "";
-    document.getElementById("aiViewText").textContent = result.moneymind_view || "";
-    document.getElementById("aiReflectionText").textContent = result.reflection || "";
-
-    aiResult.style.display = "block";
-  } catch (error) {
-    console.error("AI insight error:", error);
-    aiError.style.display = "block";
-  } finally {
-    aiLoading.style.display = "none";
-    aiExplainBtn.disabled = false;
-    aiExplainBtn.textContent = "Explain My Results";
   }
-}    const insightText = result.insight || "";
 
-    const whatMatch = insightText.match(/What stands out[:\s]*([\s\S]*?)(?=Why it matters|MoneyMind view|Reflection|$)/i);
-    const whyMatch = insightText.match(/Why it matters[:\s]*([\s\S]*?)(?=MoneyMind view|Reflection|$)/i);
-    const viewMatch = insightText.match(/MoneyMind view[:\s]*([\s\S]*?)(?=Reflection|$)/i);
-    const reflectionMatch = insightText.match(/Reflection[:\s]*([\s\S]*?)$/i);
-
-    document.getElementById("aiWhatText").textContent =
-      whatMatch?.[1]?.trim() || "No section returned.";
-
-    document.getElementById("aiWhyText").textContent =
-      whyMatch?.[1]?.trim() || "No section returned.";
-
-    document.getElementById("aiViewText").textContent =
-      viewMatch?.[1]?.trim() || "No section returned.";
-
-    document.getElementById("aiReflectionText").textContent =
-      reflectionMatch?.[1]?.trim() || "No section returned.";
-
-    aiResult.style.display = "block";
-  } catch (error) {
-    console.error("AI insight error:", error);
-    aiError.style.display = "block";
-  } finally {
-    aiLoading.style.display = "none";
-    aiExplainBtn.disabled = false;
-    aiExplainBtn.textContent = "Explain My Results";
-  }
-}
+  if (calculateBtn) {
     calculateBtn.addEventListener("click", renderCapitalMap);
+  }
+
+  if (aiExplainBtn) {
     aiExplainBtn.addEventListener("click", fetchAIInsight);
-  </script>
-<!-- <script src="app.js"></script> -->
+  }
+</script><!-- <script src="app.js"></script> -->
 </body>
 
 </html>
