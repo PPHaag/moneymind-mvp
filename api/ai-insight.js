@@ -103,11 +103,42 @@ Do not add explanation before or after the JSON.
 Use exactly this JSON shape:
 
 {
+  "structure_signal": "...",
+  "liquidity_signal": "...",
   "what_stands_out": "...",
   "why_it_matters": "...",
   "moneymind_view": "...",
   "reflection": "..."
 }
+structure_signal:
+Short classification of the capital structure maturity.
+
+Possible examples:
+- "Early-stage structure"
+- "Balanced structure"
+- "Liquidity-heavy structure"
+- "Locked-heavy structure"
+- "Under-layered capital structure"
+- "Well-layered capital structure"
+
+Keep it short (max 4 words).
+
+liquidity_signal:
+Short description of how liquid the capital structure is.
+
+Possible examples:
+- "High liquidity"
+- "Moderate liquidity"
+- "Low liquidity"
+- "Highly deployable capital"
+- "Structurally locked capital"
+
+Keep it short (max 3 words).
+
+Rules for signals:
+- These signals must be short classifications, not sentences.
+- Do not repeat the same phrase in both signals.
+- Base the signals on the capital distribution.
 
 Writing rules:
 - Sound intelligent, calm, premium, and slightly sharp.
@@ -168,13 +199,15 @@ Output must be valid JSON only.
       });
     }
 
-    return res.status(200).json({
-      success: true,
-      what_stands_out: parsed.what_stands_out || "No section returned.",
-      why_it_matters: parsed.why_it_matters || "No section returned.",
-      moneymind_view: parsed.moneymind_view || "No section returned.",
-      reflection: parsed.reflection || "No section returned.",
-    });
+return res.status(200).json({
+  success: true,
+  structure_signal: parsed.structure_signal || "",
+  liquidity_signal: parsed.liquidity_signal || "",
+  what_stands_out: parsed.what_stands_out || "No section returned.",
+  why_it_matters: parsed.why_it_matters || "No section returned.",
+  moneymind_view: parsed.moneymind_view || "No section returned.",
+  reflection: parsed.reflection || "No section returned.",
+});
   } catch (error) {
     console.error("OPENAI ERROR FULL:", error);
     console.error("OPENAI ERROR MESSAGE:", error?.message);
