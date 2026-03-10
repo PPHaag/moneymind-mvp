@@ -150,3 +150,101 @@ input[type="range"]{width:100%; margin-top:10px}
   opacity:.9;
 }
 .mm
+.mm-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mm-info {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  font-size: 11px;
+  line-height: 1;
+  cursor: help;
+  opacity: 0.7;
+  border: 1px solid rgba(255,255,255,0.18);
+  color: rgba(255,255,255,0.85);
+}
+
+.mm-info:hover,
+.mm-info:focus {
+  opacity: 1;
+}
+
+.mm-tooltip {
+  display: none;
+  position: absolute;
+  top: 24px;
+  left: 0;
+  width: 220px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.4;
+  z-index: 50;
+  background: #182235;
+  color: #f3f7ff;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.mm-info:hover .mm-tooltip,
+.mm-info:focus .mm-tooltip {
+  display: block;
+}
+.mm-field label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.mm-helperIntro {
+  margin-top: 8px;
+  margin-bottom: 20px;
+  color: rgba(255,255,255,0.72);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.mm-aiSignalRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.mm-aiSignalBox {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.mm-aiSignalLabel {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 6px;
+}
+
+.mm-aiSignalValue {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+}
+@media (max-width: 768px) {
+  .mm-aiSignalRow {
+    grid-template-columns: 1fr;
+  }
+
+  .mm-tooltip {
+    width: 180px;
+    left: -20px;
+  }
+}
