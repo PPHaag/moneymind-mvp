@@ -361,3 +361,32 @@ h3{
     font-size:14px;
   }
 }
+.mm-info{
+margin-left:6px;
+font-size:12px;
+cursor:pointer;
+position:relative;
+opacity:0.6;
+}
+
+.mm-info:hover{
+opacity:1;
+}
+
+.mm-tooltip{
+display:none;
+position:absolute;
+background:#1f2a44;
+color:white;
+padding:8px 10px;
+border-radius:6px;
+font-size:12px;
+width:220px;
+top:22px;
+left:0;
+z-index:10;
+}
+
+.mm-info:hover .mm-tooltip{
+display:block;
+}
