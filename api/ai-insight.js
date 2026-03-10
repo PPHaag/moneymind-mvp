@@ -6,7 +6,6 @@ function safeParseJSON(text) {
   try {
     return JSON.parse(text);
   } catch (_) {
-    // probeer code fences weg te halen
     const cleaned = text
       .replace(/```json/gi, "")
       .replace(/```/g, "")
@@ -57,35 +56,51 @@ export default async function handler(req, res) {
     const lockedCapital = Number(data.lockedCapital ?? 0);
     const age = data.age ?? "not provided";
 
-const prompt = `
+    const totalCapital = directCapital + accessibleCapital + lockedCapital;
+
+    const directShare =
+      totalCapital > 0 ? ((directCapital / totalCapital) * 100).toFixed(1) : "0.0";
+    const accessibleShare =
+      totalCapital > 0 ? ((accessibleCapital / totalCapital) * 100).toFixed(1) : "0.0";
+    const lockedShare =
+      totalCapital > 0 ? ((lockedCapital / totalCapital) * 100).toFixed(1) : "0.0";
+
+    const prompt = `
 You are the MoneyMind Financial Intelligence Engine.
 
-Your job is not to give generic personal finance advice.
-Your job is to interpret capital structure sharply, clearly, and strategically.
+Your role is NOT to give generic personal finance advice.
+Your role is to interpret a person's capital structure clearly, sharply, and strategically.
 
 The user completed the Capital Map tool.
+
 Tool: ${tool || "capital-map"}
 
-Capital structure:
+Capital structure data:
 - Direct Capital: €${directCapital}
 - Accessible Capital: €${accessibleCapital}
 - Locked Capital: €${lockedCapital}
 - Age: ${age}
 
-Interpret the structure through a wealth architecture lens.
+Capital mix:
+- Direct Capital Share: ${directShare}%
+- Accessible Capital Share: ${accessibleShare}%
+- Locked Capital Share: ${lockedShare}%
+
+Interpret this through a wealth architecture lens.
 
 Focus on:
 - concentration of capital
-- liquidity versus structural positioning
+- liquidity versus structural depth
 - deployability of capital
 - imbalance between flexibility and long-term positioning
-- whether the capital structure looks early-stage, balanced, or under-structured
+- whether the structure feels early-stage, balanced, or under-structured
+- whether capital appears available but not yet intentionally layered
 
 Return ONLY valid JSON.
 Do not add markdown.
 Do not add explanation before or after the JSON.
 
-Use exactly this shape:
+Use exactly this JSON shape:
 
 {
   "what_stands_out": "...",
@@ -96,21 +111,32 @@ Use exactly this shape:
 
 Writing rules:
 - Sound intelligent, calm, premium, and slightly sharp.
-- Do NOT sound like a generic financial blog.
-- Do NOT use clichés like "diversification is important" unless directly relevant.
-- Do NOT give direct financial advice or tell the user what to buy.
-- Do NOT moralize.
 - Be specific to the numbers given.
-- Make the insight feel structural, not motivational.
-- Each field should be 2-3 sentences max.
-- MoneyMind view should sound like a strategic interpretation, not a disclaimer.
+- Do NOT sound like a generic finance blog.
+- Do NOT use clichés such as "diversification is important" unless directly relevant.
+- Do NOT give direct financial advice.
+- Do NOT tell the user what to buy, sell, or allocate.
+- Do NOT moralize.
+- Do NOT use hype.
+- Make the interpretation structural, not motivational.
+- Keep each field concise: 2 to 3 sentences maximum.
+- "MoneyMind view" should feel like a strategic interpretation of the structure.
+- "Reflection" should provoke thought, not give instructions.
 
-Style examples:
-- Good: "This structure is highly liquid, but not yet deeply layered."
-- Good: "The capital is available, but not strongly positioned."
-- Good: "Flexibility is high, structural depth is limited."
-- Bad: "It is important to diversify for long-term success."
-- Bad: "Consider speaking to a financial advisor."
+Tone examples:
+Good:
+- "This structure is highly liquid, but not yet deeply layered."
+- "The capital is available, but not strongly positioned."
+- "Flexibility is high, structural depth is limited."
+- "This looks more like capital in holding formation than a mature wealth structure."
+
+Bad:
+- "It is important to diversify for long-term success."
+- "Consider speaking to a financial advisor."
+- "This is a great starting point for your journey."
+- "Make sure you invest wisely."
+
+Output must be valid JSON only.
 `;
 
     const response = await openai.responses.create({
