@@ -92,10 +92,12 @@
     }
   }
 
-  function updateShareText(result) {
-    const text = `MoneyMind Roast Result:
+ function updateShareText(result) {
+  const verdict = result.shareLine || result.headline;
 
-${result.headline}
+  const text = `MoneyMind Roast Result:
+
+${verdict}
 
 Score: ${result.score}/100
 Category: ${result.category}
@@ -103,13 +105,12 @@ Category: ${result.category}
 Try the Roast Tool:
 https://moneymind-mvp-five.vercel.app/`;
 
-    if (shareLine) {
-      shareLine.textContent = `"${result.headline}"`;
-    }
-
-    setupShareButtons(text);
+  if (shareLine) {
+    shareLine.textContent = `"${verdict}"`;
   }
 
+  setupShareButtons(text);
+}
   function renderResult(result) {
     if (scoreValue) scoreValue.textContent = result.score;
     if (scoreLabel) scoreLabel.textContent = result.category;
