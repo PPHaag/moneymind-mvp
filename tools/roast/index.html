@@ -1,130 +1,361 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>The Roast Tool | MoneyMind</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <div class="app-shell">
-    <header class="topbar">
-      <div class="brand">MoneyMind</div>
-      <a class="back-link" href="/splash.html">Back</a>
-    </header>
 
-    <main class="container">
-      <!-- INTRO -->
-      <section id="introScreen" class="screen active card hero-card">
-        <div class="eyebrow">MoneyMind Growth Tool</div>
-        <h1>The Roast Tool</h1>
-        <p class="hero-subtitle">A brutally honest financial mirror.</p>
-        <p class="hero-copy">
-          Not to shame you — to wake up your money structure.
-        </p>
+<div class="app-shell">
 
-        <div class="hero-points">
-          <div class="point">Fast</div>
-          <div class="point">Sharp</div>
-          <div class="point">Actually useful</div>
+  <header class="topbar">
+    <div class="brand">MoneyMind</div>
+    <a href="/splash.html" class="back-link">Back</a>
+  </header>
+
+
+  <main class="container">
+
+    <!-- INTRO SCREEN -->
+
+    <section id="introScreen" class="screen active card hero-card">
+
+      <div class="eyebrow">MoneyMind Tool</div>
+
+      <h1>The Roast Tool</h1>
+
+      <p class="hero-subtitle">
+        A brutally honest financial mirror.
+      </p>
+
+      <p class="hero-copy">
+        Not to shame you — to wake up your money structure.
+      </p>
+
+      <div class="hero-points">
+        <div class="point">Fast</div>
+        <div class="point">Sharp</div>
+        <div class="point">Actually useful</div>
+      </div>
+
+      <button id="startRoastBtn" class="btn btn-primary">
+        Roast My Finances
+      </button>
+
+    </section>
+
+
+
+    <!-- INPUT SCREEN -->
+
+    <section id="formScreen" class="screen card">
+
+      <div class="section-header">
+
+        <div class="eyebrow">Step 1</div>
+
+        <h2>Your Financial Snapshot</h2>
+
+        <p>Fill in all 6 fields for the most accurate roast.</p>
+
+      </div>
+
+
+
+      <form id="roastForm" class="form-grid">
+
+
+        <!-- INCOME -->
+
+        <div class="field">
+
+          <label for="monthlyNetIncome">
+            Monthly net income (€)
+
+            <span class="tooltip" tabindex="0">
+              ?
+              <span class="tooltip-text">
+                Your monthly income after taxes and payroll deductions.
+              </span>
+            </span>
+
+          </label>
+
+          <input
+            type="number"
+            id="monthlyNetIncome"
+            min="0"
+            step="1"
+            placeholder="3500"
+            required
+          >
+
         </div>
 
-        <button id="startRoastBtn" class="btn btn-primary">Roast My Finances</button>
-      </section>
 
-      <!-- INPUT -->
-      <section id="formScreen" class="screen card">
-        <div class="section-header">
-          <div class="eyebrow">Step 1</div>
-          <h2>Your Financial Snapshot</h2>
-          <p>Fill in the basics. We’ll do the uncomfortable part.</p>
+        <!-- SAVINGS -->
+
+        <div class="field">
+
+          <label for="savings">
+            Savings (€)
+
+            <span class="tooltip" tabindex="0">
+              ?
+              <span class="tooltip-text">
+                Cash you can access directly such as money in your bank or savings account.
+              </span>
+            </span>
+
+          </label>
+
+          <input
+            type="number"
+            id="savings"
+            min="0"
+            step="1"
+            placeholder="12000"
+            required
+          >
+
         </div>
 
-        <form id="roastForm" class="form-grid">
-          <div class="field">
-            <label for="monthlyNetIncome">Monthly net income (€)</label>
-            <input type="number" id="monthlyNetIncome" min="0" step="1" required />
-          </div>
 
-          <div class="field">
-            <label for="savings">Savings (€)</label>
-            <input type="number" id="savings" min="0" step="1" required />
-          </div>
+        <!-- INVESTMENTS -->
 
-          <div class="field">
-            <label for="investments">Investments (€)</label>
-            <input type="number" id="investments" min="0" step="1" required />
-          </div>
+        <div class="field">
 
-          <div class="field">
-            <label for="debt">Debt (€)</label>
-            <input type="number" id="debt" min="0" step="1" required />
-          </div>
+          <label for="investments">
+            Investments (€)
 
-          <div class="field">
-            <label for="fixedExpenses">Monthly fixed expenses (€)</label>
-            <input type="number" id="fixedExpenses" min="0" step="1" required />
-          </div>
+            <span class="tooltip" tabindex="0">
+              ?
+              <span class="tooltip-text">
+                Money invested in stocks, ETFs, crypto, funds, or other growth assets.
+              </span>
+            </span>
 
-          <div class="field">
-            <label for="monthlyWealthBuilding">Monthly wealth building (€)</label>
-            <input type="number" id="monthlyWealthBuilding" min="0" step="1" required />
-          </div>
+          </label>
 
-          <div class="actions">
-            <button type="button" id="backToIntroBtn" class="btn btn-secondary">Back</button>
-            <button type="submit" class="btn btn-primary">Generate My Roast</button>
-          </div>
-        </form>
-      </section>
+          <input
+            type="number"
+            id="investments"
+            min="0"
+            step="1"
+            placeholder="25000"
+            required
+          >
 
-      <!-- RESULT -->
-      <section id="resultScreen" class="screen card">
-        <div class="section-header">
-          <div class="eyebrow">Your Result</div>
-          <h2>Your Financial Roast</h2>
         </div>
 
-        <div class="score-wrap">
-          <div class="score-circle">
-            <span id="scoreValue">0</span>
-            <small>/100</small>
-          </div>
-          <div class="score-meta">
-            <div id="scoreLabel" class="score-label">Structural Leakage</div>
-            <p id="headline" class="headline">
-              Your income works full-time. Unfortunately not for you.
-            </p>
-          </div>
+
+        <!-- DEBT -->
+
+        <div class="field">
+
+          <label for="debt">
+            Debt (€)
+
+            <span class="tooltip" tabindex="0">
+              ?
+              <span class="tooltip-text">
+                Your total outstanding personal debt. Exclude mortgage if you want to keep it simple.
+              </span>
+            </span>
+
+          </label>
+
+          <input
+            type="number"
+            id="debt"
+            min="0"
+            step="1"
+            placeholder="8000"
+            required
+          >
+
         </div>
 
-        <div class="result-grid">
-          <div class="result-block">
-            <h3>Roast</h3>
-            <ul id="roastBullets" class="result-list"></ul>
-          </div>
 
-          <div class="result-block">
-            <h3>Structural Insight</h3>
-            <ul id="insightBullets" class="result-list"></ul>
-          </div>
+        <!-- FIXED EXPENSES -->
 
-          <div class="result-block result-block-full">
-            <h3>Next Move</h3>
-            <p id="nextMoveText" class="next-move"></p>
-          </div>
+        <div class="field">
+
+          <label for="fixedExpenses">
+            Monthly fixed expenses (€)
+
+            <span class="tooltip" tabindex="0">
+              ?
+              <span class="tooltip-text">
+                Recurring monthly costs such as rent/mortgage, utilities, insurance, subscriptions and loans.
+              </span>
+            </span>
+
+          </label>
+
+          <input
+            type="number"
+            id="fixedExpenses"
+            min="0"
+            step="1"
+            placeholder="2100"
+            required
+          >
+
         </div>
 
-        <div class="result-footer">
-          <button id="restartBtn" class="btn btn-secondary">Roast Again</button>
-          <a id="continueBtn" class="btn btn-primary" href="/tools/boarding/index.html">Continue to MoneyMind</a>
-        </div>
-      </section>
-    </main>
-  </div>
 
-  <script src="data.js"></script>
-  <script src="engine.js"></script>
-  <script src="app.js"></script>
+        <!-- WEALTH BUILDING -->
+
+        <div class="field">
+
+          <label for="monthlyWealthBuilding">
+            Monthly wealth building (€)
+
+            <span class="tooltip" tabindex="0">
+              ?
+              <span class="tooltip-text">
+                The amount you actively put toward investing, saving or structural debt reduction each month.
+              </span>
+            </span>
+
+          </label>
+
+          <input
+            type="number"
+            id="monthlyWealthBuilding"
+            min="0"
+            step="1"
+            placeholder="400"
+            required
+          >
+
+        </div>
+
+
+        <!-- ACTION BUTTONS -->
+
+        <div class="actions">
+
+          <button
+            type="button"
+            id="backToIntroBtn"
+            class="btn btn-secondary"
+          >
+            Back
+          </button>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+          >
+            Generate My Roast
+          </button>
+
+        </div>
+
+      </form>
+
+    </section>
+
+
+
+    <!-- RESULT SCREEN -->
+
+    <section id="resultScreen" class="screen card">
+
+      <div class="section-header">
+
+        <div class="eyebrow">Your Result</div>
+
+        <h2>Your Financial Roast</h2>
+
+      </div>
+
+
+
+      <div class="score-wrap">
+
+        <div class="score-circle">
+          <span id="scoreValue">0</span>
+          <small>/100</small>
+        </div>
+
+        <div class="score-meta">
+
+          <div id="scoreLabel" class="score-label">
+            Structural Leakage
+          </div>
+
+          <p id="headline" class="headline"></p>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="result-grid">
+
+        <div class="result-block">
+
+          <h3>Roast</h3>
+
+          <ul id="roastBullets" class="result-list"></ul>
+
+        </div>
+
+
+        <div class="result-block">
+
+          <h3>Structural Insight</h3>
+
+          <ul id="insightBullets" class="result-list"></ul>
+
+        </div>
+
+
+        <div class="result-block result-block-full">
+
+          <h3>Next Move</h3>
+
+          <p id="nextMoveText" class="next-move"></p>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="result-footer">
+
+        <button id="restartBtn" class="btn btn-secondary">
+          Roast Again
+        </button>
+
+        <a href="/tools/boarding/index.html" class="btn btn-primary">
+          Continue to MoneyMind
+        </a>
+
+      </div>
+
+    </section>
+
+
+  </main>
+
+</div>
+
+
+
+<script src="data.js"></script>
+<script src="engine.js"></script>
+<script src="app.js"></script>
+
 </body>
 </html>
