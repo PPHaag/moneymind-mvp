@@ -1,6 +1,6 @@
 (function () {
   function toNumber(value) {
-    const num = Number(value);
+    var num = Number(value);
     return Number.isFinite(num) ? num : 0;
   }
 
@@ -13,192 +13,192 @@
     return arr[Math.floor(Math.random() * arr.length)];
   }
 
-  function pushUnique(target, value) {
-    if (value && !target.includes(value)) {
-      target.push(value);
-    }
+  function ensureArray(value) {
+    return Array.isArray(value) ? value : [];
   }
 
-  function pickFromGroup(group, key) {
-    if (!group || !group[key]) return "";
-    return pickRandom(group[key]);
+  function getCategoryLabel(categoryKey) {
+    var categories = ensureArray(window.ROAST_DATA && window.ROAST_DATA.categories);
+    var found = categories.find(function (c) {
+      return c.key === categoryKey;
+    });
+    return found ? found.label : "Structural Leakage";
+  }
+
+  function getRandomFromMap(map, key, fallback) {
+    if (!map || !map[key]) return fallback || "";
+    return pickRandom(ensureArray(map[key])) || fallback || "";
+  }
+
+  function getUniqueTags(triggers) {
+    var tags = [];
+    var academyTags = (window.ROAST_DATA && window.ROAST_DATA.academyTags) || {};
+
+    triggers.forEach(function (trigger) {
+      ensureArray(academyTags[trigger]).forEach(function (tag) {
+        if (!tags.includes(tag)) tags.push(tag);
+      });
+    });
+
+    return tags;
+  }
+
+  function buildRoastBullets(triggers, score) {
+    var result = [];
+    var roastBullets = (window.ROAST_DATA && window.ROAST_DATA.roastBullets) || {};
+    var fallbackRoasts = ensureArray(window.ROAST_DATA && window.ROAST_DATA.fallbackRoasts);
+
+    triggers.forEach(function (trigger) {
+      var line = getRandomFromMap(roastBullets, trigger, "");
+      if (line && !result.includes(line)) result.push(line);
+    });
+
+    if (score >= 75) {
+      var goodStructure = getRandomFromMap(roastBullets, "good_structure", "");
+      var decentBuffer = getRandomFromMap(roastBullets, "decent_buffer", "");
+
+      if (goodStructure && !result.includes(goodStructure)) result.push(goodStructure);
+      if (decentBuffer && !result.includes(decentBuffer)) result.push(decentBuffer);
+    }
+
+    while (result.length < 3) {
+      var fallback = pickRandom(fallbackRoasts);
+      if (!fallback) break;
+      if (!result.includes(fallback)) result.push(fallback);
+    }
+
+    return result.slice(0, 3);
+  }
+
+  function getNextMove(triggers) {
+    var nextMoves = (window.ROAST_DATA && window.ROAST_DATA.nextMoves) || {};
+
+    if (triggers.includes("low_wealth_allocation")) {
+      return getRandomFromMap(nextMoves, "low_wealth_allocation", "Increase the percentage of your monthly income going to wealth building.");
+    }
+
+    if (triggers.includes("high_fixed_cost_load")) {
+      return getRandomFromMap(nextMoves, "high_fixed_cost_load", "Reduce structural monthly costs first.");
+    }
+
+    if (triggers.includes("high_debt_pressure")) {
+      return getRandomFromMap(nextMoves, "high_debt_pressure", "Lower debt pressure before optimizing the rest.");
+    }
+
+    if (triggers.includes("low_buffer")) {
+      return getRandomFromMap(nextMoves, "low_buffer", "Strengthen your cash buffer first.");
+    }
+
+    if (triggers.includes("sleeping_capital")) {
+      return getRandomFromMap(nextMoves, "sleeping_capital", "Put part of your idle capital to work.");
+    }
+
+    if (triggers.includes("no_investing")) {
+      return getRandomFromMap(nextMoves, "no_investing", "Start putting part of your money to work.");
+    }
+
+    return getRandomFromMap(nextMoves, "balanced", "Keep strengthening allocation discipline.");
   }
 
   function calculateRoast(input) {
-    const monthlyNetIncome = toNumber(input.monthlyNetIncome);
-    const savings = toNumber(input.savings);
-    const investments = toNumber(input.investments);
-    const debt = toNumber(input.debt);
-    const fixedExpenses = toNumber(input.fixedExpenses);
-    const monthlyWealthBuilding = toNumber(input.monthlyWealthBuilding);
+    var monthlyNetIncome = toNumber(input.monthlyNetIncome);
+    var savings = toNumber(input.savings);
+    var investments = toNumber(input.investments);
+    var debt = toNumber(input.debt);
+    var fixedExpenses = toNumber(input.fixedExpenses);
+    var monthlyWealthBuilding = toNumber(input.monthlyWealthBuilding);
 
-    const wealthAllocationPct =
-      monthlyNetIncome > 0 ? (monthlyWealthBuilding / monthlyNetIncome) * 100 : 0;
+    var wealthAllocationPct = monthlyNetIncome > 0 ? (monthlyWealthBuilding / monthlyNetIncome) * 100 : 0;
+    var fixedCostPct = monthlyNetIncome > 0 ? (fixedExpenses / monthlyNetIncome) * 100 : 100;
+    var bufferMonths = fixedExpenses > 0 ? savings / fixedExpenses : 0;
+    var investableCapital = savings + investments;
 
-    const fixedCostPct =
-      monthlyNetIncome > 0 ? (fixedExpenses / monthlyNetIncome) * 100 : 100;
+    var score = 50;
+    var triggers = [];
+    var insights = [];
 
-    const bufferMonths =
-      fixedExpenses > 0 ? savings / fixedExpenses : 0;
-
-    const investableCapital = savings + investments;
-
-    let score = 50;
-    const triggers = [];
-    const insights = [];
-
-    // Wealth allocation
     if (wealthAllocationPct < 5) {
       score -= 25;
-      pushUnique(triggers, "low_wealth_allocation");
-      pushUnique(
-        insights,
-        `Only ${wealthAllocationPct.toFixed(1)}% of your income goes to wealth building.`
-      );
+      triggers.push("low_wealth_allocation");
+      insights.push("Only " + wealthAllocationPct.toFixed(1) + "% of your income goes to wealth building.");
     } else if (wealthAllocationPct < 10) {
       score -= 15;
-      pushUnique(triggers, "low_wealth_allocation");
-      pushUnique(
-        insights,
-        `Your wealth allocation is only ${wealthAllocationPct.toFixed(1)}% of monthly income.`
-      );
+      triggers.push("low_wealth_allocation");
+      insights.push("Your wealth allocation is only " + wealthAllocationPct.toFixed(1) + "% of monthly income.");
     } else if (wealthAllocationPct >= 20) {
       score += 15;
-      pushUnique(
-        insights,
-        `A strong ${wealthAllocationPct.toFixed(1)}% of your income goes toward building wealth.`
-      );
+      insights.push("A strong " + wealthAllocationPct.toFixed(1) + "% of your income goes toward building wealth.");
     } else if (wealthAllocationPct >= 15) {
       score += 10;
-      pushUnique(
-        insights,
-        `Your wealth allocation is solid at ${wealthAllocationPct.toFixed(1)}%.`
-      );
+      insights.push("Your wealth allocation is solid at " + wealthAllocationPct.toFixed(1) + "%.");
     } else {
-      pushUnique(
-        insights,
-        `You are directing ${wealthAllocationPct.toFixed(1)}% of income toward wealth building.`
-      );
+      insights.push("You are directing " + wealthAllocationPct.toFixed(1) + "% of income toward wealth building.");
     }
 
-    // Fixed cost load
     if (fixedCostPct > 80) {
       score -= 20;
-      pushUnique(triggers, "high_fixed_cost_load");
-      pushUnique(
-        insights,
-        `${fixedCostPct.toFixed(1)}% of your income disappears into fixed costs.`
-      );
+      triggers.push("high_fixed_cost_load");
+      insights.push(fixedCostPct.toFixed(1) + "% of your income disappears into fixed costs.");
     } else if (fixedCostPct > 65) {
       score -= 10;
-      pushUnique(triggers, "high_fixed_cost_load");
-      pushUnique(
-        insights,
-        `Your fixed cost load is heavy at ${fixedCostPct.toFixed(1)}% of income.`
-      );
+      triggers.push("high_fixed_cost_load");
+      insights.push("Your fixed cost load is heavy at " + fixedCostPct.toFixed(1) + "% of income.");
     } else if (fixedCostPct < 50) {
       score += 10;
-      pushUnique(
-        insights,
-        `Your fixed cost structure leaves more room than most at ${fixedCostPct.toFixed(1)}% of income.`
-      );
+      insights.push("Your fixed cost structure leaves more room than most at " + fixedCostPct.toFixed(1) + "% of income.");
     } else {
-      pushUnique(
-        insights,
-        `Your fixed costs absorb ${fixedCostPct.toFixed(1)}% of your income each month.`
-      );
+      insights.push("Your fixed costs absorb " + fixedCostPct.toFixed(1) + "% of your income each month.");
     }
 
-    // Investing
     if (investments <= 0) {
       score -= 12;
-      pushUnique(triggers, "no_investing");
-      pushUnique(
-        insights,
-        "You currently have no invested capital working for your future."
-      );
-    } else if (investments > 0 && investments >= savings) {
+      triggers.push("no_investing");
+      insights.push("You currently have no invested capital working for your future.");
+    } else if (investments >= savings) {
       score += 10;
-      pushUnique(
-        insights,
-        "You already have capital working instead of leaving everything idle."
-      );
+      insights.push("You already have capital working instead of leaving everything idle.");
     } else {
-      pushUnique(
-        insights,
-        "You have at least started putting capital to work."
-      );
+      insights.push("You have at least started putting capital to work.");
     }
 
-    // Debt pressure
     if (debt > monthlyNetIncome * 12) {
       score -= 15;
-      pushUnique(triggers, "high_debt_pressure");
-      pushUnique(
-        insights,
-        "Debt pressure is large relative to your annual income."
-      );
+      triggers.push("high_debt_pressure");
+      insights.push("Debt pressure is large relative to your annual income.");
     } else if (debt > monthlyNetIncome * 6) {
       score -= 8;
-      pushUnique(triggers, "high_debt_pressure");
-      pushUnique(
-        insights,
-        "Debt is material enough to limit your financial flexibility."
-      );
+      triggers.push("high_debt_pressure");
+      insights.push("Debt is material enough to limit your financial flexibility.");
     }
 
-    // Buffer
     if (bufferMonths < 2) {
       score -= 15;
-      pushUnique(triggers, "low_buffer");
-      pushUnique(
-        insights,
-        `Your cash buffer covers only about ${bufferMonths.toFixed(1)} months of fixed costs.`
-      );
+      triggers.push("low_buffer");
+      insights.push("Your cash buffer covers only about " + bufferMonths.toFixed(1) + " months of fixed costs.");
     } else if (bufferMonths < 4) {
       score -= 5;
-      pushUnique(triggers, "low_buffer");
-      pushUnique(
-        insights,
-        `Your financial buffer is still modest at roughly ${bufferMonths.toFixed(1)} months.`
-      );
+      triggers.push("low_buffer");
+      insights.push("Your financial buffer is still modest at roughly " + bufferMonths.toFixed(1) + " months.");
     } else if (bufferMonths >= 6) {
       score += 10;
-      pushUnique(
-        insights,
-        `Your savings cover roughly ${bufferMonths.toFixed(1)} months of fixed costs.`
-      );
+      insights.push("Your savings cover roughly " + bufferMonths.toFixed(1) + " months of fixed costs.");
     } else {
-      pushUnique(
-        insights,
-        `Your buffer covers around ${bufferMonths.toFixed(1)} months of fixed costs.`
-      );
+      insights.push("Your buffer covers around " + bufferMonths.toFixed(1) + " months of fixed costs.");
     }
 
-    // Sleeping capital
     if (savings > investments * 2 && investments > 0) {
       score -= 7;
-      pushUnique(triggers, "sleeping_capital");
-      pushUnique(
-        insights,
-        "A large share of your capital is sitting in cash instead of compounding."
-      );
-    } else if (
-      savings > 0 &&
-      investments === 0 &&
-      investableCapital > monthlyNetIncome * 3
-    ) {
+      triggers.push("sleeping_capital");
+      insights.push("A large share of your capital is sitting in cash instead of compounding.");
+    } else if (savings > 0 && investments === 0 && investableCapital > monthlyNetIncome * 3) {
       score -= 10;
-      pushUnique(triggers, "sleeping_capital");
-      pushUnique(
-        insights,
-        "You have meaningful capital, but almost none of it is structurally working for you."
-      );
+      triggers.push("sleeping_capital");
+      insights.push("You have meaningful capital, but almost none of it is structurally working for you.");
     }
 
     score = clamp(Math.round(score), 0, 100);
 
-    let categoryKey = "structural_leakage";
+    var categoryKey = "structural_leakage";
 
     if (score < 25) {
       categoryKey = "financial_chaos";
@@ -214,77 +214,33 @@
       categoryKey = "wealth_builder";
     }
 
-    const category =
-      window.ROAST_DATA.categories.find((c) => c.key === categoryKey) || null;
+    var headlines = (window.ROAST_DATA && window.ROAST_DATA.headlines) || {};
+    var shareLines = (window.ROAST_DATA && window.ROAST_DATA.shareLines) || {};
 
-    const headline = pickFromGroup(window.ROAST_DATA.headlines, categoryKey);
-    const shareLine = pickFromGroup(window.ROAST_DATA.shareLines, categoryKey);
-
-    const roastBullets = [];
-
-    triggers.forEach((trigger) => {
-      const line = pickFromGroup(window.ROAST_DATA.roastBullets, trigger);
-      pushUnique(roastBullets, line);
-    });
-
-    if (score >= 75) {
-      pushUnique(
-        roastBullets,
-        pickFromGroup(window.ROAST_DATA.roastBullets, "good_structure")
-      );
-      pushUnique(
-        roastBullets,
-        pickFromGroup(window.ROAST_DATA.roastBullets, "decent_buffer")
-      );
-    }
-
-    while (roastBullets.length < 3) {
-      pushUnique(roastBullets, pickRandom(window.ROAST_DATA.fallbackRoasts));
-    }
-
-    let nextMove = pickRandom(window.ROAST_DATA.nextMoves.balanced);
-
-    if (triggers.includes("low_wealth_allocation")) {
-      nextMove = pickRandom(window.ROAST_DATA.nextMoves.low_wealth_allocation);
-    } else if (triggers.includes("high_fixed_cost_load")) {
-      nextMove = pickRandom(window.ROAST_DATA.nextMoves.high_fixed_cost_load);
-    } else if (triggers.includes("high_debt_pressure")) {
-      nextMove = pickRandom(window.ROAST_DATA.nextMoves.high_debt_pressure);
-    } else if (triggers.includes("low_buffer")) {
-      nextMove = pickRandom(window.ROAST_DATA.nextMoves.low_buffer);
-    } else if (triggers.includes("sleeping_capital")) {
-      nextMove = pickRandom(window.ROAST_DATA.nextMoves.sleeping_capital);
-    } else if (triggers.includes("no_investing")) {
-      nextMove = pickRandom(window.ROAST_DATA.nextMoves.no_investing);
-    }
-
-    const academyTags = [
-      ...new Set(
-        triggers.flatMap((trigger) => window.ROAST_DATA.academyTags[trigger] || [])
-      )
-    ];
+    var headline = getRandomFromMap(headlines, categoryKey, "Your money structure needs more intention.");
+    var shareLine = getRandomFromMap(shareLines, categoryKey, headline);
 
     return {
-      score,
-      category: category ? category.label : "Structural Leakage",
-      categoryKey,
-      headline,
-      shareLine: shareLine || headline,
-      roastBullets: roastBullets.slice(0, 3),
+      score: score,
+      category: getCategoryLabel(categoryKey),
+      categoryKey: categoryKey,
+      headline: headline,
+      shareLine: shareLine,
+      roastBullets: buildRoastBullets(triggers, score),
       insights: insights.slice(0, 3),
-      nextMove,
-      academyTags,
-      triggers,
+      nextMove: getNextMove(triggers),
+      academyTags: getUniqueTags(triggers),
+      triggers: triggers,
       metrics: {
-        wealthAllocationPct,
-        fixedCostPct,
-        bufferMonths,
-        investableCapital
+        wealthAllocationPct: wealthAllocationPct,
+        fixedCostPct: fixedCostPct,
+        bufferMonths: bufferMonths,
+        investableCapital: investableCapital
       }
     };
   }
 
   window.RoastEngine = {
-    calculateRoast
+    calculateRoast: calculateRoast
   };
 })();
