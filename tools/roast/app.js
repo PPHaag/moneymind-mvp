@@ -78,7 +78,20 @@
 })();
 const shareLine = document.getElementById("shareLine");
 
-function updateShareText(result){
+function renderResult(result){
+
+  scoreValue.textContent = result.score;
+  scoreLabel.textContent = result.category;
+  headline.textContent = result.headline;
+
+  nextMoveText.textContent = result.nextMove;
+
+  renderList(roastBullets,result.roastBullets);
+  renderList(insightBullets,result.insights);
+
+  updateShareText(result);
+
+}
 
   const text =
 `MoneyMind Roast Result:
