@@ -31,14 +31,19 @@
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  function getFieldValue(id) {
+    const el = document.getElementById(id);
+    return el ? el.value : 0;
+  }
+
   function getFormData() {
     return {
-      monthlyNetIncome: document.getElementById("monthlyNetIncome")?.value || 0,
-      savings: document.getElementById("savings")?.value || 0,
-      investments: document.getElementById("investments")?.value || 0,
-      debt: document.getElementById("debt")?.value || 0,
-      fixedExpenses: document.getElementById("fixedExpenses")?.value || 0,
-      monthlyWealthBuilding: document.getElementById("monthlyWealthBuilding")?.value || 0
+      monthlyNetIncome: getFieldValue("monthlyNetIncome"),
+      savings: getFieldValue("savings"),
+      investments: getFieldValue("investments"),
+      debt: getFieldValue("debt"),
+      fixedExpenses: getFieldValue("fixedExpenses"),
+      monthlyWealthBuilding: getFieldValue("monthlyWealthBuilding")
     };
   }
 
@@ -46,7 +51,7 @@
     if (!container) return;
     container.innerHTML = "";
 
-    items.forEach((item) => {
+    (items || []).forEach((item) => {
       const li = document.createElement("li");
       li.textContent = item;
       container.appendChild(li);
@@ -59,43 +64,43 @@
     const encodedUrl = encodeURIComponent(appUrl);
 
     if (shareLinkedIn) {
-      shareLinkedIn.onclick = () => {
+      shareLinkedIn.onclick = function () {
         const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
         window.open(url, "_blank");
       };
     }
 
     if (shareTwitter) {
-      shareTwitter.onclick = () => {
+      shareTwitter.onclick = function () {
         const url = `https://twitter.com/intent/tweet?text=${encodedText}`;
         window.open(url, "_blank");
       };
     }
 
     if (shareWhatsApp) {
-      shareWhatsApp.onclick = () => {
+      shareWhatsApp.onclick = function () {
         const url = `https://wa.me/?text=${encodedText}`;
         window.open(url, "_blank");
       };
     }
 
     if (copyResult) {
-      copyResult.onclick = async () => {
+      copyResult.onclick = async function () {
         try {
           await navigator.clipboard.writeText(text);
           alert("Result copied");
         } catch (error) {
+          console.error("Copy failed:", error);
           alert("Copy failed");
-          console.error(error);
         }
       };
     }
   }
 
- function updateShareText(result) {
-  const verdict = result.shareLine || result.headline;
+  function updateShareText(result) {
+    const verdict = result.shareLine || result.headline;
 
-  const text = `MoneyMind Roast Result:
+    const text = `MoneyMind Roast Result:
 
 ${verdict}
 
@@ -105,20 +110,22 @@ Category: ${result.category}
 Try the Roast Tool:
 https://moneymind-mvp-five.vercel.app/`;
 
-  if (shareLine) {
-    shareLine.textContent = `"${verdict}"`;
+    if (shareLine) {
+      shareLine.textContent = `"${verdict}"`;
+    }
+
+    setupShareButtons(text);
   }
 
-  setupShareButtons(text);
-}
   function renderResult(result) {
     if (scoreValue) scoreValue.textContent = result.score;
     if (scoreLabel) scoreLabel.textContent = result.category;
     if (headline) headline.textContent = result.headline;
     if (nextMoveText) nextMoveText.textContent = result.nextMove;
 
-    renderList(roastBullets, result.roastBullets || []);
-    renderList(insightBullets, result.insights || []);
+    renderList(roastBullets, result.roastBullets);
+    renderList(insightBullets, result.insights);
+
     updateShareText(result);
   }
 
@@ -145,11 +152,16 @@ https://moneymind-mvp-five.vercel.app/`;
     roastForm.addEventListener("submit", function (event) {
       event.preventDefault();
 
-      const formData = getFormData();
-      const result = window.RoastEngine.calculateRoast(formData);
+      try {
+        const formData = getFormData();
+        const result = window.RoastEngine.calculateRoast(formData);
 
-      renderResult(result);
-      showScreen(resultScreen);
+        renderResult(result);
+        showScreen(resultScreen);
+      } catch (error) {
+        console.error("Roast generation failed:", error);
+        alert("Something went wrong while generating your roast.");
+      }
     });
   }
 
