@@ -76,3 +76,64 @@
     showScreen(resultScreen);
   });
 })();
+const shareLine = document.getElementById("shareLine");
+
+function updateShareText(result){
+
+  const text =
+`MoneyMind Roast Result:
+
+${result.headline}
+
+Score: ${result.score}/100
+
+Try the Roast Tool:
+https://moneymind-mvp-five.vercel.app/`;
+
+  shareLine.textContent = `"${result.headline}"`;
+
+  setupShareButtons(text);
+
+}
+
+
+function setupShareButtons(text){
+
+  const encoded = encodeURIComponent(text);
+
+  document.getElementById("shareLinkedIn").onclick = () => {
+
+    const url =
+`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent("https://moneymind-mvp-five.vercel.app/")}`;
+
+    window.open(url,"_blank");
+
+  };
+
+  document.getElementById("shareTwitter").onclick = () => {
+
+    const url =
+`https://twitter.com/intent/tweet?text=${encoded}`;
+
+    window.open(url,"_blank");
+
+  };
+
+  document.getElementById("shareWhatsApp").onclick = () => {
+
+    const url =
+`https://wa.me/?text=${encoded}`;
+
+    window.open(url,"_blank");
+
+  };
+
+  document.getElementById("copyResult").onclick = () => {
+
+    navigator.clipboard.writeText(text);
+
+    alert("Result copied");
+
+  };
+
+}
