@@ -11,142 +11,146 @@
   const scoreValue = document.getElementById("scoreValue");
   const scoreLabel = document.getElementById("scoreLabel");
   const headline = document.getElementById("headline");
+  const shareLine = document.getElementById("shareLine");
   const roastBullets = document.getElementById("roastBullets");
   const insightBullets = document.getElementById("insightBullets");
   const nextMoveText = document.getElementById("nextMoveText");
 
+  const shareLinkedIn = document.getElementById("shareLinkedIn");
+  const shareTwitter = document.getElementById("shareTwitter");
+  const shareWhatsApp = document.getElementById("shareWhatsApp");
+  const copyResult = document.getElementById("copyResult");
+
   function showScreen(screen) {
-    [introScreen, formScreen, resultScreen].forEach(section => {
-      section.classList.remove("active");
+    [introScreen, formScreen, resultScreen].forEach((section) => {
+      if (section) section.classList.remove("active");
     });
-    screen.classList.add("active");
+
+    if (screen) screen.classList.add("active");
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function getFormData() {
     return {
-      monthlyNetIncome: document.getElementById("monthlyNetIncome").value,
-      savings: document.getElementById("savings").value,
-      investments: document.getElementById("investments").value,
-      debt: document.getElementById("debt").value,
-      fixedExpenses: document.getElementById("fixedExpenses").value,
-      monthlyWealthBuilding: document.getElementById("monthlyWealthBuilding").value
+      monthlyNetIncome: document.getElementById("monthlyNetIncome")?.value || 0,
+      savings: document.getElementById("savings")?.value || 0,
+      investments: document.getElementById("investments")?.value || 0,
+      debt: document.getElementById("debt")?.value || 0,
+      fixedExpenses: document.getElementById("fixedExpenses")?.value || 0,
+      monthlyWealthBuilding: document.getElementById("monthlyWealthBuilding")?.value || 0
     };
   }
 
   function renderList(container, items) {
+    if (!container) return;
     container.innerHTML = "";
-    items.forEach(item => {
+
+    items.forEach((item) => {
       const li = document.createElement("li");
       li.textContent = item;
       container.appendChild(li);
     });
   }
 
-  function renderResult(result) {
-    scoreValue.textContent = result.score;
-    scoreLabel.textContent = result.category;
-    headline.textContent = result.headline;
-    nextMoveText.textContent = result.nextMove;
+  function setupShareButtons(text) {
+    const appUrl = "https://moneymind-mvp-five.vercel.app/";
+    const encodedText = encodeURIComponent(text);
+    const encodedUrl = encodeURIComponent(appUrl);
 
-    renderList(roastBullets, result.roastBullets);
-    renderList(insightBullets, result.insights);
+    if (shareLinkedIn) {
+      shareLinkedIn.onclick = () => {
+        const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
+        window.open(url, "_blank");
+      };
+    }
+
+    if (shareTwitter) {
+      shareTwitter.onclick = () => {
+        const url = `https://twitter.com/intent/tweet?text=${encodedText}`;
+        window.open(url, "_blank");
+      };
+    }
+
+    if (shareWhatsApp) {
+      shareWhatsApp.onclick = () => {
+        const url = `https://wa.me/?text=${encodedText}`;
+        window.open(url, "_blank");
+      };
+    }
+
+    if (copyResult) {
+      copyResult.onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(text);
+          alert("Result copied");
+        } catch (error) {
+          alert("Copy failed");
+          console.error(error);
+        }
+      };
+    }
   }
 
-  startRoastBtn.addEventListener("click", function () {
-    showScreen(formScreen);
-  });
-
-  backToIntroBtn.addEventListener("click", function () {
-    showScreen(introScreen);
-  });
-
-  restartBtn.addEventListener("click", function () {
-    roastForm.reset();
-    showScreen(introScreen);
-  });
-
-  roastForm.addEventListener("submit", function (event) {
-    event.preventDefault();
-
-    const formData = getFormData();
-    const result = window.RoastEngine.calculateRoast(formData);
-
-    renderResult(result);
-    showScreen(resultScreen);
-  });
-})();
-const shareLine = document.getElementById("shareLine");
-
-function renderResult(result){
-
-  scoreValue.textContent = result.score;
-  scoreLabel.textContent = result.category;
-  headline.textContent = result.headline;
-
-  nextMoveText.textContent = result.nextMove;
-
-  renderList(roastBullets,result.roastBullets);
-  renderList(insightBullets,result.insights);
-
-  updateShareText(result);
-
-}
-
-  const text =
-`MoneyMind Roast Result:
+  function updateShareText(result) {
+    const text = `MoneyMind Roast Result:
 
 ${result.headline}
 
 Score: ${result.score}/100
+Category: ${result.category}
 
 Try the Roast Tool:
 https://moneymind-mvp-five.vercel.app/`;
 
-  shareLine.textContent = `"${result.headline}"`;
+    if (shareLine) {
+      shareLine.textContent = `"${result.headline}"`;
+    }
 
-  setupShareButtons(text);
+    setupShareButtons(text);
+  }
 
-}
+  function renderResult(result) {
+    if (scoreValue) scoreValue.textContent = result.score;
+    if (scoreLabel) scoreLabel.textContent = result.category;
+    if (headline) headline.textContent = result.headline;
+    if (nextMoveText) nextMoveText.textContent = result.nextMove;
 
+    renderList(roastBullets, result.roastBullets || []);
+    renderList(insightBullets, result.insights || []);
+    updateShareText(result);
+  }
 
-function setupShareButtons(text){
+  if (startRoastBtn) {
+    startRoastBtn.addEventListener("click", function () {
+      showScreen(formScreen);
+    });
+  }
 
-  const encoded = encodeURIComponent(text);
+  if (backToIntroBtn) {
+    backToIntroBtn.addEventListener("click", function () {
+      showScreen(introScreen);
+    });
+  }
 
-  document.getElementById("shareLinkedIn").onclick = () => {
+  if (restartBtn) {
+    restartBtn.addEventListener("click", function () {
+      if (roastForm) roastForm.reset();
+      showScreen(introScreen);
+    });
+  }
 
-    const url =
-`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent("https://moneymind-mvp-five.vercel.app/")}`;
+  if (roastForm) {
+    roastForm.addEventListener("submit", function (event) {
+      event.preventDefault();
 
-    window.open(url,"_blank");
+      const formData = getFormData();
+      const result = window.RoastEngine.calculateRoast(formData);
 
-  };
+      renderResult(result);
+      showScreen(resultScreen);
+    });
+  }
 
-  document.getElementById("shareTwitter").onclick = () => {
-
-    const url =
-`https://twitter.com/intent/tweet?text=${encoded}`;
-
-    window.open(url,"_blank");
-
-  };
-
-  document.getElementById("shareWhatsApp").onclick = () => {
-
-    const url =
-`https://wa.me/?text=${encoded}`;
-
-    window.open(url,"_blank");
-
-  };
-
-  document.getElementById("copyResult").onclick = () => {
-
-    navigator.clipboard.writeText(text);
-
-    alert("Result copied");
-
-  };
-
-}
+  console.log("Roast Tool app.js loaded");
+})();
