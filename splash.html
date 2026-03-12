@@ -243,31 +243,31 @@
     </div>
   </main>
 
-  <script>
-    const roastUrl = "/tools/roast/index.html";
-    const startBtn = document.getElementById("startRoastBtn");
-    const redirectMessage = document.getElementById("redirectMessage");
+<script>
+  const roastUrl = "tools/roast/index.html"; // pas aan als nodig
+  const startBtn = document.getElementById("startRoastBtn");
+  const redirectMessage = document.getElementById("redirectMessage");
 
-    let secondsLeft = 15;
+  let secondsLeft = 15;
 
-    const countdown = setInterval(() => {
-      secondsLeft -= 1;
+  const countdown = setInterval(() => {
+    secondsLeft -= 1;
 
-      if (secondsLeft > 0) {
-        redirectMessage.textContent =
-          `Starting the Financial Roast automatically in ${secondsLeft} seconds…`;
-      }
-    }, 1000);
+    if (secondsLeft > 0) {
+      redirectMessage.textContent =
+        `Starting the Financial Roast automatically in ${secondsLeft} seconds…`;
+    }
+  }, 1000);
 
-    const redirectTimer = setTimeout(() => {
-      window.location.href = roastUrl;
-    }, 15000);
+  const redirectTimer = setTimeout(() => {
+    window.location.href = roastUrl;
+  }, 15000);
 
-    startBtn.addEventListener("click", () => {
-      clearTimeout(redirectTimer);
-      clearInterval(countdown);
-    });
-  </script>
+  startBtn.addEventListener("click", () => {
+    clearTimeout(redirectTimer);
+    clearInterval(countdown);
+  });
+</script>
 
 </body>
 </html>
