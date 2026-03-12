@@ -1,389 +1,169 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <title>The Roast Tool | MoneyMind</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MoneyMind Roast</title>
+  <link rel="stylesheet" href="./style.css">
 </head>
-
 <body>
+  <main class="app-shell">
+    <section class="screen active" id="introScreen">
+      <div class="card hero-card">
+        <div class="eyebrow">MoneyMind • Financial Roast</div>
+        <h1>Let’s take a brutally honest look at your financial life.</h1>
+        <p class="lead">
+          Answer a few quick questions and discover what your money structure
+          may be doing behind your back.
+        </p>
 
-<div class="app-shell">
+        <div class="hero-points">
+          <div class="pill">~ 60 seconds</div>
+          <div class="pill">No signup</div>
+          <div class="pill">Step 1 of 5</div>
+        </div>
 
-  <header class="topbar">
-    <div class="brand">MoneyMind</div>
-    <a href="/splash.html" class="back-link">Back</a>
-  </header>
-
-
-  <main class="container">
-
-    <!-- INTRO SCREEN -->
-
-    <section id="introScreen" class="screen active card hero-card">
-
-      <div class="eyebrow">MoneyMind Tool</div>
-
-      <h1>The Roast Tool</h1>
-
-      <p class="hero-subtitle">
-        A brutally honest financial mirror.
-      </p>
-
-      <p class="hero-copy">
-        Not to shame you — to wake up your money structure.
-      </p>
-
-      <div class="hero-points">
-        <div class="point">Fast</div>
-        <div class="point">Sharp</div>
-        <div class="point">Actually useful</div>
+        <button class="btn btn-primary btn-lg" id="startBtn">
+          Start My Financial Roast
+        </button>
       </div>
-
-      <button id="startRoastBtn" class="btn btn-primary">
-        Roast My Finances
-      </button>
-
     </section>
 
-
-
-    <!-- INPUT SCREEN -->
-
-    <section id="formScreen" class="screen card">
-
-      <div class="section-header">
-
-        <div class="eyebrow">Step 1</div>
-
-        <h2>Your Financial Snapshot</h2>
-
-        <p>Fill in all 6 fields for the most accurate roast.</p>
-
+    <section class="screen" id="questionScreen">
+      <div class="topbar">
+        <button class="ghost-btn" id="backBtn" type="button">← Back</button>
+        <div class="progress-wrap">
+          <div class="progress-meta">
+            <span id="progressText">Question 1 of 5</span>
+            <span id="progressPct">20%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
       </div>
 
-
-
-      <form id="roastForm" class="form-grid">
-
-
-        <!-- INCOME -->
-
-        <div class="field">
-
-          <label for="monthlyNetIncome">
-            Monthly net income (€)
-
-            <span class="tooltip" tabindex="0">
-              ?
-              <span class="tooltip-text">
-                Your monthly income after taxes and payroll deductions.
-              </span>
-            </span>
-
-          </label>
-
-          <input
-            type="number"
-            id="monthlyNetIncome"
-            min="0"
-            step="1"
-            placeholder="3500"
-            required
-          >
-
-        </div>
-
-
-        <!-- SAVINGS -->
-
-        <div class="field">
-
-          <label for="savings">
-            Savings (€)
-
-            <span class="tooltip" tabindex="0">
-              ?
-              <span class="tooltip-text">
-                Cash you can access directly such as money in your bank or savings account.
-              </span>
-            </span>
-
-          </label>
-
-          <input
-            type="number"
-            id="savings"
-            min="0"
-            step="1"
-            placeholder="12000"
-            required
-          >
-
-        </div>
-
-
-        <!-- INVESTMENTS -->
-
-        <div class="field">
-
-          <label for="investments">
-            Investments (€)
-
-            <span class="tooltip" tabindex="0">
-              ?
-              <span class="tooltip-text">
-                Money invested in stocks, ETFs, crypto, funds, or other growth assets.
-              </span>
-            </span>
-
-          </label>
-
-          <input
-            type="number"
-            id="investments"
-            min="0"
-            step="1"
-            placeholder="25000"
-            required
-          >
-
-        </div>
-
-
-        <!-- DEBT -->
-
-        <div class="field">
-
-          <label for="debt">
-            Debt (€)
-
-            <span class="tooltip" tabindex="0">
-              ?
-              <span class="tooltip-text">
-                Your total outstanding personal debt. Exclude mortgage if you want to keep it simple.
-              </span>
-            </span>
-
-          </label>
-
-          <input
-            type="number"
-            id="debt"
-            min="0"
-            step="1"
-            placeholder="8000"
-            required
-          >
-
-        </div>
-
-
-        <!-- FIXED EXPENSES -->
-
-        <div class="field">
-
-          <label for="fixedExpenses">
-            Monthly fixed expenses (€)
-
-            <span class="tooltip" tabindex="0">
-              ?
-              <span class="tooltip-text">
-                Recurring monthly costs such as rent/mortgage, utilities, insurance, subscriptions and loans.
-              </span>
-            </span>
-
-          </label>
-
-          <input
-            type="number"
-            id="fixedExpenses"
-            min="0"
-            step="1"
-            placeholder="2100"
-            required
-          >
-
-        </div>
-
-
-        <!-- WEALTH BUILDING -->
-
-        <div class="field">
-
-          <label for="monthlyWealthBuilding">
-            Monthly wealth building (€)
-
-            <span class="tooltip" tabindex="0">
-              ?
-              <span class="tooltip-text">
-                The amount you actively put toward investing, saving or structural debt reduction each month.
-              </span>
-            </span>
-
-          </label>
-
-          <input
-            type="number"
-            id="monthlyWealthBuilding"
-            min="0"
-            step="1"
-            placeholder="400"
-            required
-          >
-
-        </div>
-
-
-        <!-- ACTION BUTTONS -->
-
-        <div class="actions">
-
-          <button
-            type="button"
-            id="backToIntroBtn"
-            class="btn btn-secondary"
-          >
-            Back
-          </button>
-
-          <button
-            type="submit"
-            class="btn btn-primary"
-          >
-            Generate My Roast
-          </button>
-
-        </div>
-
-      </form>
-
+      <div class="card question-card">
+        <div class="eyebrow" id="questionEyebrow">MoneyMind Roast</div>
+        <h2 id="questionTitle">Question title</h2>
+        <p class="muted" id="questionHint">Choose the option that fits best.</p>
+        <div class="options" id="optionsContainer"></div>
+      </div>
     </section>
 
+    <section class="screen" id="loadingScreen">
+      <div class="card loading-card">
+        <div class="eyebrow">MoneyMind Analysis</div>
+        <h2>Analyzing your financial DNA...</h2>
+        <div class="loader"></div>
 
-
-    <!-- RESULT SCREEN -->
-
-    <section id="resultScreen" class="screen card">
-
-      <div class="section-header">
-
-        <div class="eyebrow">Your Result</div>
-
-        <h2>Your Financial Roast</h2>
-<div class="verdict-card">
-
-  <div class="verdict-label">
-    Financial Verdict
-  </div>
-
-  <p id="shareLine" class="verdict-text"></p>
-
-  <div class="share-buttons">
-
-    <button id="shareLinkedIn" class="btn btn-secondary">
-      Share on LinkedIn
-    </button>
-
-    <button id="shareTwitter" class="btn btn-secondary">
-      Share on X
-    </button>
-
-    <button id="shareWhatsApp" class="btn btn-secondary">
-      Share on WhatsApp
-    </button>
-
-    <button id="copyResult" class="btn btn-secondary">
-      Copy Result
-    </button>
-
-  </div>
-
-</div>
+        <div class="scan-list">
+          <div class="scan-item">Income pattern</div>
+          <div class="scan-item">Capital formation</div>
+          <div class="scan-item">Wealth trajectory</div>
+          <div class="scan-item">Behavior profile</div>
+        </div>
       </div>
+    </section>
 
+    <section class="screen" id="resultScreen">
+      <div class="result-stack">
+        <div class="card hero-result">
+          <div class="eyebrow">Your MoneyMind Roast</div>
+          <h2 id="headlineText"></h2>
+          <p class="lead result-lead" id="observationText"></p>
 
-
-      <div class="score-wrap">
-
-        <div class="score-circle">
-          <span id="scoreValue">0</span>
-          <small>/100</small>
+          <div class="metric-grid">
+            <div class="metric-card">
+              <span class="metric-label">Monthly Income</span>
+              <span class="metric-value" id="incomeText"></span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label">Monthly Investing</span>
+              <span class="metric-value" id="investText"></span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-label">Investment Rate</span>
+              <span class="metric-value" id="investRateText"></span>
+            </div>
+          </div>
         </div>
 
-        <div class="score-meta">
+        <div class="card personality-card">
+          <div class="eyebrow">Your MoneyMind Profile</div>
+          <div class="profile-badge" id="profileName"></div>
+          <p class="profile-copy" id="profileDescription"></p>
+          <div class="insight-callout">
+            <strong>Opportunity</strong>
+            <p id="profileOpportunity"></p>
+          </div>
+        </div>
 
-          <div id="scoreLabel" class="score-label">
-            Structural Leakage
+        <div class="card trajectory-card">
+          <div class="eyebrow">Wealth Trajectory</div>
+          <h3>The gap between your current path and your optimized path</h3>
+
+          <div class="trajectory-grid">
+            <div class="trajectory-box">
+              <span class="trajectory-label">Current trajectory</span>
+              <span class="trajectory-big" id="currentWealthText"></span>
+              <span class="trajectory-sub" id="currentAgeText"></span>
+            </div>
+
+            <div class="trajectory-box optimized">
+              <span class="trajectory-label">Optimized trajectory</span>
+              <span class="trajectory-big" id="optimizedWealthText"></span>
+              <span class="trajectory-sub" id="optimizedAgeText"></span>
+            </div>
           </div>
 
-          <p id="headline" class="headline"></p>
-
+          <div class="difference-box">
+            <span class="difference-label">Potential wealth difference</span>
+            <span class="difference-value" id="wealthDifferenceText"></span>
+          </div>
         </div>
 
+        <div class="card behavior-card">
+          <div class="eyebrow">Behavior Insight</div>
+          <h3 id="behaviorTitle"></h3>
+          <p id="behaviorText"></p>
+          <button class="btn btn-secondary" id="lessonBtn" type="button">
+            Learn this concept (3 min)
+          </button>
+        </div>
+
+        <div class="card next-step-card">
+          <div>
+            <div class="eyebrow">Your next step</div>
+            <h3>See how your wealth is structured.</h3>
+            <p class="muted">
+              Your Roast is the wake-up call. Your Capital Map is where the real clarity starts.
+            </p>
+          </div>
+
+          <a class="btn btn-primary btn-lg" href="/tools/capital-map/index.html">
+            See Your Capital Map
+          </a>
+        </div>
+
+        <div class="card share-card">
+          <div class="eyebrow">Shareable Result</div>
+          <div class="share-preview" id="sharePreview"></div>
+          <div class="share-actions">
+            <button class="btn btn-secondary" id="copyShareBtn" type="button">
+              Copy Result
+            </button>
+            <button class="btn btn-secondary" id="restartBtn" type="button">
+              Roast Again
+            </button>
+          </div>
+        </div>
       </div>
-
-
-
-      <div class="result-grid">
-
-        <div class="result-block">
-
-          <h3>Roast</h3>
-
-          <ul id="roastBullets" class="result-list"></ul>
-
-        </div>
-
-
-        <div class="result-block">
-
-          <h3>Structural Insight</h3>
-
-          <ul id="insightBullets" class="result-list"></ul>
-
-        </div>
-
-
-        <div class="result-block result-block-full">
-
-          <h3>Next Move</h3>
-
-          <p id="nextMoveText" class="next-move"></p>
-
-        </div>
-
-      </div>
-
-
-
-      <div class="result-footer">
-
-        <button id="restartBtn" class="btn btn-secondary">
-          Roast Again
-        </button>
-
-        <a href="/tools/boarding/index.html" class="btn btn-primary">
-          Continue to MoneyMind
-        </a>
-
-      </div>
-
     </section>
-
-
   </main>
 
-</div>
-
-
-
-<script src="data.js"></script>
-<script src="engine.js"></script>
-<script src="app.js"></script>
-
+  <script src="./data.js"></script>
+  <script src="./engine.js"></script>
+  <script src="./app.js"></script>
 </body>
 </html>
