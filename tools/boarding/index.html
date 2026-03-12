@@ -1,109 +1,119 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MoneyMind – Boarding</title>
-  <link rel="stylesheet" href="./style.css">
+  <title>MoneyMind • Boarding</title>
+  <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
 
-<div id="mmErrorBox" style="display:none; margin:12px; padding:12px; border-radius:12px; border:1px solid rgba(255,80,80,.35); background: rgba(255,80,80,.12); color:#ffd1d1; font-family: ui-sans-serif,system-ui; white-space: pre-wrap;"></div>
+  <div id="mmErrorBox" style="display:none; margin:12px; padding:12px; border-radius:12px; border:1px solid rgba(255,80,80,.35); background: rgba(255,80,80,.12); color:#ffd1d1; font-family: ui-sans-serif,system-ui; white-space: pre-wrap;"></div>
 
-<a class="mm-back" href="/hub.html">← Back to Hub</a>
+  <div class="mm-wrap">
 
-  <header class="hero">
-    <h1>MoneyMind Boarding</h1>
-    <p class="sub">Bouw je profiel in 60 seconden. Geen login. Geen gedoe.</p>
-  </header>
+    <a class="mm-back" href="/tools/roast/">← Back</a>
 
-  <section class="card" id="wizardCard">
-    <div class="topbar">
-      <div class="progressWrap">
-        <div class="progressLabel">
-          <span id="stepLabel">Stap 1</span> van <span id="stepTotal">6</span>
+    <header class="hero">
+      <div class="mm-kicker">MoneyMind Onboarding</div>
+      <h1>Your financial starting point</h1>
+      <p class="sub">
+        A few quick inputs help MoneyMind understand where you are today — so your next insights actually make sense.
+      </p>
+    </header>
+
+    <section class="card" id="wizardCard">
+
+      <div class="topbar">
+        <div class="progressWrap">
+          <div class="progressLabel">
+            <span id="stepLabel">Step 1</span> of <span id="stepTotal">6</span>
+          </div>
+          <div class="progress">
+            <div class="progressFill" id="progressFill"></div>
+          </div>
         </div>
-        <div class="progress">
-          <div class="progressFill" id="progressFill"></div>
+
+        <button class="linkBtn" id="loadBtn" title="Load previously saved profile">
+          Load profile
+        </button>
+      </div>
+
+      <div class="introBox">
+        <div class="introLabel">Why this matters</div>
+        <div class="introText">
+          MoneyMind is not just showing numbers. It is helping you understand the language of money — step by step, from structure to allocation, leakage, and growth.
         </div>
       </div>
 
-      <button class="linkBtn" id="loadBtn" title="Laad eerder opgeslagen profiel">
-        Laad profiel
-      </button>
-    </div>
+      <div id="steps"></div>
 
-    <div id="steps"></div>
-
-    <div class="nav">
-      <button id="backBtn" class="secondary">Terug</button>
-      <button id="nextBtn">Volgende</button>
-    </div>
-
-    <p class="note" id="note"></p>
-  </section>
-
-  <section class="card" id="resultCard" style="display:none;">
-    <h2>Jouw MoneyMind profiel</h2>
-
-    <div class="resultsGrid">
-      <div class="resultBox">
-        <div class="label">Profieltype</div>
-        <div class="value" id="profileType">—</div>
+      <div class="nav">
+        <button id="backBtn" class="secondary">Back</button>
+        <button id="nextBtn">Continue</button>
       </div>
 
-      <div class="resultBox">
-        <div class="label">Primary focus</div>
-        <div class="value" id="primaryFocus">—</div>
+      <p class="note" id="note"></p>
+    </section>
+
+    <section class="card" id="resultCard" style="display:none;">
+      <div class="mm-kicker">MoneyMind Profile</div>
+      <h2>Your MoneyMind starting profile</h2>
+      <p class="sub">
+        This is your current starting point inside MoneyMind. It helps determine what you should understand first.
+      </p>
+
+      <div class="resultsGrid">
+        <div class="resultBox">
+          <div class="label">Profile type</div>
+          <div class="value" id="profileType">—</div>
+        </div>
+
+        <div class="resultBox">
+          <div class="label">Primary focus</div>
+          <div class="value" id="primaryFocus">—</div>
+        </div>
+
+        <div class="resultBox highlight">
+          <div class="label">Recommended next step</div>
+          <div class="value" id="nextStep">—</div>
+          <div class="small" id="nextStepNote">—</div>
+        </div>
+
+        <div class="resultBox">
+          <div class="label">Profile status</div>
+          <div class="value" id="saveStatus">—</div>
+          <div class="small">Saved locally in your browser.</div>
+        </div>
       </div>
 
-      <div class="resultBox highlight">
-        <div class="label">Aanbevolen volgende stap</div>
-        <div class="value" id="nextStep">—</div>
-        <div class="small" id="nextStepNote">—</div>
+      <div class="insightBox">
+        <div class="insightLabel">What happens next</div>
+        <div class="insightText">
+          MoneyMind will now guide you through your capital structure, allocation, and wealth leakage — so you can understand where your money stands today and what to improve first.
+        </div>
       </div>
 
-      <div class="resultBox">
-        <div class="label">Opslag</div>
-        <div class="value" id="saveStatus">—</div>
-        <div class="small">Opgeslagen in je browser (localStorage).</div>
+      <div class="actions">
+        <a id="goCapitalMapBtn" class="mm-btn" href="/tools/capital-map/">
+          Continue to Capital Map
+        </a>
+
+        <button id="restartBtn" class="secondary">Start Again</button>
       </div>
-    </div>
 
-    <div class="actions">
-      <button id="copyProfileBtn">Kopieer profiel JSON</button>
-      <button id="restartBtn" class="secondary">Opnieuw</button>
-    </div>
+      <details class="details devOnly">
+        <summary>Developer view: raw profile data</summary>
+        <pre id="profileJson" class="code">—</pre>
+      </details>
+    </section>
 
-    <details class="details">
-      <summary>Toon ruwe profieldata</summary>
-      <pre id="profileJson" class="code">—</pre>
-    </details>
+    <footer class="footer">
+      <span>MoneyMind MVP • Boarding</span>
+    </footer>
 
-    <div class="divider"></div>
+  </div>
 
-    <h3>Ga door naar tools</h3>
-    <p class="sub">Deze knoppen gebruiken je opgeslagen profiel om tools later te personaliseren.</p>
-<div class="actions">
-  <a id="goWealthBuilderBtn" class="mm-btn" href="#" onclick="alert('Wealth Builder coming soon'); return false;">
-    Open Wealth Builder
-  </a>
-
-  <a id="goLeakageBtn" class="mm-btn secondary" href="/tools/leakage/">
-    Open Wealth Leakage
-  </a>
-</div>
-
-    <p class="note">Tip: in V2 laten we tools automatisch prefillen op basis van dit profiel.</p>
-  </section>
-
-  <footer class="footer">
-    <span>MoneyMind MVP • Boarding Wizard</span>
-  </footer>
-</div>
-
-
-
-<script src="./app.js" defer></script>
+  <script src="./app.js" defer></script>
 </body>
 </html>
