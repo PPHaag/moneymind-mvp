@@ -1,242 +1,272 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MoneyMind • Capital Map</title>
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-  <div class="mm-wrap">
+  <main class="mm-shell">
+    <div class="mm-wrap">
 
-    <div class="mm-toolnav">
-      <a href="../capital-map/" class="active">Capital Map</a>
-      <a href="../allocation/">Allocation</a>
-      <a href="../leakage/">Leakage</a>
-      <a href="../cost-of-delay/">Cost of Delay</a>
-      <a href="../builder/">Builder</a>
-    </div>
+      <nav class="mm-toolnav">
+        <a href="../capital-map/" class="active">Capital Map</a>
+        <a href="../allocation/">Allocation</a>
+        <a href="../leakage/">Leakage</a>
+        <a href="../cost-of-delay/">Cost of Delay</a>
+        <a href="../builder/">Builder</a>
+      </nav>
 
-    <div class="mm-card mm-hero">
+      <section class="mm-card mm-hero">
+        <div class="mm-eyebrow">MoneyMind • Step 2 of 5</div>
+        <h1>Your Capital Map</h1>
+        <p class="mm-lead">
+          Map where your capital currently sits. Understanding your asset base
+          is the first step toward making better financial decisions.
+        </p>
+        <p class="mm-helperIntro">
+          Use approximate current values. Perfect precision is not required — clarity is.
+        </p>
+      </section>
 
-      <h1>Capital Map</h1>
+      <section class="mm-card mm-roastImport" id="roastProfileCard" style="display:none;">
+        <div class="mm-eyebrow">Imported from your Roast</div>
+        <div class="mm-roastTop">
+          <div>
+            <h2 id="profileName">Your profile</h2>
+            <p id="profileText" class="mm-muted"></p>
+          </div>
+          <div class="mm-profileBadge" id="profileBadge">Profile</div>
+        </div>
 
-      <p>
-        Map where your capital currently sits. Understanding your asset base
-        is the first step toward making better financial decisions.
-      </p>
+        <div class="mm-summaryGrid">
+          <div class="mm-summaryCard">
+            <span class="mm-summaryLabel">Monthly income</span>
+            <span class="mm-summaryValue" id="roastIncomeValue">€0</span>
+          </div>
+          <div class="mm-summaryCard">
+            <span class="mm-summaryLabel">Monthly investing</span>
+            <span class="mm-summaryValue" id="roastInvestValue">€0</span>
+          </div>
+          <div class="mm-summaryCard">
+            <span class="mm-summaryLabel">Roast profile</span>
+            <span class="mm-summaryValue mm-summaryValueSmall" id="roastProfileValue">-</span>
+          </div>
+        </div>
+      </section>
 
-      <p class="mm-helperIntro">
-        Enter the approximate current value of each category.
-      </p>
+      <section class="mm-card mm-formCard">
 
-      <h3>Direct Capital</h3>
+        <div class="mm-sectionHead">
+          <div class="mm-eyebrow">Direct Capital</div>
+          <h3>Capital you can access relatively quickly</h3>
+        </div>
 
-      <div class="mm-grid mm-grid3">
-
-        <div class="mm-field">
-          <label class="mm-label" for="cash">
-            Cash / Savings
-            <span class="mm-info" tabindex="0">?
-              <span class="mm-tooltip">
-                Money in bank accounts or savings that you can access immediately.
+        <div class="mm-grid mm-grid3">
+          <div class="mm-field">
+            <label class="mm-label" for="cash">
+              Cash / Savings
+              <span class="mm-info" tabindex="0">?
+                <span class="mm-tooltip">
+                  Money in bank accounts or savings that you can access immediately.
+                </span>
               </span>
-            </span>
-          </label>
-          <div class="mm-input">
-            <span>€</span>
-            <input id="cash" type="number" value="0" min="0">
+            </label>
+            <div class="mm-input">
+              <span>€</span>
+              <input id="cash" type="number" value="0" min="0">
+            </div>
           </div>
-        </div>
 
-        <div class="mm-field">
-          <label class="mm-label" for="investments">
-            Investments
-            <span class="mm-info" tabindex="0">?
-              <span class="mm-tooltip">
-                Stocks, ETFs or funds that can be sold relatively easily.
+          <div class="mm-field">
+            <label class="mm-label" for="investments">
+              Investments
+              <span class="mm-info" tabindex="0">?
+                <span class="mm-tooltip">
+                  Stocks, ETFs or funds that can be sold relatively easily.
+                </span>
               </span>
-            </span>
-          </label>
-          <div class="mm-input">
-            <span>€</span>
-            <input id="investments" type="number" value="0" min="0">
+            </label>
+            <div class="mm-input">
+              <span>€</span>
+              <input id="investments" type="number" value="0" min="0">
+            </div>
           </div>
-        </div>
 
-        <div class="mm-field">
-          <label class="mm-label" for="crypto">
-            Crypto
-            <span class="mm-info" tabindex="0">?
-              <span class="mm-tooltip">
-                Cryptocurrency holdings at estimated current market value.
+          <div class="mm-field">
+            <label class="mm-label" for="crypto">
+              Crypto
+              <span class="mm-info" tabindex="0">?
+                <span class="mm-tooltip">
+                  Cryptocurrency holdings at estimated current market value.
+                </span>
               </span>
-            </span>
-          </label>
-          <div class="mm-input">
-            <span>€</span>
-            <input id="crypto" type="number" value="0" min="0">
-          </div>
-        </div>
-
-      </div>
-
-      <h3>Accessible Capital</h3>
-
-      <div class="mm-grid mm-grid3">
-
-        <div class="mm-field">
-          <label class="mm-label" for="metals">
-            Precious Metals
-            <span class="mm-info" tabindex="0">?
-              <span class="mm-tooltip">
-                Physical gold or silver owned directly.
-              </span>
-            </span>
-          </label>
-          <div class="mm-input">
-            <span>€</span>
-            <input id="metals" type="number" value="0" min="0">
-          </div>
-        </div>
-
-        <div class="mm-field">
-          <label class="mm-label" for="homeEquity">
-            Home Equity
-            <span class="mm-info" tabindex="0">?
-              <span class="mm-tooltip">
-                Only your equity in the property: home value minus remaining mortgage.
-              </span>
-            </span>
-          </label>
-          <div class="mm-input">
-            <span>€</span>
-            <input id="homeEquity" type="number" value="0" min="0">
-          </div>
-        </div>
-
-        <div class="mm-field">
-          <label class="mm-label" for="equity">
-            Private Equity / Business
-            <span class="mm-info" tabindex="0">?
-              <span class="mm-tooltip">
-                Estimated value of ownership in a private company or business.
-              </span>
-            </span>
-          </label>
-          <div class="mm-input">
-            <span>€</span>
-            <input id="equity" type="number" value="0" min="0">
-          </div>
-        </div>
-
-      </div>
-
-      <h3>Locked Capital</h3>
-
-      <div class="mm-grid">
-        <div class="mm-field">
-          <label class="mm-label" for="pension">
-            Pension
-            <span class="mm-info" tabindex="0">?
-              <span class="mm-tooltip">
-                Retirement capital that is not freely accessible today.
-              </span>
-            </span>
-          </label>
-          <div class="mm-input">
-            <span>€</span>
-            <input id="pension" type="number" value="0" min="0">
-          </div>
-        </div>
-      </div>
-
-      <h3>Other</h3>
-
-      <div class="mm-grid mm-grid3">
-
-        <div class="mm-field">
-          <label class="mm-label" for="otherAssets">
-            Other Assets
-            <span class="mm-info" tabindex="0">?
-              <span class="mm-tooltip">
-                Other valuable assets such as art, collectibles or vehicles.
-              </span>
-            </span>
-          </label>
-          <div class="mm-input">
-            <span>€</span>
-            <input id="otherAssets" type="number" value="0" min="0">
-          </div>
-        </div>
-
-        <div class="mm-field">
-          <label class="mm-label" for="debt">
-            Debt
-            <span class="mm-info" tabindex="0">?
-              <span class="mm-tooltip">
-                Total outstanding debt. This will be subtracted from your net worth.
-              </span>
-            </span>
-          </label>
-          <div class="mm-input">
-            <span>€</span>
-            <input id="debt" type="number" value="0" min="0">
-          </div>
-        </div>
-
-      </div>
-
-      <button class="mm-btn" id="calculateBtn" type="button">
-        Map My Capital
-      </button>
-
-      <div id="resultBlock" class="mm-result" style="display:none;">
-
-        <div class="mm-resultRow">
-          <div class="mm-metric">
-            <div class="mm-big" id="directCapitalValue">€0</div>
-            <div class="mm-sub">Direct Capital</div>
-          </div>
-
-          <div class="mm-divider"></div>
-
-          <div class="mm-metric">
-            <div class="mm-big" id="accessibleCapitalValue">€0</div>
-            <div class="mm-sub">Accessible Capital</div>
-          </div>
-
-          <div class="mm-divider"></div>
-
-          <div class="mm-metric">
-            <div class="mm-big" id="lockedCapitalValue">€0</div>
-            <div class="mm-sub">Locked Capital</div>
-          </div>
-        </div>
-
-        <div class="mm-resultRow">
-          <div class="mm-metric">
-            <div class="mm-big" id="netWorthValue">€0</div>
-            <div class="mm-sub">Net Worth</div>
-
-            <div class="mm-impact">
-              <div class="mm-impactMain" id="capitalInsight"></div>
-              <div class="mm-impactSub">
-                Capital awareness comes before allocation. First map it. Then optimize it.
-              </div>
+            </label>
+            <div class="mm-input">
+              <span>€</span>
+              <input id="crypto" type="number" value="0" min="0">
             </div>
           </div>
         </div>
 
-        <div class="mm-aiInsight">
+        <div class="mm-sectionHead">
+          <div class="mm-eyebrow">Accessible Capital</div>
+          <h3>Assets with value, but not instantly deployable</h3>
+        </div>
 
+        <div class="mm-grid mm-grid3">
+          <div class="mm-field">
+            <label class="mm-label" for="metals">
+              Precious Metals
+              <span class="mm-info" tabindex="0">?
+                <span class="mm-tooltip">
+                  Physical gold or silver owned directly.
+                </span>
+              </span>
+            </label>
+            <div class="mm-input">
+              <span>€</span>
+              <input id="metals" type="number" value="0" min="0">
+            </div>
+          </div>
+
+          <div class="mm-field">
+            <label class="mm-label" for="homeEquity">
+              Home Equity
+              <span class="mm-info" tabindex="0">?
+                <span class="mm-tooltip">
+                  Only your equity in the property: home value minus remaining mortgage.
+                </span>
+              </span>
+            </label>
+            <div class="mm-input">
+              <span>€</span>
+              <input id="homeEquity" type="number" value="0" min="0">
+            </div>
+          </div>
+
+          <div class="mm-field">
+            <label class="mm-label" for="equity">
+              Private Equity / Business
+              <span class="mm-info" tabindex="0">?
+                <span class="mm-tooltip">
+                  Estimated value of ownership in a private company or business.
+                </span>
+              </span>
+            </label>
+            <div class="mm-input">
+              <span>€</span>
+              <input id="equity" type="number" value="0" min="0">
+            </div>
+          </div>
+        </div>
+
+        <div class="mm-sectionHead">
+          <div class="mm-eyebrow">Locked Capital</div>
+          <h3>Value that exists, but is not freely accessible today</h3>
+        </div>
+
+        <div class="mm-grid">
+          <div class="mm-field">
+            <label class="mm-label" for="pension">
+              Pension
+              <span class="mm-info" tabindex="0">?
+                <span class="mm-tooltip">
+                  Retirement capital that is not freely accessible today.
+                </span>
+              </span>
+            </label>
+            <div class="mm-input">
+              <span>€</span>
+              <input id="pension" type="number" value="0" min="0">
+            </div>
+          </div>
+        </div>
+
+        <div class="mm-sectionHead">
+          <div class="mm-eyebrow">Other</div>
+          <h3>Remaining assets and liabilities</h3>
+        </div>
+
+        <div class="mm-grid mm-grid3">
+          <div class="mm-field">
+            <label class="mm-label" for="otherAssets">
+              Other Assets
+              <span class="mm-info" tabindex="0">?
+                <span class="mm-tooltip">
+                  Other valuable assets such as art, collectibles or vehicles.
+                </span>
+              </span>
+            </label>
+            <div class="mm-input">
+              <span>€</span>
+              <input id="otherAssets" type="number" value="0" min="0">
+            </div>
+          </div>
+
+          <div class="mm-field">
+            <label class="mm-label" for="debt">
+              Debt
+              <span class="mm-info" tabindex="0">?
+                <span class="mm-tooltip">
+                  Total outstanding debt. This will be subtracted from your net worth.
+                </span>
+              </span>
+            </label>
+            <div class="mm-input">
+              <span>€</span>
+              <input id="debt" type="number" value="0" min="0">
+            </div>
+          </div>
+        </div>
+
+        <button class="mm-btn" id="calculateBtn" type="button">
+          Map My Capital
+        </button>
+      </section>
+
+      <section id="resultBlock" class="mm-resultStack" style="display:none;">
+
+        <section class="mm-card mm-resultCard">
+          <div class="mm-eyebrow">Your Capital Structure</div>
+
+          <div class="mm-resultGrid">
+            <div class="mm-metricCard">
+              <div class="mm-big" id="directCapitalValue">€0</div>
+              <div class="mm-sub">Direct Capital</div>
+            </div>
+
+            <div class="mm-metricCard">
+              <div class="mm-big" id="accessibleCapitalValue">€0</div>
+              <div class="mm-sub">Accessible Capital</div>
+            </div>
+
+            <div class="mm-metricCard">
+              <div class="mm-big" id="lockedCapitalValue">€0</div>
+              <div class="mm-sub">Locked Capital</div>
+            </div>
+          </div>
+
+          <div class="mm-netWorthBox">
+            <div class="mm-big" id="netWorthValue">€0</div>
+            <div class="mm-sub">Net Worth</div>
+          </div>
+
+          <div class="mm-impact">
+            <div class="mm-impactMain" id="capitalInsight"></div>
+            <div class="mm-impactSub">
+              Capital awareness comes before allocation. First map it. Then optimize it.
+            </div>
+          </div>
+        </section>
+
+        <section class="mm-card mm-aiInsight">
           <div class="mm-aiHeader">
-            <div class="mm-aiTitle">AI Insight</div>
-            <div class="mm-aiSub">
-              MoneyMind translates your numbers into structural insight.
+            <div>
+              <div class="mm-eyebrow">AI Insight</div>
+              <div class="mm-aiTitle">MoneyMind translates your numbers into structural insight.</div>
             </div>
           </div>
 
@@ -273,171 +303,28 @@
               <div class="mm-aiText" id="aiReflectionText"></div>
             </div>
           </div>
+        </section>
 
-        </div>
+        <section class="mm-card mm-nextCard">
+          <div>
+            <div class="mm-eyebrow">Next Step</div>
+            <h3>Now look at your monthly allocation.</h3>
+            <p class="mm-muted">
+              Your Capital Map shows what you have. Allocation shows what your money is doing every month.
+            </p>
+          </div>
 
-      </div>
+          <a class="mm-btn" href="../allocation/">
+            See Your Allocation
+          </a>
+        </section>
+
+      </section>
 
     </div>
+  </main>
 
-  </div>
-
-  <script>
-    const calculateBtn = document.getElementById("calculateBtn");
-    const resultBlock = document.getElementById("resultBlock");
-    const aiExplainBtn = document.getElementById("aiExplainBtn");
-    const aiLoading = document.getElementById("aiLoading");
-    const aiResult = document.getElementById("aiResult");
-    const aiError = document.getElementById("aiError");
-
-    function getNumber(id) {
-      const el = document.getElementById(id);
-      if (!el) return 0;
-      const value = Number(el.value);
-      return Number.isFinite(value) && value >= 0 ? value : 0;
-    }
-
-    function formatCurrency(value) {
-      return new Intl.NumberFormat("nl-NL", {
-        style: "currency",
-        currency: "EUR",
-        maximumFractionDigits: 0
-      }).format(value);
-    }
-
-    function calculateCapitalMapData() {
-      const cash = getNumber("cash");
-      const investments = getNumber("investments");
-      const crypto = getNumber("crypto");
-      const metals = getNumber("metals");
-      const homeEquity = getNumber("homeEquity");
-      const equity = getNumber("equity");
-      const pension = getNumber("pension");
-      const otherAssets = getNumber("otherAssets");
-      const debt = getNumber("debt");
-
-      const directCapital = cash + investments + crypto;
-      const accessibleCapital = metals + homeEquity + equity + otherAssets;
-      const lockedCapital = pension;
-      const netWorth = directCapital + accessibleCapital + lockedCapital - debt;
-
-      return {
-        cash,
-        investments,
-        crypto,
-        metals,
-        homeEquity,
-        equity,
-        pension,
-        otherAssets,
-        debt,
-        directCapital,
-        accessibleCapital,
-        lockedCapital,
-        netWorth
-      };
-    }
-
-    function getCapitalInsight(data) {
-      const { directCapital, accessibleCapital, lockedCapital, netWorth } = data;
-
-      if (netWorth <= 0) {
-        return "Your capital structure is still in early formation.";
-      }
-
-      if (directCapital > accessibleCapital && directCapital > lockedCapital) {
-        return "Your structure is relatively liquid. Flexibility is a current strength.";
-      }
-
-      if (lockedCapital > directCapital + accessibleCapital) {
-        return "A large share of your wealth is locked. Long-term strength, lower short-term flexibility.";
-      }
-
-      if (accessibleCapital > directCapital && accessibleCapital > lockedCapital) {
-        return "Your structure leans toward accessible wealth, but not all of it is instantly deployable.";
-      }
-
-      return "Your capital is spread across multiple layers. The next question is how deployable it really is.";
-    }
-
-    function resetAIBlocks() {
-      document.getElementById("aiWhatText").textContent = "";
-      document.getElementById("aiWhyText").textContent = "";
-      document.getElementById("aiViewText").textContent = "";
-      document.getElementById("aiReflectionText").textContent = "";
-
-      aiResult.style.display = "none";
-      aiError.style.display = "none";
-      aiLoading.style.display = "none";
-    }
-
-    function renderCapitalMap() {
-      const data = calculateCapitalMapData();
-
-      document.getElementById("directCapitalValue").textContent = formatCurrency(data.directCapital);
-      document.getElementById("accessibleCapitalValue").textContent = formatCurrency(data.accessibleCapital);
-      document.getElementById("lockedCapitalValue").textContent = formatCurrency(data.lockedCapital);
-      document.getElementById("netWorthValue").textContent = formatCurrency(data.netWorth);
-      document.getElementById("capitalInsight").textContent = getCapitalInsight(data);
-
-      resultBlock.style.display = "block";
-      resetAIBlocks();
-    }
-
-    async function fetchAIInsight() {
-      const data = calculateCapitalMapData();
-
-      aiExplainBtn.disabled = true;
-      aiExplainBtn.textContent = "Analyzing...";
-      aiLoading.style.display = "block";
-      aiResult.style.display = "none";
-      aiError.style.display = "none";
-
-      try {
-        const response = await fetch("/api/ai-insight", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            tool: "capital-map",
-            data
-          })
-        });
-
-        const result = await response.json();
-        console.log("AI RESULT FRONTEND:", result);
-
-        if (!response.ok) {
-          throw new Error(result.details || result.error || "AI request failed");
-        }
-
-        document.getElementById("aiWhatText").textContent = result.what_stands_out || "No section returned.";
-        document.getElementById("aiWhyText").textContent = result.why_it_matters || "No section returned.";
-        document.getElementById("aiViewText").textContent = result.moneymind_view || "No section returned.";
-        document.getElementById("aiReflectionText").textContent = result.reflection || "No section returned.";
-
-        aiResult.style.display = "block";
-      } catch (error) {
-        console.error("AI insight error:", error);
-        aiError.style.display = "block";
-      } finally {
-        aiLoading.style.display = "none";
-        aiExplainBtn.disabled = false;
-        aiExplainBtn.textContent = "Explain My Results";
-      }
-    }
-
-    if (calculateBtn) {
-      calculateBtn.addEventListener("click", renderCapitalMap);
-    }
-
-    if (aiExplainBtn) {
-      aiExplainBtn.addEventListener("click", fetchAIInsight);
-    }
-  </script>
-
-  <!-- <script src="app.js"></script> -->
+  <script src="engine.js"></script>
+  <script src="app.js"></script>
 </body>
-
 </html>
