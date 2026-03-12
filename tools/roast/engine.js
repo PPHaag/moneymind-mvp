@@ -1,444 +1,191 @@
-(function () {
-  function toNumber(value) {
-    const num = Number(value);
-    return Number.isFinite(num) ? num : 0;
+(function(){
+  function clamp(num, min, max){
+    return Math.min(Math.max(num, min), max);
   }
 
-  function clamp(value, min, max) {
-    return Math.min(Math.max(value, min), max);
+  function formatEuro(value){
+    return new Intl.NumberFormat("nl-NL", {
+      style: "currency",
+      currency: "EUR",
+      maximumFractionDigits: 0
+    }).format(value);
   }
 
-  function randomItem(arr) {
-    if (!Array.isArray(arr) || arr.length === 0) return "";
-    return arr[Math.floor(Math.random() * arr.length)];
+  function formatPercent(value){
+    return `${Math.round(value * 100)}%`;
   }
 
-  function uniquePush(arr, value) {
-    if (value && !arr.includes(value)) {
-      arr.push(value);
-    }
+  function getAnnualReturnByProfile(answerData){
+    const income = answerData.income.amount;
+    const invest = answerData.invest.amount;
+    const investRate = income > 0 ? invest / income : 0;
+
+    if (investRate >= 0.2) return 0.07;
+    if (investRate >= 0.1) return 0.065;
+    return 0.06;
   }
 
-  function getData() {
-    return window.ROAST_DATA || {};
+  function futureValue(monthlyContribution, years, annualReturn, startingCapital){
+    const months = years * 12;
+    const monthlyRate = annualReturn / 12;
+
+    if (months <= 0) {
+      return startingCapital;
+    }
+
+    const fvStart = startingCapital * Math.pow(1 + monthlyRate, months);
+    const fvContrib = monthlyContribution * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+
+    return fvStart + fvContrib;
   }
 
-  function getCategoryLabel(categoryKey) {
-    const categories = getData().categories || [];
-    const found = categories.find((item) => item.key === categoryKey);
-    return found ? found.label : "Structural Leakage";
+  function determineProfile(answerData){
+    const income = answerData.income.amount;
+    const invest = answerData.invest.amount;
+    const savings = answerData.savings.amount;
+    const investRate = income > 0 ? invest / income : 0;
+    const wealthRatio = income > 0 ? savings / (income * 12) : 0;
+
+    if (investRate >= 0.2 && wealthRatio >= 1) {
+      return "future_architect";
+    }
+
+    if (investRate >= 0.15) {
+      return "disciplined_investor";
+    }
+
+    if (investRate < 0.05 && wealthRatio >= 1.5) {
+      return "security_seeker";
+    }
+
+    if (income >= 4000 && investRate < 0.12) {
+      return "potential_builder";
+    }
+
+    return "lifestyle_optimizer";
   }
 
-  function getHeadline(categoryKey) {
-    const data = getData();
-    const headlines = data.headlines || {};
+  function determineBehaviorConcept(answerData, profileKey){
+    const income = answerData.income.amount;
+    const invest = answerData.invest.amount;
+    const investRate = income > 0 ? invest / income : 0;
 
-    const defaults = {
-      financial_chaos: [
-        "Your money structure is less a system, more a monthly survival experiment."
-      ],
-      structural_leakage: [
-        "Your income works full-time. Unfortunately not for you."
-      ],
-      income_without_direction: [
-        "Nice income. Shame about the capital discipline."
-      ],
-      sleeping_capital: [
-        "Your money is safe, comfortable, and doing absolutely nothing heroic."
-      ],
-      fragile_builder: [
-        "You are building something, but one bad month could still bully the whole system."
-      ],
-      wealth_builder: [
-        "Finally. Evidence of adult financial behavior."
-      ]
-    };
+    if (profileKey === "disciplined_investor" || profileKey === "future_architect") {
+      return "compounding_patience";
+    }
 
-    return randomItem(headlines[categoryKey] || defaults[categoryKey] || defaults.structural_leakage);
+    if (profileKey === "security_seeker") {
+      return "risk_illusion";
+    }
+
+    if (investRate <= 0.05) {
+      return "discipline_gap";
+    }
+
+    return "lifestyle_inflation";
   }
 
-  function getShareLine(categoryKey, headline) {
-    const data = getData();
-    const shareLines = data.shareLines || {};
+  function buildHeadline(answerData, profileKey){
+    const income = answerData.income.amount;
+    const invest = answerData.invest.amount;
+    const investRate = income > 0 ? invest / income : 0;
 
-    const defaults = {
-      financial_chaos: [
-        "Your finances are currently running on hope, timing, and vibes."
-      ],
-      structural_leakage: [
-        "Your cashflow has movement, but very little direction."
-      ],
-      income_without_direction: [
-        "Good income. Weak routing."
-      ],
-      sleeping_capital: [
-        "Your capital is safe, but not exactly ambitious."
-      ],
-      fragile_builder: [
-        "You are building, but the structure still needs thicker walls."
-      ],
-      wealth_builder: [
-        "Your structure shows actual financial intent."
-      ]
-    };
+    if (profileKey === "future_architect") {
+      return "Your financial structure reflects serious long-term wealth intent.";
+    }
 
-    return randomItem(shareLines[categoryKey] || defaults[categoryKey] || [headline]) || headline;
+    if (profileKey === "disciplined_investor") {
+      return "You are ahead of most people — because your structure actually supports wealth building.";
+    }
+
+    if (investRate < 0.08) {
+      return "Your income suggests strong wealth potential — but your capital formation may be slower than expected.";
+    }
+
+    return "You are building something real — but there is still more upside in your financial structure.";
   }
 
-  function getRoastLine(trigger) {
-    const data = getData();
-    const roastBullets = data.roastBullets || {};
+  function buildObservation(answerData){
+    const income = answerData.income.amount;
+    const invest = answerData.invest.amount;
+    const investRate = income > 0 ? invest / income : 0;
 
-    const defaults = {
-      low_wealth_allocation: [
-        "Too little of your monthly cashflow reaches wealth-building.",
-        "Your future gets whatever is left over.",
-        "You are underfunding your own long-term upside."
-      ],
-      high_fixed_cost_load: [
-        "Your fixed costs are eating flexibility before your future gets a vote.",
-        "Too much of your monthly structure is already spoken for.",
-        "Your money has bills. Your goals get leftovers."
-      ],
-      no_investing: [
-        "Inflation appreciates your passivity more than you do.",
-        "You currently have no invested capital working for your future.",
-        "Right now compounding is not in the chat."
-      ],
-      high_debt_pressure: [
-        "Debt is taking up too much space in your financial architecture.",
-        "Debt pressure is limiting optionality before growth even starts.",
-        "Too much of this structure is carrying old weight."
-      ],
-      low_buffer: [
-        "Your safety buffer is thin enough to make one unexpected invoice feel personal.",
-        "Your margin for error is smaller than your confidence.",
-        "One decent financial hit could shake this whole setup."
-      ],
-      sleeping_capital: [
-        "A meaningful chunk of your money is sitting still instead of compounding.",
-        "Your capital is protected, but not particularly productive.",
-        "Too much of your capital prefers comfort over contribution."
-      ],
-      good_structure: [
-        "Your allocation shows that you are actually directing money on purpose.",
-        "There is visible strategy in how your cashflow is being handled."
-      ],
-      decent_buffer: [
-        "You have at least some defensive structure instead of pure optimism.",
-        "There is a visible safety layer in the system."
-      ]
-    };
+    if (investRate < 0.05) {
+      return "Right now, only a small part of your monthly cashflow appears to be going toward long-term wealth building. That usually feels harmless in the present and expensive in the future.";
+    }
 
-    return randomItem(roastBullets[trigger] || defaults[trigger] || []);
+    if (investRate < 0.15) {
+      return "Your structure shows some investment discipline, but not yet the kind of capital allocation that tends to create serious long-term wealth.";
+    }
+
+    return "Your current structure shows above-average investing discipline. That gives you a real compounding advantage over time.";
   }
 
-  function getFallbackRoastLines() {
-    const data = getData();
-    return data.fallbackRoasts || [
-      "Your financial structure still has room to become more intentional.",
-      "Money likes direction. Drift is expensive.",
-      "A decent income is not the same as a strong system.",
-      "Cashflow without structure is just motion.",
-      "Your money needs a plan more than it needs hope."
-    ];
-  }
+  function buildTrajectory(answerData){
+    const years = answerData.age.yearsTo60;
+    const currentMonthly = answerData.invest.amount;
+    const currentCapital = answerData.savings.amount;
+    const annualReturn = getAnnualReturnByProfile(answerData);
+    const currentWealth = futureValue(currentMonthly, years, annualReturn, currentCapital);
 
-  function getNextMove(triggers) {
-    const data = getData();
-    const nextMoves = data.nextMoves || {};
-
-    const defaults = {
-      low_wealth_allocation: [
-        "Increase the percentage of your monthly income going to wealth building before optimizing anything else."
-      ],
-      high_fixed_cost_load: [
-        "Reduce structural monthly outflow first. A heavy system kills optionality."
-      ],
-      no_investing: [
-        "Start putting part of your capital to work. Even a simple long-term structure beats hesitation."
-      ],
-      high_debt_pressure: [
-        "Stabilize debt pressure before pretending you are in optimization mode."
-      ],
-      low_buffer: [
-        "Build a stronger cash buffer so your financial system stops being one setback away from drama."
-      ],
-      sleeping_capital: [
-        "Move part of your idle capital into a structure that can actually grow over time."
-      ],
-      balanced: [
-        "Keep strengthening allocation discipline. Good systems become powerful through consistency."
-      ]
-    };
-
-    if (triggers.includes("low_wealth_allocation")) {
-      return randomItem(nextMoves.low_wealth_allocation || defaults.low_wealth_allocation);
-    }
-    if (triggers.includes("high_fixed_cost_load")) {
-      return randomItem(nextMoves.high_fixed_cost_load || defaults.high_fixed_cost_load);
-    }
-    if (triggers.includes("high_debt_pressure")) {
-      return randomItem(nextMoves.high_debt_pressure || defaults.high_debt_pressure);
-    }
-    if (triggers.includes("low_buffer")) {
-      return randomItem(nextMoves.low_buffer || defaults.low_buffer);
-    }
-    if (triggers.includes("sleeping_capital")) {
-      return randomItem(nextMoves.sleeping_capital || defaults.sleeping_capital);
-    }
-    if (triggers.includes("no_investing")) {
-      return randomItem(nextMoves.no_investing || defaults.no_investing);
-    }
-
-    return randomItem(nextMoves.balanced || defaults.balanced);
-  }
-
-  function getAcademyTags(triggers) {
-    const data = getData();
-    const academyMap = data.academyTags || {};
-    const tags = [];
-
-    triggers.forEach((trigger) => {
-      const triggerTags = academyMap[trigger] || [];
-      triggerTags.forEach((tag) => uniquePush(tags, tag));
-    });
-
-    return tags;
-  }
-
-  function buildRoastBullets(triggers, score) {
-    const result = [];
-
-    triggers.forEach((trigger) => {
-      uniquePush(result, getRoastLine(trigger));
-    });
-
-    if (score >= 75) {
-      uniquePush(result, getRoastLine("good_structure"));
-      uniquePush(result, getRoastLine("decent_buffer"));
-    }
-
-    const fallback = getFallbackRoastLines();
-
-    while (result.length < 3) {
-      uniquePush(result, randomItem(fallback));
-      if (fallback.length === 0) break;
-      if (result.length >= fallback.length && result.length < 3) {
-        uniquePush(result, "Your money structure still has room to become more intentional.");
-        uniquePush(result, "Money likes direction. Drift is expensive.");
-        uniquePush(result, "A decent income is not the same as a strong system.");
-      }
-    }
-
-    return result.slice(0, 3);
-  }
-
-  function buildInsights(metrics, triggers, monthlyNetIncome, savings, investments, debt, fixedExpenses, monthlyWealthBuilding) {
-    const insights = [];
-
-    if (triggers.includes("low_wealth_allocation")) {
-      uniquePush(
-        insights,
-        `Only ${metrics.wealthAllocationPct.toFixed(1)}% of your income goes to wealth building.`
-      );
-    } else {
-      uniquePush(
-        insights,
-        `You are directing ${metrics.wealthAllocationPct.toFixed(1)}% of your monthly income toward wealth building.`
-      );
-    }
-
-    if (triggers.includes("high_fixed_cost_load")) {
-      uniquePush(
-        insights,
-        `${metrics.fixedCostPct.toFixed(1)}% of your income disappears into fixed costs.`
-      );
-    } else {
-      uniquePush(
-        insights,
-        `Your fixed costs absorb ${metrics.fixedCostPct.toFixed(1)}% of your monthly income.`
-      );
-    }
-
-    if (investments <= 0) {
-      uniquePush(
-        insights,
-        "You currently have no invested capital working for your future."
-      );
-    } else if (savings > investments * 2 && investments > 0) {
-      uniquePush(
-        insights,
-        "A large share of your capital is sitting in cash instead of compounding."
-      );
-    } else {
-      uniquePush(
-        insights,
-        "You already have capital working instead of leaving everything idle."
-      );
-    }
-
-    if (insights.length < 3 && triggers.includes("low_buffer")) {
-      uniquePush(
-        insights,
-        `Your buffer covers about ${metrics.bufferMonths.toFixed(1)} months of fixed costs.`
-      );
-    }
-
-    if (insights.length < 3 && triggers.includes("high_debt_pressure")) {
-      uniquePush(
-        insights,
-        "Debt pressure is limiting your financial flexibility."
-      );
-    }
-
-    if (insights.length < 3) {
-      uniquePush(
-        insights,
-        `Your current structure combines €${monthlyNetIncome.toFixed(0)} monthly net income with €${monthlyWealthBuilding.toFixed(0)} going toward wealth building.`
-      );
-    }
-
-    return insights.slice(0, 3);
-  }
-
-  function calculateRoast(input) {
-    const monthlyNetIncome = toNumber(input.monthlyNetIncome);
-    const savings = toNumber(input.savings);
-    const investments = toNumber(input.investments);
-    const debt = toNumber(input.debt);
-    const fixedExpenses = toNumber(input.fixedExpenses);
-    const monthlyWealthBuilding = toNumber(input.monthlyWealthBuilding);
-
-    const wealthAllocationPct = monthlyNetIncome > 0
-      ? (monthlyWealthBuilding / monthlyNetIncome) * 100
-      : 0;
-
-    const fixedCostPct = monthlyNetIncome > 0
-      ? (fixedExpenses / monthlyNetIncome) * 100
-      : 100;
-
-    const bufferMonths = fixedExpenses > 0
-      ? (savings / fixedExpenses)
-      : 0;
-
-    const investableCapital = savings + investments;
-
-    let score = 50;
-    const triggers = [];
-
-    if (wealthAllocationPct < 5) {
-      score -= 25;
-      uniquePush(triggers, "low_wealth_allocation");
-    } else if (wealthAllocationPct < 10) {
-      score -= 15;
-      uniquePush(triggers, "low_wealth_allocation");
-    } else if (wealthAllocationPct >= 20) {
-      score += 15;
-    } else if (wealthAllocationPct >= 15) {
-      score += 10;
-    }
-
-    if (fixedCostPct > 80) {
-      score -= 20;
-      uniquePush(triggers, "high_fixed_cost_load");
-    } else if (fixedCostPct > 65) {
-      score -= 10;
-      uniquePush(triggers, "high_fixed_cost_load");
-    } else if (fixedCostPct < 50) {
-      score += 10;
-    }
-
-    if (investments <= 0) {
-      score -= 12;
-      uniquePush(triggers, "no_investing");
-    } else if (investments >= savings) {
-      score += 10;
-    }
-
-    if (debt > monthlyNetIncome * 12 && monthlyNetIncome > 0) {
-      score -= 15;
-      uniquePush(triggers, "high_debt_pressure");
-    } else if (debt > monthlyNetIncome * 6 && monthlyNetIncome > 0) {
-      score -= 8;
-      uniquePush(triggers, "high_debt_pressure");
-    }
-
-    if (bufferMonths < 2) {
-      score -= 15;
-      uniquePush(triggers, "low_buffer");
-    } else if (bufferMonths < 4) {
-      score -= 5;
-      uniquePush(triggers, "low_buffer");
-    } else if (bufferMonths >= 6) {
-      score += 10;
-    }
-
-    if (savings > investments * 2 && investments > 0) {
-      score -= 7;
-      uniquePush(triggers, "sleeping_capital");
-    } else if (savings > 0 && investments === 0 && investableCapital > monthlyNetIncome * 3) {
-      score -= 10;
-      uniquePush(triggers, "sleeping_capital");
-    }
-
-    score = clamp(Math.round(score), 0, 100);
-
-    let categoryKey = "structural_leakage";
-
-    if (score < 25) {
-      categoryKey = "financial_chaos";
-    } else if (score < 45) {
-      categoryKey = "structural_leakage";
-    } else if (score < 60) {
-      categoryKey = "income_without_direction";
-    } else if (score < 70 && triggers.includes("sleeping_capital")) {
-      categoryKey = "sleeping_capital";
-    } else if (score < 80) {
-      categoryKey = "fragile_builder";
-    } else {
-      categoryKey = "wealth_builder";
-    }
-
-    const metrics = {
-      wealthAllocationPct,
-      fixedCostPct,
-      bufferMonths,
-      investableCapital
-    };
-
-    const headline = getHeadline(categoryKey);
-    const shareLine = getShareLine(categoryKey, headline);
-    const roastBullets = buildRoastBullets(triggers, score);
-    const insights = buildInsights(
-      metrics,
-      triggers,
-      monthlyNetIncome,
-      savings,
-      investments,
-      debt,
-      fixedExpenses,
-      monthlyWealthBuilding
-    );
-    const nextMove = getNextMove(triggers);
-    const academyTags = getAcademyTags(triggers);
+    const optimizedRate = 0.2;
+    const optimizedMonthly = Math.max(currentMonthly, answerData.income.amount * optimizedRate);
+    const optimizedWealth = futureValue(optimizedMonthly, years, annualReturn, currentCapital);
 
     return {
-      score,
-      category: getCategoryLabel(categoryKey),
-      categoryKey,
-      headline,
-      shareLine,
-      roastBullets,
-      insights,
-      nextMove,
-      academyTags,
-      triggers,
-      metrics
+      years,
+      currentWealth: Math.round(currentWealth),
+      optimizedWealth: Math.round(optimizedWealth),
+      wealthDifference: Math.round(optimizedWealth - currentWealth)
     };
+  }
+
+  function buildShareText(result){
+    return [
+      "My MoneyMind Roast",
+      "",
+      `Profile: ${result.profile.name}`,
+      `Investment rate: ${result.investRateText}`,
+      `Potential wealth gap: ${formatEuro(result.trajectory.wealthDifference)}`,
+      `Behavior insight: ${result.behavior.title}`
+    ].join("\n");
+  }
+
+  function analyzeRoast(answerData){
+    const incomeAmount = answerData.income.amount;
+    const investAmount = answerData.invest.amount;
+    const investRate = incomeAmount > 0 ? investAmount / incomeAmount : 0;
+
+    const profileKey = determineProfile(answerData);
+    const profile = window.ROAST_DATA.profiles[profileKey];
+
+    const behaviorKey = determineBehaviorConcept(answerData, profileKey);
+    const behavior = window.ROAST_DATA.behaviorConcepts[behaviorKey];
+
+    const trajectory = buildTrajectory(answerData);
+
+    const result = {
+      headline: buildHeadline(answerData, profileKey),
+      observation: buildObservation(answerData),
+      incomeText: formatEuro(incomeAmount),
+      investText: formatEuro(investAmount),
+      investRateText: formatPercent(investRate),
+      profileKey,
+      profile,
+      behaviorKey,
+      behavior,
+      trajectory,
+      currentAgeText: `Estimated wealth by age 60`,
+      optimizedAgeText: `If you raise investing toward 20%`,
+      shareText: ""
+    };
+
+    result.shareText = buildShareText(result);
+    return result;
   }
 
   window.RoastEngine = {
-    calculateRoast
+    analyzeRoast,
+    formatEuro
   };
 })();
