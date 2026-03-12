@@ -1,187 +1,133 @@
-(function(){
-  const questions = window.ROAST_DATA.questions;
-
-  const state = {
-    currentQuestionIndex: 0,
-    answers: {}
-  };
-
-  const screens = {
-    intro: document.getElementById("introScreen"),
-    question: document.getElementById("questionScreen"),
-    loading: document.getElementById("loadingScreen"),
-    result: document.getElementById("resultScreen")
-  };
-
-  const els = {
-    startBtn: document.getElementById("startBtn"),
-    backBtn: document.getElementById("backBtn"),
-    progressText: document.getElementById("progressText"),
-    progressPct: document.getElementById("progressPct"),
-    progressFill: document.getElementById("progressFill"),
-    questionEyebrow: document.getElementById("questionEyebrow"),
-    questionTitle: document.getElementById("questionTitle"),
-    questionHint: document.getElementById("questionHint"),
-    optionsContainer: document.getElementById("optionsContainer"),
-
-    headlineText: document.getElementById("headlineText"),
-    observationText: document.getElementById("observationText"),
-    incomeText: document.getElementById("incomeText"),
-    investText: document.getElementById("investText"),
-    investRateText: document.getElementById("investRateText"),
-    profileName: document.getElementById("profileName"),
-    profileDescription: document.getElementById("profileDescription"),
-    profileOpportunity: document.getElementById("profileOpportunity"),
-    currentWealthText: document.getElementById("currentWealthText"),
-    optimizedWealthText: document.getElementById("optimizedWealthText"),
-    currentAgeText: document.getElementById("currentAgeText"),
-    optimizedAgeText: document.getElementById("optimizedAgeText"),
-    wealthDifferenceText: document.getElementById("wealthDifferenceText"),
-    behaviorTitle: document.getElementById("behaviorTitle"),
-    behaviorText: document.getElementById("behaviorText"),
-    lessonBtn: document.getElementById("lessonBtn"),
-    sharePreview: document.getElementById("sharePreview"),
-    copyShareBtn: document.getElementById("copyShareBtn"),
-    restartBtn: document.getElementById("restartBtn")
-  };
-
-  function showScreen(target){
-    Object.values(screens).forEach(screen => screen.classList.remove("active"));
-    target.classList.add("active");
-    window.scrollTo({ top: 0, behavior: "instant" });
-  }
-
-  function startRoast(){
-    state.currentQuestionIndex = 0;
-    state.answers = {};
-    renderQuestion();
-    showScreen(screens.question);
-  }
-
-  function renderQuestion(){
-    const q = questions[state.currentQuestionIndex];
-    const index = state.currentQuestionIndex + 1;
-    const pct = Math.round((index / questions.length) * 100);
-
-    els.progressText.textContent = `Question ${index} of ${questions.length}`;
-    els.progressPct.textContent = `${pct}%`;
-    els.progressFill.style.width = `${pct}%`;
-
-    els.questionEyebrow.textContent = q.eyebrow;
-    els.questionTitle.textContent = q.title;
-    els.questionHint.textContent = q.hint;
-    els.optionsContainer.innerHTML = "";
-
-    q.options.forEach(option => {
-      const button = document.createElement("button");
-      button.className = "option-btn";
-      button.type = "button";
-      button.textContent = option.label;
-      button.addEventListener("click", () => {
-        state.answers[q.id] = option;
-        nextQuestion();
-      });
-      els.optionsContainer.appendChild(button);
-    });
-
-    els.backBtn.style.visibility = state.currentQuestionIndex === 0 ? "hidden" : "visible";
-  }
-
-  function nextQuestion(){
-    if (state.currentQuestionIndex < questions.length - 1) {
-      state.currentQuestionIndex += 1;
-      renderQuestion();
-      return;
+window.ROAST_DATA = {
+  questions: [
+    {
+      id: "age",
+      eyebrow: "Question 1",
+      title: "How old are you?",
+      hint: "This helps estimate your compounding runway.",
+      options: [
+        { label: "18–25", value: "18-25", yearsTo60: 38 },
+        { label: "26–35", value: "26-35", yearsTo60: 30 },
+        { label: "36–45", value: "36-45", yearsTo60: 20 },
+        { label: "46–55", value: "46-55", yearsTo60: 10 },
+        { label: "56+", value: "56+", yearsTo60: 5 }
+      ]
+    },
+    {
+      id: "income",
+      eyebrow: "Question 2",
+      title: "What is your monthly income?",
+      hint: "Choose the range that fits best.",
+      options: [
+        { label: "< €2k", value: "<2k", amount: 1500 },
+        { label: "€2k–4k", value: "2k-4k", amount: 3000 },
+        { label: "€4k–6k", value: "4k-6k", amount: 5000 },
+        { label: "€6k–10k", value: "6k-10k", amount: 8000 },
+        { label: "€10k+", value: "10k+", amount: 12000 }
+      ]
+    },
+    {
+      id: "savings",
+      eyebrow: "Question 3",
+      title: "How much have you saved or invested so far?",
+      hint: "Think total accessible savings + investments.",
+      options: [
+        { label: "< €5k", value: "<5k", amount: 2500 },
+        { label: "€5k–20k", value: "5k-20k", amount: 12500 },
+        { label: "€20k–100k", value: "20k-100k", amount: 60000 },
+        { label: "€100k–500k", value: "100k-500k", amount: 250000 },
+        { label: "€500k+", value: "500k+", amount: 600000 }
+      ]
+    },
+    {
+      id: "invest",
+      eyebrow: "Question 4",
+      title: "How much do you invest each month?",
+      hint: "Approximate is fine. No accountant drama needed.",
+      options: [
+        { label: "€0", value: "0", amount: 0 },
+        { label: "€100–300", value: "100-300", amount: 200 },
+        { label: "€300–800", value: "300-800", amount: 550 },
+        { label: "€800–2000", value: "800-2000", amount: 1400 },
+        { label: "€2000+", value: "2000+", amount: 2500 }
+      ]
+    },
+    {
+      id: "goal",
+      eyebrow: "Question 5",
+      title: "What is your biggest financial goal right now?",
+      hint: "This helps shape the tone of your Roast.",
+      options: [
+        { label: "Financial freedom", value: "freedom" },
+        { label: "Wealth building", value: "wealth" },
+        { label: "Security", value: "security" },
+        { label: "Not sure yet", value: "unsure" }
+      ]
     }
+  ],
 
-    runAnalysis();
-  }
-
-  function previousQuestion(){
-    if (state.currentQuestionIndex === 0) {
-      showScreen(screens.intro);
-      return;
+  profiles: {
+    potential_builder: {
+      name: "The Potential Builder",
+      description:
+        "You have meaningful wealth potential, but your current capital formation is weaker than it should be for your income level.",
+      opportunity:
+        "Increase your investment allocation and focus more aggressively on turning income into assets."
+    },
+    disciplined_investor: {
+      name: "The Disciplined Investor",
+      description:
+        "Your financial behavior shows strong long-term discipline. You are already doing what most people only talk about.",
+      opportunity:
+        "Refine your allocation and expand your wealth architecture instead of starting from scratch."
+    },
+    lifestyle_optimizer: {
+      name: "The Lifestyle Optimizer",
+      description:
+        "Your income is likely supporting a comfortable life, but your structure suggests lifestyle growth may be moving faster than wealth growth.",
+      opportunity:
+        "Redirect part of your income toward assets before your future becomes an expensive side effect."
+    },
+    security_seeker: {
+      name: "The Security Seeker",
+      description:
+        "You value stability and protection, but your wealth may be growing slower than it could because too much capital stays defensive.",
+      opportunity:
+        "Introduce gradual investing and let time do more of the heavy lifting."
+    },
+    future_architect: {
+      name: "The Future Architect",
+      description:
+        "Your structure suggests strategic thinking and a serious wealth-building mindset. You are building systems, not just reacting.",
+      opportunity:
+        "Optimize your capital structure, diversification, and long-term compounding strategy."
     }
+  },
 
-    state.currentQuestionIndex -= 1;
-    renderQuestion();
-  }
-
-  function runAnalysis(){
-    showScreen(screens.loading);
-
-    setTimeout(() => {
-      const result = window.RoastEngine.analyzeRoast(state.answers);
-      renderResult(result);
-      showScreen(screens.result);
-    }, 2200);
-  }
-
-  function renderResult(result){
-    els.headlineText.textContent = result.headline;
-    els.observationText.textContent = result.observation;
-    els.incomeText.textContent = result.incomeText;
-    els.investText.textContent = result.investText;
-    els.investRateText.textContent = result.investRateText;
-
-    els.profileName.textContent = result.profile.name;
-    els.profileDescription.textContent = result.profile.description;
-    els.profileOpportunity.textContent = result.profile.opportunity;
-
-    els.currentWealthText.textContent = window.RoastEngine.formatEuro(result.trajectory.currentWealth);
-    els.optimizedWealthText.textContent = window.RoastEngine.formatEuro(result.trajectory.optimizedWealth);
-    els.currentAgeText.textContent = result.currentAgeText;
-    els.optimizedAgeText.textContent = result.optimizedAgeText;
-    els.wealthDifferenceText.textContent = `+ ${window.RoastEngine.formatEuro(result.trajectory.wealthDifference)}`;
-
-    els.behaviorTitle.textContent = result.behavior.title;
-    els.behaviorText.textContent = result.behavior.text;
-    els.lessonBtn.textContent = result.behavior.lessonLabel;
-    els.sharePreview.textContent = result.shareText;
-
-    try {
-      localStorage.setItem("moneymind_roast_result", JSON.stringify({
-        answers: state.answers,
-        result
-      }));
-    } catch (err) {
-      console.warn("Could not save roast result to localStorage.", err);
+  behaviorConcepts: {
+    lifestyle_inflation: {
+      title: "Lifestyle Inflation Risk",
+      text:
+        "As income rises, spending often rises with it. That feels harmless in the moment, but over time it slows capital formation and quietly steals future wealth.",
+      lessonLabel: "Learn: Lifestyle Inflation"
+    },
+    discipline_gap: {
+      title: "Discipline Gap",
+      text:
+        "Many people know what they should do financially, but their monthly structure says something else. The gap between intention and execution is where wealth quietly leaks away.",
+      lessonLabel: "Learn: Discipline Gap"
+    },
+    risk_illusion: {
+      title: "Risk Illusion",
+      text:
+        "Avoiding visible risk can feel safe, but not investing enough over time carries its own hidden risk: falling behind inflation and losing compounding power.",
+      lessonLabel: "Learn: Risk Illusion"
+    },
+    compounding_patience: {
+      title: "Compounding Patience",
+      text:
+        "Your structure shows the kind of consistency that gives compounding a real chance to work. Not flashy. Just effective. Which is annoyingly how wealth is usually built.",
+      lessonLabel: "Learn: Compounding Patience"
     }
   }
-
-  async function copyShareText(){
-    const text = els.sharePreview.textContent.trim();
-
-    try {
-      await navigator.clipboard.writeText(text);
-      els.copyShareBtn.textContent = "Copied";
-      setTimeout(() => {
-        els.copyShareBtn.textContent = "Copy Result";
-      }, 1400);
-    } catch (err) {
-      console.warn("Clipboard copy failed.", err);
-      els.copyShareBtn.textContent = "Copy Failed";
-      setTimeout(() => {
-        els.copyShareBtn.textContent = "Copy Result";
-      }, 1400);
-    }
-  }
-
-  function restartRoast(){
-    showScreen(screens.intro);
-  }
-
-  function init(){
-    els.startBtn.addEventListener("click", startRoast);
-    els.backBtn.addEventListener("click", previousQuestion);
-    els.copyShareBtn.addEventListener("click", copyShareText);
-    els.restartBtn.addEventListener("click", restartRoast);
-    els.lessonBtn.addEventListener("click", () => {
-      alert("Hook this to your Academy lesson route later. For now: this is your behavioral lesson CTA.");
-    });
-
-    showScreen(screens.intro);
-  }
-
-  init();
-})();
+};
