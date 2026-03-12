@@ -43,32 +43,44 @@
     return tags;
   }
 
-  function buildRoastBullets(triggers, score) {
-    var result = [];
-    var roastBullets = (window.ROAST_DATA && window.ROAST_DATA.roastBullets) || {};
-    var fallbackRoasts = ensureArray(window.ROAST_DATA && window.ROAST_DATA.fallbackRoasts);
+}
+function buildRoastBullets(triggers, score) {
 
-    triggers.forEach(function (trigger) {
-      var line = getRandomFromMap(roastBullets, trigger, "");
-      if (line && !result.includes(line)) result.push(line);
-    });
+  var roastBullets = (window.ROAST_DATA && window.ROAST_DATA.roastBullets) || {};
+  var fallback = (window.ROAST_DATA && window.ROAST_DATA.fallbackRoasts) || [];
 
-    if (score >= 75) {
-      var goodStructure = getRandomFromMap(roastBullets, "good_structure", "");
-      var decentBuffer = getRandomFromMap(roastBullets, "decent_buffer", "");
+  var result = [];
 
-      if (goodStructure && !result.includes(goodStructure)) result.push(goodStructure);
-      if (decentBuffer && !result.includes(decentBuffer)) result.push(decentBuffer);
+  triggers.forEach(function(trigger){
+
+    if (roastBullets[trigger]){
+
+      var options = roastBullets[trigger];
+      var line = options[Math.floor(Math.random() * options.length)];
+
+      if(line && !result.includes(line)){
+        result.push(line);
+      }
+
     }
 
-    while (result.length < 3) {
-      var fallback = pickRandom(fallbackRoasts);
-      if (!fallback) break;
-      if (!result.includes(fallback)) result.push(fallback);
+  });
+
+  // als er weinig triggers zijn -> fallback toevoegen
+
+  while(result.length < 3){
+
+    var extra = fallback[Math.floor(Math.random() * fallback.length)];
+
+    if(extra && !result.includes(extra)){
+      result.push(extra);
     }
 
-    return result.slice(0, 3);
   }
+
+  return result.slice(0,3);
+
+}
 
   function getNextMove(triggers) {
     var nextMoves = (window.ROAST_DATA && window.ROAST_DATA.nextMoves) || {};
