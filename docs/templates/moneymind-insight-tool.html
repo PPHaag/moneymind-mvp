@@ -1,1 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MoneyMind • Insight Tool Template</title>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
 
+  <div class="mm-wrap">
+
+    <div class="mm-toolnav">
+      <a href="../roast/">Roast Tool</a>
+      <a href="../trajectory/">Wealth Trajectory</a>
+      <a href="../blind-spot/">Financial Blind Spot</a>
+      <a href="../capital-map/">Capital Map</a>
+      <a href="../academy/">Academy</a>
+    </div>
+
+    <div class="mm-card mm-hero">
+
+      <div class="mm-kicker">MoneyMind Insight Tool</div>
+      <h1>[TOOL NAME]</h1>
+
+      <p>
+        [A sharp and emotionally engaging explanation of what this tool reveals.]
+      </p>
+
+      <p class="mm-helperIntro">
+        [Optional line to set the mood or explain what happens next.]
+      </p>
+
+      <div class="mm-grid mm-grid3">
+
+        <div class="mm-field">
+          <label class="mm-label" for="field1">
+            [Field Label 1]
+            <span class="mm-info" tabindex="0">?
+              <span class="mm-tooltip">[Short tooltip explanation.]</span>
+            </span>
+          </label>
+          <div class="mm-input">
+            <span>€</span>
+            <input id="field1" type="number" value="0" min="0" placeholder="1000" />
+          </div>
+        </div>
+
+        <div class="mm-field">
+          <label class="mm-label" for="field2">
+            [Field Label 2]
+            <span class="mm-info" tabindex="0">?
+              <span class="mm-tooltip">[Short tooltip explanation.]</span>
+            </span>
+          </label>
+          <div class="mm-input">
+            <span>€</span>
+            <input id="field2" type="number" value="0" min="0" placeholder="1000" />
+          </div>
+        </div>
+
+        <div class="mm-field">
+          <label class="mm-label" for="field3">
+            [Field Label 3]
+            <span class="mm-info" tabindex="0">?
+              <span class="mm-tooltip">[Short tooltip explanation.]</span>
+            </span>
+          </label>
+          <div class="mm-input">
+            <span>€</span>
+            <input id="field3" type="number" value="0" min="0" placeholder="1000" />
+          </div>
+        </div>
+
+      </div>
+
+      <button class="mm-btn" id="analyzeBtn" type="button">
+        [Primary CTA]
+      </button>
+
+      <div id="resultBlock" class="mm-result" style="display:none;">
+
+        <div class="mm-resultIntro">
+          [Short introduction to the result.]
+        </div>
+
+        <div class="mm-scoreWrap">
+          <div class="mm-scoreCircle">
+            <div class="mm-scoreValue" id="scoreValue">0</div>
+            <div class="mm-scoreSub">/100</div>
+          </div>
+
+          <div class="mm-scoreMeta">
+            <div class="mm-badge" id="categoryValue">[Category]</div>
+            <div class="mm-verdict" id="verdictValue">[Verdict headline goes here]</div>
+          </div>
+        </div>
+
+        <div class="mm-resultGrid">
+
+          <div class="mm-resultCard">
+            <div class="mm-resultCardTitle">What's hurting your structure</div>
+            <ul id="painPointsList">
+              <li>[Pain point 1]</li>
+              <li>[Pain point 2]</li>
+              <li>[Pain point 3]</li>
+            </ul>
+          </div>
+
+          <div class="mm-resultCard">
+            <div class="mm-resultCardTitle">Structural Insight</div>
+            <ul id="insightList">
+              <li>[Insight 1]</li>
+              <li>[Insight 2]</li>
+              <li>[Insight 3]</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <div class="mm-nextMove">
+          <div class="mm-resultCardTitle">Next Move</div>
+          <div id="nextMoveValue">[Actionable next move goes here]</div>
+        </div>
+
+        <div class="mm-shareBlock">
+          <div class="mm-resultCardTitle">Financial Verdict</div>
+          <div id="shareLineValue">[Short shareable one-liner]</div>
+
+          <div class="mm-shareButtons">
+            <button class="mm-btn mm-btn-secondary" id="shareLinkedIn">Share on LinkedIn</button>
+            <button class="mm-btn mm-btn-secondary" id="shareX">Share on X</button>
+            <button class="mm-btn mm-btn-secondary" id="shareWhatsApp">Share on WhatsApp</button>
+            <button class="mm-btn mm-btn-secondary" id="copyResult">Copy Result</button>
+          </div>
+        </div>
+
+        <div class="mm-recommendBlock">
+          <div class="mm-recommendLabel">Recommended Insight</div>
+          <div class="mm-recommendTitle">[Lesson Title]</div>
+          <div class="mm-recommendMeta">5 min read</div>
+          <a href="../academy/" class="mm-btn mm-btn-secondary">Open Lesson</a>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const analyzeBtn = document.getElementById("analyzeBtn");
+    const resultBlock = document.getElementById("resultBlock");
+
+    function randomItem(arr) {
+      if (!Array.isArray(arr) || arr.length === 0) return "";
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function getNumber(id) {
+      const el = document.getElementById(id);
+      if (!el) return 0;
+      const value = Number(el.value);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    }
+
+    function calculateInsightData() {
+      const field1 = getNumber("field1");
+      const field2 = getNumber("field2");
+      const field3 = getNumber("field3");
+
+      const score = Math.max(0, Math.min(100, 100 - Math.round((field2 + field3) / Math.max(field1, 1) * 100)));
+
+      return {
+        field1,
+        field2,
+        field3,
+        score,
+        category: score >= 80 ? "Strong Structure" : score >= 60 ? "Needs Attention" : "Structural Leakage",
+        verdict: score >= 80
+          ? "Your structure shows real intent."
+          : score >= 60
+          ? "Your money structure needs more discipline."
+          : "Your cashflow has movement, but not enough direction.",
+        painPoints: [
+          "Too much of your structure may be working against your long-term goals.",
+          "Your current setup may be funding the present more than the future.",
+          "There is likely more financial drift than strategy in the system."
+        ],
+        insights: [
+          "This result reflects structure, not intelligence or potential.",
+          "Small changes in allocation often create very different future outcomes.",
+          "The biggest issue is usually not income, but how income is routed."
+        ],
+        nextMove: "Start by improving the part of your structure that reduces long-term optionality the most.",
+        shareLine: "Your money structure needs more intention."
+      };
+    }
+
+    function renderList(id, items) {
+      const list = document.getElementById(id);
+      if (!list) return;
+      list.innerHTML = "";
+      items.forEach((item) => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        list.appendChild(li);
+      });
+    }
+
+    function setupShareButtons(text) {
+      const appUrl = window.location.origin;
+      const encodedText = encodeURIComponent(text);
+      const encodedUrl = encodeURIComponent(appUrl);
+
+      document.getElementById("shareLinkedIn").onclick = () => {
+        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`, "_blank");
+      };
+
+      document.getElementById("shareX").onclick = () => {
+        window.open(`https://twitter.com/intent/tweet?text=${encodedText}`, "_blank");
+      };
+
+      document.getElementById("shareWhatsApp").onclick = () => {
+        window.open(`https://wa.me/?text=${encodedText}`, "_blank");
+      };
+
+      document.getElementById("copyResult").onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(text);
+          alert("Result copied");
+        } catch (error) {
+          alert("Copy failed");
+        }
+      };
+    }
+
+    function renderInsightTool() {
+      const data = calculateInsightData();
+
+      document.getElementById("scoreValue").textContent = data.score;
+      document.getElementById("categoryValue").textContent = data.category;
+      document.getElementById("verdictValue").textContent = data.verdict;
+      document.getElementById("nextMoveValue").textContent = data.nextMove;
+      document.getElementById("shareLineValue").textContent = `"${data.shareLine}"`;
+
+      renderList("painPointsList", data.painPoints);
+      renderList("insightList", data.insights);
+
+      const shareText = `MoneyMind Insight Result:
+
+${data.shareLine}
+
+Score: ${data.score}/100
+Category: ${data.category}
+
+Try MoneyMind:
+${window.location.origin}`;
+
+      setupShareButtons(shareText);
+
+      resultBlock.style.display = "block";
+    }
+
+    if (analyzeBtn) {
+      analyzeBtn.addEventListener("click", renderInsightTool);
+    }
+  </script>
+
+</body>
+</html>
