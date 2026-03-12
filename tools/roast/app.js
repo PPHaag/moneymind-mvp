@@ -1,169 +1,187 @@
-(function () {
-  const introScreen = document.getElementById("introScreen");
-  const formScreen = document.getElementById("formScreen");
-  const resultScreen = document.getElementById("resultScreen");
+(function(){
+  const questions = window.ROAST_DATA.questions;
 
-  const startRoastBtn = document.getElementById("startRoastBtn");
-  const backToIntroBtn = document.getElementById("backToIntroBtn");
-  const restartBtn = document.getElementById("restartBtn");
-  const roastForm = document.getElementById("roastForm");
+  const state = {
+    currentQuestionIndex: 0,
+    answers: {}
+  };
 
-  const scoreValue = document.getElementById("scoreValue");
-  const scoreLabel = document.getElementById("scoreLabel");
-  const headline = document.getElementById("headline");
-  const shareLine = document.getElementById("shareLine");
-  const roastBullets = document.getElementById("roastBullets");
-  const insightBullets = document.getElementById("insightBullets");
-  const nextMoveText = document.getElementById("nextMoveText");
+  const screens = {
+    intro: document.getElementById("introScreen"),
+    question: document.getElementById("questionScreen"),
+    loading: document.getElementById("loadingScreen"),
+    result: document.getElementById("resultScreen")
+  };
 
-  const shareLinkedIn = document.getElementById("shareLinkedIn");
-  const shareTwitter = document.getElementById("shareTwitter");
-  const shareWhatsApp = document.getElementById("shareWhatsApp");
-  const copyResult = document.getElementById("copyResult");
+  const els = {
+    startBtn: document.getElementById("startBtn"),
+    backBtn: document.getElementById("backBtn"),
+    progressText: document.getElementById("progressText"),
+    progressPct: document.getElementById("progressPct"),
+    progressFill: document.getElementById("progressFill"),
+    questionEyebrow: document.getElementById("questionEyebrow"),
+    questionTitle: document.getElementById("questionTitle"),
+    questionHint: document.getElementById("questionHint"),
+    optionsContainer: document.getElementById("optionsContainer"),
 
-  function showScreen(screen) {
-    [introScreen, formScreen, resultScreen].forEach((section) => {
-      if (section) section.classList.remove("active");
+    headlineText: document.getElementById("headlineText"),
+    observationText: document.getElementById("observationText"),
+    incomeText: document.getElementById("incomeText"),
+    investText: document.getElementById("investText"),
+    investRateText: document.getElementById("investRateText"),
+    profileName: document.getElementById("profileName"),
+    profileDescription: document.getElementById("profileDescription"),
+    profileOpportunity: document.getElementById("profileOpportunity"),
+    currentWealthText: document.getElementById("currentWealthText"),
+    optimizedWealthText: document.getElementById("optimizedWealthText"),
+    currentAgeText: document.getElementById("currentAgeText"),
+    optimizedAgeText: document.getElementById("optimizedAgeText"),
+    wealthDifferenceText: document.getElementById("wealthDifferenceText"),
+    behaviorTitle: document.getElementById("behaviorTitle"),
+    behaviorText: document.getElementById("behaviorText"),
+    lessonBtn: document.getElementById("lessonBtn"),
+    sharePreview: document.getElementById("sharePreview"),
+    copyShareBtn: document.getElementById("copyShareBtn"),
+    restartBtn: document.getElementById("restartBtn")
+  };
+
+  function showScreen(target){
+    Object.values(screens).forEach(screen => screen.classList.remove("active"));
+    target.classList.add("active");
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }
+
+  function startRoast(){
+    state.currentQuestionIndex = 0;
+    state.answers = {};
+    renderQuestion();
+    showScreen(screens.question);
+  }
+
+  function renderQuestion(){
+    const q = questions[state.currentQuestionIndex];
+    const index = state.currentQuestionIndex + 1;
+    const pct = Math.round((index / questions.length) * 100);
+
+    els.progressText.textContent = `Question ${index} of ${questions.length}`;
+    els.progressPct.textContent = `${pct}%`;
+    els.progressFill.style.width = `${pct}%`;
+
+    els.questionEyebrow.textContent = q.eyebrow;
+    els.questionTitle.textContent = q.title;
+    els.questionHint.textContent = q.hint;
+    els.optionsContainer.innerHTML = "";
+
+    q.options.forEach(option => {
+      const button = document.createElement("button");
+      button.className = "option-btn";
+      button.type = "button";
+      button.textContent = option.label;
+      button.addEventListener("click", () => {
+        state.answers[q.id] = option;
+        nextQuestion();
+      });
+      els.optionsContainer.appendChild(button);
     });
 
-    if (screen) screen.classList.add("active");
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    els.backBtn.style.visibility = state.currentQuestionIndex === 0 ? "hidden" : "visible";
   }
 
-  function getFieldValue(id) {
-    const el = document.getElementById(id);
-    return el ? el.value : 0;
-  }
-
-  function getFormData() {
-    return {
-      monthlyNetIncome: getFieldValue("monthlyNetIncome"),
-      savings: getFieldValue("savings"),
-      investments: getFieldValue("investments"),
-      debt: getFieldValue("debt"),
-      fixedExpenses: getFieldValue("fixedExpenses"),
-      monthlyWealthBuilding: getFieldValue("monthlyWealthBuilding")
-    };
-  }
-
-  function renderList(container, items) {
-    if (!container) return;
-    container.innerHTML = "";
-
-    (items || []).forEach((item) => {
-      const li = document.createElement("li");
-      li.textContent = item;
-      container.appendChild(li);
-    });
-  }
-
-  function setupShareButtons(text) {
-    const appUrl = "https://moneymind-mvp-five.vercel.app/";
-    const encodedText = encodeURIComponent(text);
-    const encodedUrl = encodeURIComponent(appUrl);
-
-    if (shareLinkedIn) {
-      shareLinkedIn.onclick = function () {
-        const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
-        window.open(url, "_blank");
-      };
+  function nextQuestion(){
+    if (state.currentQuestionIndex < questions.length - 1) {
+      state.currentQuestionIndex += 1;
+      renderQuestion();
+      return;
     }
 
-    if (shareTwitter) {
-      shareTwitter.onclick = function () {
-        const url = `https://twitter.com/intent/tweet?text=${encodedText}`;
-        window.open(url, "_blank");
-      };
+    runAnalysis();
+  }
+
+  function previousQuestion(){
+    if (state.currentQuestionIndex === 0) {
+      showScreen(screens.intro);
+      return;
     }
 
-    if (shareWhatsApp) {
-      shareWhatsApp.onclick = function () {
-        const url = `https://wa.me/?text=${encodedText}`;
-        window.open(url, "_blank");
-      };
+    state.currentQuestionIndex -= 1;
+    renderQuestion();
+  }
+
+  function runAnalysis(){
+    showScreen(screens.loading);
+
+    setTimeout(() => {
+      const result = window.RoastEngine.analyzeRoast(state.answers);
+      renderResult(result);
+      showScreen(screens.result);
+    }, 2200);
+  }
+
+  function renderResult(result){
+    els.headlineText.textContent = result.headline;
+    els.observationText.textContent = result.observation;
+    els.incomeText.textContent = result.incomeText;
+    els.investText.textContent = result.investText;
+    els.investRateText.textContent = result.investRateText;
+
+    els.profileName.textContent = result.profile.name;
+    els.profileDescription.textContent = result.profile.description;
+    els.profileOpportunity.textContent = result.profile.opportunity;
+
+    els.currentWealthText.textContent = window.RoastEngine.formatEuro(result.trajectory.currentWealth);
+    els.optimizedWealthText.textContent = window.RoastEngine.formatEuro(result.trajectory.optimizedWealth);
+    els.currentAgeText.textContent = result.currentAgeText;
+    els.optimizedAgeText.textContent = result.optimizedAgeText;
+    els.wealthDifferenceText.textContent = `+ ${window.RoastEngine.formatEuro(result.trajectory.wealthDifference)}`;
+
+    els.behaviorTitle.textContent = result.behavior.title;
+    els.behaviorText.textContent = result.behavior.text;
+    els.lessonBtn.textContent = result.behavior.lessonLabel;
+    els.sharePreview.textContent = result.shareText;
+
+    try {
+      localStorage.setItem("moneymind_roast_result", JSON.stringify({
+        answers: state.answers,
+        result
+      }));
+    } catch (err) {
+      console.warn("Could not save roast result to localStorage.", err);
     }
+  }
 
-    if (copyResult) {
-      copyResult.onclick = async function () {
-        try {
-          await navigator.clipboard.writeText(text);
-          alert("Result copied");
-        } catch (error) {
-          console.error("Copy failed:", error);
-          alert("Copy failed");
-        }
-      };
+  async function copyShareText(){
+    const text = els.sharePreview.textContent.trim();
+
+    try {
+      await navigator.clipboard.writeText(text);
+      els.copyShareBtn.textContent = "Copied";
+      setTimeout(() => {
+        els.copyShareBtn.textContent = "Copy Result";
+      }, 1400);
+    } catch (err) {
+      console.warn("Clipboard copy failed.", err);
+      els.copyShareBtn.textContent = "Copy Failed";
+      setTimeout(() => {
+        els.copyShareBtn.textContent = "Copy Result";
+      }, 1400);
     }
   }
 
-  function updateShareText(result) {
-    const verdict = result.shareLine || result.headline;
-
-    const text = `MoneyMind Roast Result:
-
-${verdict}
-
-Score: ${result.score}/100
-Category: ${result.category}
-
-Try the Roast Tool:
-https://moneymind-mvp-five.vercel.app/`;
-
-    if (shareLine) {
-      shareLine.textContent = `"${verdict}"`;
-    }
-
-    setupShareButtons(text);
+  function restartRoast(){
+    showScreen(screens.intro);
   }
 
-  function renderResult(result) {
-    if (scoreValue) scoreValue.textContent = result.score;
-    if (scoreLabel) scoreLabel.textContent = result.category;
-    if (headline) headline.textContent = result.headline;
-    if (nextMoveText) nextMoveText.textContent = result.nextMove;
-
-    renderList(roastBullets, result.roastBullets);
-    renderList(insightBullets, result.insights);
-
-    updateShareText(result);
-  }
-
-  if (startRoastBtn) {
-    startRoastBtn.addEventListener("click", function () {
-      showScreen(formScreen);
+  function init(){
+    els.startBtn.addEventListener("click", startRoast);
+    els.backBtn.addEventListener("click", previousQuestion);
+    els.copyShareBtn.addEventListener("click", copyShareText);
+    els.restartBtn.addEventListener("click", restartRoast);
+    els.lessonBtn.addEventListener("click", () => {
+      alert("Hook this to your Academy lesson route later. For now: this is your behavioral lesson CTA.");
     });
+
+    showScreen(screens.intro);
   }
 
-  if (backToIntroBtn) {
-    backToIntroBtn.addEventListener("click", function () {
-      showScreen(introScreen);
-    });
-  }
-
-  if (restartBtn) {
-    restartBtn.addEventListener("click", function () {
-      if (roastForm) roastForm.reset();
-      showScreen(introScreen);
-    });
-  }
-
-  if (roastForm) {
-    roastForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-
-      try {
-        const formData = getFormData();
-        const result = window.RoastEngine.calculateRoast(formData);
-
-        renderResult(result);
-        showScreen(resultScreen);
-      } catch (error) {
-        console.error("Roast generation failed:", error);
-        alert("Something went wrong while generating your roast.");
-      }
-    });
-  }
-
-  console.log("Roast Tool app.js loaded");
+  init();
 })();
