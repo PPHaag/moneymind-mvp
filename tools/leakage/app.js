@@ -1,130 +1,247 @@
-function mmShowError(msg) {
-  const box = document.getElementById("mmErrorBox");
-  if (!box) { alert(msg); return; }
-  box.style.display = "block";
-  box.textContent = "MoneyMind error:\n" + msg;
-}
-
-window.addEventListener("error", (e) => {
-  mmShowError(e.error?.stack || e.message);
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-
-  function toNumber(id) {
-  const el = document.getElementById(id);
-  const v = Number(el.value);
-  return Number.isFinite(v) ? v : 0;
-}
-
-function formatEUR(amount) {
-  return new Intl.NumberFormat("nl-NL", {
-    style: "currency",
-    currency: "EUR",
-    maximumFractionDigits: 0
-  }).format(amount);
-}
-
-function monthlyRateFromAnnualPercent(pct) {
-  const r = pct / 100;
-  return Math.pow(1 + r, 1 / 12) - 1;
-}
-
-function simulate({ initial, monthly, months, monthlyReturn, monthlyFee }) {
-  let balance = initial;
-  let contributed = initial;
-
-  for (let m = 0; m < months; m++) {
-    // bijdrage aan begin van de maand (simpel & consistent)
-    balance += monthly;
-    contributed += monthly;
-
-    // groei
-    balance *= (1 + monthlyReturn);
-
-    // fee (op de assets)
-    balance *= (1 - monthlyFee);
+(function(){
+  function getNumber(id) {
+    const el = document.getElementById(id);
+    const value = Number(el?.value || 0);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
   }
 
-  return { balance, contributed };
-}
+  function formatCurrency(value) {
+    return new Intl.NumberFormat("nl-NL", {
+      style: "currency",
+      currency: "EUR",
+      maximumFractionDigits: 0
+    }).format(value);
+  }
 
-function inflationAdjust(value, annualInflationPct, years) {
-  if (!annualInflationPct || annualInflationPct === 0) return value;
-  const infl = annualInflationPct / 100;
-  return value / Math.pow(1 + infl, years);
-}
+  function formatPercent(value) {
+    return `${Math.round(value)}%`;
+  }
 
-function calculate() {
-  const initial = Math.max(0, toNumber("initial"));
-  const monthly = Math.max(0, toNumber("monthly"));
-  const years = Math.max(1, Math.floor(toNumber("years")));
-  const returnRate = toNumber("returnRate");
-  const feeRate = Math.max(0, toNumber("feeRate"));
-  const inflationRate = Math.max(0, toNumber("inflationRate"));
+  function getRoastPayload() {
+    try {
+      const raw = localStorage.getItem("moneymind_roast_result");
+      return raw ? JSON.parse(raw) : null;
+    } catch (err) {
+      console.warn("Could not read roast payload.", err);
+      return null;
+    }
+  }
 
-  const months = years * 12;
+  function prefillFromJourney() {
+    const roastPayload = getRoastPayload();
+    if (!roastPayload?.answers) return null;
 
-  const monthlyReturn = monthlyRateFromAnnualPercent(returnRate);
-  const monthlyFee = monthlyRateFromAnnualPercent(feeRate);
+    const { answers, result } = roastPayload;
 
-  // Zonder fee
-  const noFee = simulate({
-    initial,
-    monthly,
-    months,
-    monthlyReturn,
-    monthlyFee: 0
-  });
+    const incomeAmount = answers?.income?.amount || 0;
+    const investAmount = answers?.invest?.amount || 0;
 
-  // Met fee
-  const withFee = simulate({
-    initial,
-    monthly,
-    months,
-    monthlyReturn,
-    monthlyFee
-  });
+    const incomeEl = document.getElementById("income");
+    const wealthEl = document.getElementById("wealth");
 
-  const noFeeAdj = inflationAdjust(noFee.balance, inflationRate, years);
-  const withFeeAdj = inflationAdjust(withFee.balance, inflationRate, years);
+    if (incomeEl && Number(incomeEl.value) === 0) {
+      incomeEl.value = incomeAmount;
+    }
 
-  const leakage = Math.max(0, noFeeAdj - withFeeAdj);
-  const leakagePct = noFeeAdj > 0 ? (leakage / noFeeAdj) * 100 : 0;
+    if (wealthEl && Number(wealthEl.value) === 0) {
+      wealthEl.value = investAmount;
+    }
 
-  document.getElementById("noFeeValue").textContent = formatEUR(noFeeAdj);
-  document.getElementById("withFeeValue").textContent = formatEUR(withFeeAdj);
-  document.getElementById("leakageValue").textContent = formatEUR(leakage);
-  document.getElementById("leakagePct").textContent =
-    `Dat is ~${leakagePct.toFixed(1)}% van je eindvermogen (na inflatiecorrectie indien ingevuld).`;
+    return {
+      incomeAmount,
+      investAmount,
+      profileName: result?.profile?.name || "",
+      profileDescription: result?.profile?.description || ""
+    };
+  }
 
-  document.getElementById("contributedValue").textContent = formatEUR(withFee.contributed);
-}
+  function renderJourneyImport(prefill) {
+    const journeyProfileCard = document.getElementById("journeyProfileCard");
+    const profileName = document.getElementById("profileName");
+    const profileText = document.getElementById("profileText");
+    const profileBadge = document.getElementById("profileBadge");
+    const journeyIncomeValue = document.getElementById("journeyIncomeValue");
+    const journeyInvestValue = document.getElementById("journeyInvestValue");
+    const journeyProfileValue = document.getElementById("journeyProfileValue");
 
-function resetForm() {
-  document.getElementById("initial").value = 10000;
-  document.getElementById("monthly").value = 500;
-  document.getElementById("years").value = 20;
-  document.getElementById("returnRate").value = 7;
-  document.getElementById("feeRate").value = 1;
-  document.getElementById("inflationRate").value = 0;
+    if (!prefill || !prefill.profileName) return;
 
-  document.getElementById("noFeeValue").textContent = "—";
-  document.getElementById("withFeeValue").textContent = "—";
-  document.getElementById("leakageValue").textContent = "—";
-  document.getElementById("leakagePct").textContent = "—";
-  document.getElementById("contributedValue").textContent = "—";
-}
+    if (profileName) profileName.textContent = prefill.profileName;
+    if (profileText) profileText.textContent = prefill.profileDescription || "";
+    if (profileBadge) profileBadge.textContent = prefill.profileName;
+    if (journeyIncomeValue) journeyIncomeValue.textContent = formatCurrency(prefill.incomeAmount || 0);
+    if (journeyInvestValue) journeyInvestValue.textContent = formatCurrency(prefill.investAmount || 0);
+    if (journeyProfileValue) journeyProfileValue.textContent = prefill.profileName;
 
-document.getElementById("calculateBtn").addEventListener("click", calculate);
-document.getElementById("resetBtn").addEventListener("click", resetForm);
+    if (journeyProfileCard) journeyProfileCard.style.display = "block";
+  }
 
-// Run once on load (zodat je meteen iets ziet)
-calculate();
-const HUB_URL = "https://codepen.io/PPHaagie/full/yyaBgxr";
-const backBtn = document.getElementById("backToHub");
-if(backBtn) backBtn.addEventListener("click", () => location.href = HUB_URL);
+  function calculateLeakageData() {
+    const income = getNumber("income");
+    const wealth = getNumber("wealth");
+    const lifestyle = getNumber("lifestyle");
+    const subscriptions = getNumber("subscriptions");
 
+    const monthlyLeakage = lifestyle + subscriptions;
+    const annualLeakage = monthlyLeakage * 12;
+    const leakagePct = income > 0 ? (monthlyLeakage / income) * 100 : 0;
 
-});
+    return {
+      income,
+      wealth,
+      lifestyle,
+      subscriptions,
+      monthlyLeakage,
+      annualLeakage,
+      leakagePct
+    };
+  }
 
+  function getLeakageInsight(data) {
+    const { leakagePct, wealth, monthlyLeakage } = data;
+
+    if (monthlyLeakage === 0) {
+      return "Your structure shows almost no visible leakage. Either you are extremely disciplined or suspiciously optimistic.";
+    }
+
+    if (leakagePct <= 10) {
+      return "Your leakage appears relatively controlled. Most of your income still has room to support your financial progress.";
+    }
+
+    if (leakagePct <= 20) {
+      return "A noticeable part of your monthly cashflow leaks into spending that does not strengthen long-term wealth.";
+    }
+
+    if (wealth > 0 && monthlyLeakage > wealth) {
+      return "You are building wealth, but your leakage currently exceeds the capital you add each month. That slows progress more than it seems.";
+    }
+
+    return "A large share of your monthly income disappears before it can support real capital formation.";
+  }
+
+  function resetAIBlocks() {
+    const leakageSignalText = document.getElementById("leakageSignalText");
+    const behaviorSignalText = document.getElementById("behaviorSignalText");
+    const aiWhatText = document.getElementById("aiWhatText");
+    const aiWhyText = document.getElementById("aiWhyText");
+    const aiViewText = document.getElementById("aiViewText");
+    const aiReflectionText = document.getElementById("aiReflectionText");
+
+    const aiLoading = document.getElementById("aiLoading");
+    const aiResult = document.getElementById("aiResult");
+    const aiError = document.getElementById("aiError");
+
+    if (leakageSignalText) leakageSignalText.textContent = "";
+    if (behaviorSignalText) behaviorSignalText.textContent = "";
+    if (aiWhatText) aiWhatText.textContent = "";
+    if (aiWhyText) aiWhyText.textContent = "";
+    if (aiViewText) aiViewText.textContent = "";
+    if (aiReflectionText) aiReflectionText.textContent = "";
+
+    if (aiResult) aiResult.style.display = "none";
+    if (aiError) aiError.style.display = "none";
+    if (aiLoading) aiLoading.style.display = "none";
+  }
+
+  function renderLeakage() {
+    const data = calculateLeakageData();
+
+    document.getElementById("leakagePctValue").textContent = formatPercent(data.leakagePct);
+    document.getElementById("monthlyLeakageValue").textContent = formatCurrency(data.monthlyLeakage);
+    document.getElementById("annualLeakageValue").textContent = formatCurrency(data.annualLeakage);
+    document.getElementById("wealthEuroValue").textContent = formatCurrency(data.wealth);
+    document.getElementById("leakageInsight").textContent = getLeakageInsight(data);
+
+    const resultBlock = document.getElementById("resultBlock");
+    if (resultBlock) {
+      resultBlock.style.display = "grid";
+      resultBlock.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+
+    resetAIBlocks();
+  }
+
+  async function fetchAIInsight() {
+    const aiExplainBtn = document.getElementById("aiExplainBtn");
+    const aiLoading = document.getElementById("aiLoading");
+    const aiResult = document.getElementById("aiResult");
+    const aiError = document.getElementById("aiError");
+
+    const leakageSignalText = document.getElementById("leakageSignalText");
+    const behaviorSignalText = document.getElementById("behaviorSignalText");
+    const aiWhatText = document.getElementById("aiWhatText");
+    const aiWhyText = document.getElementById("aiWhyText");
+    const aiViewText = document.getElementById("aiViewText");
+    const aiReflectionText = document.getElementById("aiReflectionText");
+
+    if (!aiExplainBtn || !aiLoading || !aiResult || !aiError || !leakageSignalText || !behaviorSignalText || !aiWhatText || !aiWhyText || !aiViewText || !aiReflectionText) {
+      console.error("AI UI elements not found.");
+      return;
+    }
+
+    const data = calculateLeakageData();
+
+    aiExplainBtn.disabled = true;
+    aiExplainBtn.textContent = "Analyzing...";
+    aiLoading.style.display = "block";
+    aiResult.style.display = "none";
+    aiError.style.display = "none";
+
+    try {
+      const response = await fetch("/api/ai-insight", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          tool: "wealth-leakage",
+          data
+        })
+      });
+
+      const result = await response.json();
+      console.log("AI RESULT FRONTEND:", result);
+
+      if (!response.ok) {
+        throw new Error(result.details || result.error || "AI request failed");
+      }
+
+      leakageSignalText.textContent = result.leakage_signal || "";
+      behaviorSignalText.textContent = result.behavior_signal || "";
+      aiWhatText.textContent = result.what_stands_out || "No section returned.";
+      aiWhyText.textContent = result.why_it_matters || "No section returned.";
+      aiViewText.textContent = result.moneymind_view || "No section returned.";
+      aiReflectionText.textContent = result.reflection || "No section returned.";
+
+      aiResult.style.display = "grid";
+    } catch (error) {
+      console.error("AI insight error:", error);
+      aiError.style.display = "block";
+    } finally {
+      aiLoading.style.display = "none";
+      aiExplainBtn.disabled = false;
+      aiExplainBtn.textContent = "Explain My Leakage";
+    }
+  }
+
+  function init() {
+    const calculateBtn = document.getElementById("calculateBtn");
+    const aiExplainBtn = document.getElementById("aiExplainBtn");
+
+    const prefill = prefillFromJourney();
+    renderJourneyImport(prefill);
+
+    if (calculateBtn) {
+      calculateBtn.addEventListener("click", renderLeakage);
+    }
+
+    if (aiExplainBtn) {
+      aiExplainBtn.addEventListener("click", fetchAIInsight);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+})();
