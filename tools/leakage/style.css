@@ -246,28 +246,36 @@ body{
   display:flex;
   align-items:center;
   gap:10px;
+  width:100%;
+  min-width:0;
   border:1px solid var(--border-soft);
   border-radius:16px;
   background:rgba(255,255,255,.03);
   padding:0 14px;
   min-height:56px;
+  overflow:hidden;
 }
 
 .mm-input span{
+  flex:0 0 auto;
   color:var(--muted);
   font-weight:700;
 }
 
 .mm-input input{
-  flex:1;
+  flex:1 1 auto;
+  min-width:0;
+  width:100%;
   border:none;
   outline:none;
   background:transparent;
   color:var(--text);
   font-size:1rem;
   font-weight:700;
+  line-height:1.2;
+  appearance:none;
+  -webkit-appearance:none;
 }
-
 .mm-btn{
   display:inline-flex;
   align-items:center;
