@@ -1,110 +1,254 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>MoneyMind – Wealth Leakage</title>
-
-<link rel="stylesheet" href="./style.css">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoneyMind • Wealth Leakage</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="mmErrorBox" style="display:none; margin:12px; padding:12px; border-radius:12px; border:1px solid rgba(255,80,80,.35); background: rgba(255,80,80,.12); color:#ffd1d1; font-family: ui-sans-serif,system-ui; white-space: pre-wrap;"></div>
+  <main class="mm-shell">
+    <div class="mm-wrap">
 
-<a class="mm-back" href="https://codepen.io/PPHaagie/full/NPRqMpy">← Back to Hub</a>
+      <nav class="mm-toolnav">
+        <a href="../capital-map/">Capital Map</a>
+        <a href="../allocation/">Allocation</a>
+        <a href="../leakage/" class="active">Wealth Leakage</a>
+        <a href="../cost-of-delay/">Cost of Delay</a>
+        <a href="../builder/">Builder</a>
+      </nav>
 
+      <section class="mm-card mm-hero">
+        <div class="mm-eyebrow">MoneyMind • Step 4 of 5</div>
+        <h1>Wealth Leakage</h1>
+        <p class="mm-lead">
+          Not all spending is harmful. But some of it quietly drains capital that could have built real wealth.
+        </p>
+        <p class="mm-helperIntro">
+          Estimate where your monthly cashflow disappears without strengthening your long-term financial position.
+        </p>
+      </section>
 
-<h1>👋 MoneyMind</h1>
-<div class="app">
-  <header>
-    <h1>Wealth Leakage Check</h1>
-    <p class="sub">Zie hoeveel vermogen je verliest door jaarlijkse kosten (fees) over tijd.</p>
-  </header>
+      <section class="mm-card mm-journeyImport" id="journeyProfileCard" style="display:none;">
+        <div class="mm-eyebrow">Imported from your journey</div>
+        <div class="mm-journeyTop">
+          <div>
+            <h2 id="profileName">Your profile</h2>
+            <p id="profileText" class="mm-muted"></p>
+          </div>
+          <div class="mm-profileBadge" id="profileBadge">Profile</div>
+        </div>
 
-  <section class="card">
-    <div class="grid">
-      <label>
-        Startkapitaal (€)
-        <input id="initial" type="number" value="10000" min="0" step="100" />
-      </label>
+        <div class="mm-summaryGrid">
+          <div class="mm-summaryCard">
+            <span class="mm-summaryLabel">Monthly income</span>
+            <span class="mm-summaryValue" id="journeyIncomeValue">€0</span>
+          </div>
+          <div class="mm-summaryCard">
+            <span class="mm-summaryLabel">Monthly investing</span>
+            <span class="mm-summaryValue" id="journeyInvestValue">€0</span>
+          </div>
+          <div class="mm-summaryCard">
+            <span class="mm-summaryLabel">Journey profile</span>
+            <span class="mm-summaryValue mm-summaryValueSmall" id="journeyProfileValue">-</span>
+          </div>
+        </div>
+      </section>
 
-      <label>
-        Maandelijkse inleg (€)
-        <input id="monthly" type="number" value="500" min="0" step="10" />
-      </label>
+      <section class="mm-card mm-formCard">
 
-      <label>
-        Looptijd (jaren)
-        <input id="years" type="number" value="20" min="1" step="1" />
-      </label>
+        <div class="mm-sectionHead">
+          <div class="mm-eyebrow">Monthly Leakage Inputs</div>
+          <h3>Where money leaves your system without building assets</h3>
+        </div>
 
-      <label>
-        Verwacht rendement (% per jaar)
-        <input id="returnRate" type="number" value="7" step="0.1" />
-      </label>
+        <div class="mm-grid mm-grid2">
 
-      <label>
-        Jaarlijkse kosten / fee (% per jaar)
-        <input id="feeRate" type="number" value="1" step="0.01" />
-      </label>
+          <div class="mm-field">
+            <label class="mm-label" for="income">
+              Monthly Net Income
+              <span class="mm-info" tabindex="0">?
+                <span class="mm-tooltip">
+                  Your average monthly income after taxes and deductions.
+                </span>
+              </span>
+            </label>
+            <div class="mm-input">
+              <span>€</span>
+              <input id="income" type="number" value="0" min="0" placeholder="4500">
+            </div>
+          </div>
 
-      <label>
-        Inflatie (% per jaar) (optioneel)
-        <input id="inflationRate" type="number" value="0" step="0.1" />
-      </label>
+          <div class="mm-field">
+            <label class="mm-label" for="wealth">
+              Monthly Wealth Building
+              <span class="mm-info" tabindex="0">?
+                <span class="mm-tooltip">
+                  Money directed toward savings, investing or long-term capital formation.
+                </span>
+              </span>
+            </label>
+            <div class="mm-input">
+              <span>€</span>
+              <input id="wealth" type="number" value="0" min="0" placeholder="600">
+            </div>
+          </div>
+
+          <div class="mm-field">
+            <label class="mm-label" for="lifestyle">
+              Lifestyle Spending
+              <span class="mm-info" tabindex="0">?
+                <span class="mm-tooltip">
+                  Non-essential recurring spending such as dining out, shopping, entertainment and convenience spending.
+                </span>
+              </span>
+            </label>
+            <div class="mm-input">
+              <span>€</span>
+              <input id="lifestyle" type="number" value="0" min="0" placeholder="700">
+            </div>
+          </div>
+
+          <div class="mm-field">
+            <label class="mm-label" for="subscriptions">
+              Subscriptions & Small Drains
+              <span class="mm-info" tabindex="0">?
+                <span class="mm-tooltip">
+                  Streaming, apps, software, memberships and small recurring costs that often go unnoticed.
+                </span>
+              </span>
+            </label>
+            <div class="mm-input">
+              <span>€</span>
+              <input id="subscriptions" type="number" value="0" min="0" placeholder="120">
+            </div>
+          </div>
+
+        </div>
+
+        <button class="mm-btn" id="calculateBtn" type="button">
+          Check My Leakage
+        </button>
+      </section>
+
+      <section id="resultBlock" class="mm-resultStack" style="display:none;">
+
+        <section class="mm-card mm-resultCard">
+          <div class="mm-eyebrow">Your Leakage Result</div>
+
+          <div class="mm-resultIntro">
+            This is the part of your monthly cashflow that may be quietly weakening long-term wealth building.
+          </div>
+
+          <div class="mm-resultGrid">
+            <div class="mm-metricCard">
+              <div class="mm-big" id="leakagePctValue">0%</div>
+              <div class="mm-sub">Leakage Ratio</div>
+            </div>
+
+            <div class="mm-metricCard">
+              <div class="mm-big" id="monthlyLeakageValue">€0</div>
+              <div class="mm-sub">Monthly Leakage</div>
+            </div>
+
+            <div class="mm-metricCard">
+              <div class="mm-big" id="annualLeakageValue">€0</div>
+              <div class="mm-sub">Annual Leakage</div>
+            </div>
+          </div>
+
+          <div class="mm-netWorthBox">
+            <div class="mm-big" id="wealthEuroValue">€0</div>
+            <div class="mm-sub">Monthly Wealth Building</div>
+          </div>
+
+          <div class="mm-impact">
+            <div class="mm-impactMain" id="leakageInsight"></div>
+            <div class="mm-impactSub">
+              Leakage is not about guilt. It is about seeing what your current structure silently costs you over time.
+            </div>
+          </div>
+        </section>
+
+        <section class="mm-card mm-aiInsight">
+          <div class="mm-aiHeader">
+            <div>
+              <div class="mm-eyebrow">AI Insight</div>
+              <div class="mm-aiTitle">
+                MoneyMind interprets what your leakage pattern may be telling you.
+              </div>
+            </div>
+          </div>
+
+          <button class="mm-btn mm-aiBtn" id="aiExplainBtn" type="button">
+            Explain My Leakage
+          </button>
+
+          <div class="mm-aiLoading" id="aiLoading" style="display:none;">
+            Analyzing your leakage structure...
+          </div>
+
+          <div class="mm-aiError" id="aiError" style="display:none;">
+            AI Insight is temporarily unavailable. Please try again.
+          </div>
+
+          <div class="mm-aiResult" id="aiResult" style="display:none;">
+
+            <div class="mm-aiSignalRow">
+              <div class="mm-aiSignalBox">
+                <div class="mm-aiSignalLabel">Leakage Signal</div>
+                <div class="mm-aiSignalValue" id="leakageSignalText"></div>
+              </div>
+
+              <div class="mm-aiSignalBox">
+                <div class="mm-aiSignalLabel">Behavior Signal</div>
+                <div class="mm-aiSignalValue" id="behaviorSignalText"></div>
+              </div>
+            </div>
+
+            <div class="mm-aiResultBlock">
+              <div class="mm-aiLabel">What stands out</div>
+              <div class="mm-aiText" id="aiWhatText"></div>
+            </div>
+
+            <div class="mm-aiResultBlock">
+              <div class="mm-aiLabel">Why it matters</div>
+              <div class="mm-aiText" id="aiWhyText"></div>
+            </div>
+
+            <div class="mm-aiResultBlock">
+              <div class="mm-aiLabel">MoneyMind view</div>
+              <div class="mm-aiText" id="aiViewText"></div>
+            </div>
+
+            <div class="mm-aiResultBlock">
+              <div class="mm-aiLabel">Reflection</div>
+              <div class="mm-aiText" id="aiReflectionText"></div>
+            </div>
+
+          </div>
+        </section>
+
+        <section class="mm-card mm-nextCard">
+          <div>
+            <div class="mm-eyebrow">Next Step</div>
+            <h3>Now build your future path.</h3>
+            <p class="mm-muted">
+              You have seen your structure, your allocation and your leakage. Now translate that into long-term wealth potential.
+            </p>
+          </div>
+
+          <a class="mm-btn" href="../builder/">
+            See Your Builder
+          </a>
+        </section>
+
+      </section>
+
     </div>
+  </main>
 
-    <div class="actions">
-      <button id="calculateBtn">Bereken</button>
-      <button id="resetBtn" class="secondary">Reset</button>
-    </div>
-
-    <p class="note">
-      MVP-aanname: rendement en fee worden maandelijks “verrekend” (benadering die goed genoeg is voor inzicht).
-    </p>
-  </section>
-
-  <section class="card" id="results" aria-live="polite">
-    <h2>Resultaat</h2>
-    <div class="resultsGrid">
-      <div class="resultBox">
-        <div class="label">Eindwaarde zonder fee</div>
-        <div class="value" id="noFeeValue">—</div>
-      </div>
-
-      <div class="resultBox">
-        <div class="label">Eindwaarde mét fee</div>
-        <div class="value" id="withFeeValue">—</div>
-      </div>
-
-      <div class="resultBox highlight">
-        <div class="label">Wealth leakage (verschil)</div>
-        <div class="value" id="leakageValue">—</div>
-        <div class="small" id="leakagePct">—</div>
-      </div>
-
-      <div class="resultBox">
-        <div class="label">Totaal ingelegd</div>
-        <div class="value" id="contributedValue">—</div>
-      </div>
-    </div>
-
-    <details class="details">
-      <summary>Toon aannames & uitleg</summary>
-      <ul>
-        <li>Maandrendement = (1 + jaarrendement)^(1/12) - 1</li>
-        <li>Maandfee = (1 + jaarfee)^(1/12) - 1</li>
-        <li>Inflatie corrigeert de eindwaarde naar “koopkracht van vandaag” (optioneel).</li>
-      </ul>
-    </details>
-  </section>
-
-  <footer class="footer">
-    <span>MoneyMind MVP tool • Wealth Leakage Check</span>
-  </footer>
-</div>
-
-<script src="./app.js" defer></script>
-
+  <script src="app.js"></script>
 </body>
 </html>
