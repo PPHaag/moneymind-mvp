@@ -203,7 +203,10 @@
       });
 
       const result = await response.json();
-      console.log("AI RESULT FRONTEND:", result);
+      console.log("LEAKAGE PAYLOAD:", {
+  tool: "wealth-leakage",
+  data
+});
 
       if (!response.ok) {
         throw new Error(result.details || result.error || "AI request failed");
