@@ -1,139 +1,200 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MoneyMind – Wealth Builder</title>
-  <link rel="stylesheet" href="./style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoneyMind • Wealth Builder</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="mmErrorBox" style="display:none; margin:12px; padding:12px; border-radius:12px; border:1px solid rgba(255,80,80,.35); background: rgba(255,80,80,.12); color:#ffd1d1; font-family: ui-sans-serif,system-ui; white-space: pre-wrap;"></div>
+  <main class="mm-shell">
+    <div class="mm-wrap">
 
-<a class="mm-back" href="https://codepen.io/PPHaagie/full/NPRqMpy">← Back to Hub</a>
+      <nav class="mm-toolnav">
+        <a href="../capital-map/">Capital Map</a>
+        <a href="../allocation/">Allocation</a>
+        <a href="../leakage/">Wealth Leakage</a>
+        <a href="../builder/" class="active">Wealth Builder</a>
+      </nav>
 
-<div class="app">
-  
-  <header>
-    <h1>Wealth Builder Engine</h1>
-    <p class="sub">Bouw je vermogenspad met milestones en “financial freedom” datum.</p>
-  </header>
+      <section class="mm-card mm-hero">
+        <div class="mm-eyebrow">MoneyMind • Step 5 of 5</div>
+        <h1>Wealth Builder</h1>
+        <p class="mm-lead">
+          This is where your current financial behavior meets your future wealth trajectory.
+        </p>
+        <p class="mm-helperIntro">
+          MoneyMind uses your existing journey data to show where your current path leads —
+          and what happens if your structure improves.
+        </p>
+      </section>
 
-  <section class="card">
-    <div class="grid">
-      <label>
-        Startkapitaal (€)
-        <input id="initial" type="number" value="10000" min="0" step="100" />
-      </label>
-
-      <label>
-        Maandelijkse inleg (€)
-        <input id="monthly" type="number" value="500" min="0" step="10" />
-      </label>
-
-      <label>
-        Looptijd (jaren)
-        <input id="years" type="number" value="30" min="1" step="1" />
-      </label>
-
-      <label>
-        Verwacht rendement (% per jaar)
-        <input id="returnRate" type="number" value="7" step="0.1" />
-      </label>
-
-      <label>
-        Jaarlijkse fee (% per jaar)
-        <input id="feeRate" type="number" value="0.6" step="0.01" />
-      </label>
-
-      <label>
-        Inflatie (% per jaar) (optioneel)
-        <input id="inflationRate" type="number" value="0" step="0.1" />
-      </label>
-
-      <label>
-        Vermogensdoel (€)
-        <input id="wealthGoal" type="number" value="500000" min="0" step="1000" />
-      </label>
-
-      <label>
-        Passive income doel (€ per maand)
-        <input id="incomeGoal" type="number" value="2000" min="0" step="50" />
-      </label>
-
-      <label>
-        Verwachte yield op eindvermogen (% per jaar)
-        <input id="yieldRate" type="number" value="4" step="0.1" />
-      </label>
-    </div>
-
-    <div class="actions">
-      <button id="calculateBtn">Bereken pad</button>
-      <button id="resetBtn" class="secondary">Reset</button>
-    </div>
-
-    <p class="note">
-      MVP-aanname: maandelijkse inleg aan begin van de maand. Rendement en fee worden maandelijks toegepast (benadering).
-    </p>
-  </section>
-
-  <section class="card">
-    <h2>Dashboard</h2>
-
-    <div class="resultsGrid">
-      <div class="resultBox">
-        <div class="label">Eindvermogen (met fee)</div>
-        <div class="value" id="endWithFee">—</div>
-        <div class="small" id="endWithFeeReal">—</div>
-      </div>
-
-      <div class="resultBox">
-        <div class="label">Eindvermogen (zonder fee)</div>
-        <div class="value" id="endNoFee">—</div>
-        <div class="small" id="endNoFeeReal">—</div>
-      </div>
-
-      <div class="resultBox highlight">
-        <div class="label">Years to wealth goal</div>
-        <div class="value" id="yearsToWealth">—</div>
-        <div class="small" id="wealthGoalNote">—</div>
-      </div>
-
-      <div class="resultBox highlight">
-        <div class="label">Years to financial freedom</div>
-        <div class="value" id="yearsToFreedom">—</div>
-        <div class="small" id="freedomNote">—</div>
-      </div>
-    </div>
-
-    <div class="chartWrap">
-      <div class="chartHeader">
-        <div>
-          <div class="chartTitle">Vermogenspad</div>
-          <div class="chartSub">Met fee vs zonder fee • milestones als lijnen</div>
+      <section class="mm-card mm-journeyImport" id="journeyProfileCard" style="display:none;">
+        <div class="mm-eyebrow">Imported from your journey</div>
+        <div class="mm-journeyTop">
+          <div>
+            <h2 id="profileName">Your profile</h2>
+            <p id="profileText" class="mm-muted"></p>
+          </div>
+          <div class="mm-profileBadge" id="profileBadge">Profile</div>
         </div>
-        <div class="pill" id="milestoneNext">Volgende milestone: —</div>
-      </div>
 
-      <canvas id="chart" height="120"></canvas>
+        <div class="mm-summaryGrid">
+          <div class="mm-summaryCard">
+            <span class="mm-summaryLabel">Current capital</span>
+            <span class="mm-summaryValue" id="journeyCapitalValue">€0</span>
+          </div>
+          <div class="mm-summaryCard">
+            <span class="mm-summaryLabel">Monthly wealth building</span>
+            <span class="mm-summaryValue" id="journeyInvestValue">€0</span>
+          </div>
+          <div class="mm-summaryCard">
+            <span class="mm-summaryLabel">Years to 65</span>
+            <span class="mm-summaryValue mm-summaryValueSmall" id="journeyYearsValue">0 years</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="mm-card mm-formCard">
+        <div class="mm-sectionHead">
+          <div class="mm-eyebrow">Builder Assumptions</div>
+          <h3>Minimal inputs. Maximum future clarity.</h3>
+        </div>
+
+        <div class="mm-grid mm-grid2">
+
+          <div class="mm-field">
+            <label class="mm-label" for="currentCapital">
+              Current Capital
+              <span class="mm-info" tabindex="0">?
+                <span class="mm-tooltip">
+                  Your current starting capital. MoneyMind prefills this from your journey where possible.
+                </span>
+              </span>
+            </label>
+            <div class="mm-input">
+              <span>€</span>
+              <input id="currentCapital" type="number" value="0" min="0" placeholder="25000">
+            </div>
+          </div>
+
+          <div class="mm-field">
+            <label class="mm-label" for="monthlyInvesting">
+              Monthly Wealth Building
+              <span class="mm-info" tabindex="0">?
+                <span class="mm-tooltip">
+                  The amount you direct toward savings, investing or long-term capital building each month.
+                </span>
+              </span>
+            </label>
+            <div class="mm-input">
+              <span>€</span>
+              <input id="monthlyInvesting" type="number" value="0" min="0" placeholder="600">
+            </div>
+          </div>
+
+          <div class="mm-field">
+            <label class="mm-label" for="yearsToGoal">
+              Years Remaining
+              <span class="mm-info" tabindex="0">?
+                <span class="mm-tooltip">
+                  The period over which your capital compounds. MoneyMind prefills this based on your Roast age.
+                </span>
+              </span>
+            </label>
+            <div class="mm-input">
+              <input id="yearsToGoal" type="number" value="25" min="1" max="50" placeholder="25">
+              <span>yrs</span>
+            </div>
+          </div>
+
+          <div class="mm-field">
+            <label class="mm-label" for="annualReturn">
+              Expected Annual Return
+              <span class="mm-info" tabindex="0">?
+                <span class="mm-tooltip">
+                  A simple planning assumption, not a prediction. Keep it realistic.
+                </span>
+              </span>
+            </label>
+            <div class="mm-input">
+              <input id="annualReturn" type="number" value="7" min="1" max="15" step="0.5" placeholder="7">
+              <span>%</span>
+            </div>
+          </div>
+
+        </div>
+
+        <button class="mm-btn" id="calculateBtn" type="button">
+          Show My Wealth Path
+        </button>
+      </section>
+
+      <section id="resultBlock" class="mm-resultStack" style="display:none;">
+
+        <section class="mm-card mm-resultCard">
+          <div class="mm-eyebrow">Your Wealth Trajectory</div>
+
+          <div class="mm-trajectoryGrid">
+            <div class="mm-trajectoryCard">
+              <div class="mm-trajectoryLabel">Current Path</div>
+              <div class="mm-big" id="currentPathValue">€0</div>
+              <div class="mm-sub">Based on your current monthly wealth building</div>
+            </div>
+
+            <div class="mm-trajectoryCard mm-trajectoryCardOptimized">
+              <div class="mm-trajectoryLabel">Optimized Path</div>
+              <div class="mm-big" id="optimizedPathValue">€0</div>
+              <div class="mm-sub">If your allocation becomes structurally stronger</div>
+            </div>
+          </div>
+
+          <div class="mm-highlightRow">
+            <div class="mm-highlightCard">
+              <div class="mm-highlightLabel">Potential Difference</div>
+              <div class="mm-big" id="differenceValue">€0</div>
+            </div>
+
+            <div class="mm-highlightCard mm-highlightCardWarning">
+              <div class="mm-highlightLabel">5-Year Delay Cost</div>
+              <div class="mm-big" id="delayCostValue">€0</div>
+            </div>
+          </div>
+
+          <div class="mm-impact">
+            <div class="mm-impactMain" id="builderInsight"></div>
+            <div class="mm-impactSub">
+              This is not about prediction. It is about seeing what your current structure is likely to produce over time.
+            </div>
+          </div>
+        </section>
+
+        <section class="mm-card mm-futureShockCard">
+          <div class="mm-eyebrow">Future Shock</div>
+          <h3>Your future is not mainly decided by income. It is decided by structure.</h3>
+          <p class="mm-muted" id="futureShockText"></p>
+        </section>
+
+        <section class="mm-card mm-nextCard">
+          <div>
+            <div class="mm-eyebrow">Next Step</div>
+            <h3>Your core MoneyMind journey is complete.</h3>
+            <p class="mm-muted">
+              From here, MoneyMind should help you monitor, understand and improve your financial structure over time.
+            </p>
+          </div>
+
+          <a class="mm-btn" href="../../splash.html">
+            Return to Home
+          </a>
+        </section>
+
+      </section>
+
     </div>
+  </main>
 
-    <details class="details">
-      <summary>Toon milestones & aannames</summary>
-      <ul>
-        <li>Milestones: €100k, €250k, €500k, €1M (aanpasbaar in code later)</li>
-        <li>Financial freedom: benodigde kapitaal = (maanddoel × 12) / yield%</li>
-        <li>Inflatie (optioneel): toont ook “koopkracht vandaag” indicatie onder eindwaarden</li>
-      </ul>
-    </details>
-  </section>
-
-  <footer class="footer">
-    <span>MoneyMind MVP tool • Wealth Builder Engine</span>
-  </footer>
-</div>
-
-<script src="./app.js" defer></script>
-
+  <script src="app.js"></script>
 </body>
 </html>
