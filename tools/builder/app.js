@@ -1,379 +1,262 @@
-function mmShowError(msg) {
-  const box = document.getElementById("mmErrorBox");
-  if (!box) { alert(msg); return; }
-  box.style.display = "block";
-  box.textContent = "MoneyMind error:\n" + msg;
-}
-
-window.addEventListener("error", (e) => {
-  mmShowError(e.error?.stack || e.message);
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-
-  // ===== MoneyMind Wealth Builder Engine (MVP v1) - Full JS Replacement =====
-
-// ---------- Helpers ----------
-const HUB_URL = "https://codepen.io/PPHaagie/full/yyaBgxr";
-function $(id) {
-  return document.getElementById(id);
-}
-
-function toNumber(id) {
-  const el = $(id);
-  const v = Number(el?.value);
-  return Number.isFinite(v) ? v : 0;
-}
-
-function monthlyRateFromAnnualPercent(pct) {
-  const r = pct / 100;
-  return Math.pow(1 + r, 1 / 12) - 1;
-}
-
-function formatEUR(amount) {
-  return new Intl.NumberFormat("nl-NL", {
-    style: "currency",
-    currency: "EUR",
-    maximumFractionDigits: 0
-  }).format(amount);
-}
-
-function formatEURCompact(amount) {
-  // €100K / €1M style (nl-NL uses "K" and "mln" sometimes; still compact & readable)
-  return new Intl.NumberFormat("nl-NL", {
-    style: "currency",
-    currency: "EUR",
-    notation: "compact",
-    compactDisplay: "short",
-    maximumFractionDigits: 1
-  }).format(amount);
-}
-
-function inflationAdjust(value, annualInflationPct, years) {
-  if (!annualInflationPct || annualInflationPct === 0) return value;
-  const infl = annualInflationPct / 100;
-  return value / Math.pow(1 + infl, years);
-}
-
-function monthToYears(m) {
-  return m / 12;
-}
-
-// ---------- Core simulation (monthly) ----------
-function simulatePath({ initial, monthly, months, monthlyReturn, monthlyFee }) {
-  let balance = Math.max(0, initial);
-  let contributed = Math.max(0, initial);
-  const series = [balance]; // month 0
-
-  for (let m = 1; m <= months; m++) {
-    // contribute at start of month
-    balance += monthly;
-    contributed += monthly;
-
-    // growth
-    balance *= (1 + monthlyReturn);
-
-    // fee drag on assets
-    balance *= (1 - monthlyFee);
-
-    series.push(balance);
+(function(){
+  function getNumber(id) {
+    const el = document.getElementById(id);
+    const value = Number(el?.value || 0);
+    return Number.isFinite(value) && value >= 0 ? value : 0;
   }
 
-  return { end: balance, contributed, series };
-}
-
-function findMonthWhenCrossing(series, target) {
-  if (target <= 0) return 0;
-  for (let i = 0; i < series.length; i++) {
-    if (series[i] >= target) return i;
-  }
-  return null; // not reached
-}
-
-const MILESTONES = [100000, 250000, 500000, 1000000];
-
-// ---------- Canvas chart (bulletproof) ----------
-function drawChart({ withFee, noFee, milestones }) {
-  const canvas = $("chart");
-  if (!canvas) return;
-
-  const ctx = canvas.getContext("2d");
-  const rect = canvas.getBoundingClientRect();
-
-  // Fallback sizes so it never becomes 0-width/0-height
-  const cssW = Math.max(360, Math.floor(rect.width));
-  const cssH = Math.max(220, Math.floor(rect.height || 220));
-
-  const dpr = window.devicePixelRatio || 1;
-
-  // Set actual pixel buffer size
-  canvas.width = Math.floor(cssW * dpr);
-  canvas.height = Math.floor(cssH * dpr);
-
-  // Reset transform and scale once
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.scale(dpr, dpr);
-
-  // Clear in CSS pixels
-  ctx.clearRect(0, 0, cssW, cssH);
-
-  const w = cssW;
-  const h = cssH;
-
-  // ✅ Fix: more room on the left + smaller font for labels
-  const padding = { left: 88, right: 16, top: 14, bottom: 32 };
-  const plotW = w - padding.left - padding.right;
-  const plotH = h - padding.top - padding.bottom;
-
-  // Guard
-  const maxLen = Math.max(withFee.length, noFee.length);
-  if (maxLen < 2) return;
-
-  // Determine maxY
-  const maxSeries = Math.max(
-    ...withFee,
-    ...noFee,
-    ...milestones.map(m => m * 1.02)
-  );
-
-  const minY = 0;
-  const maxY = Math.max(1, maxSeries);
-  const maxX = maxLen - 1;
-
-  function xScale(i) {
-    return padding.left + (i / maxX) * plotW;
+  function formatCurrency(value) {
+    return new Intl.NumberFormat("nl-NL", {
+      style: "currency",
+      currency: "EUR",
+      maximumFractionDigits: 0
+    }).format(value);
   }
 
-  function yScale(v) {
-    const t = (v - minY) / (maxY - minY || 1);
-    return padding.top + (1 - t) * plotH;
-  }
-
-  // Background grid (Y)
-  const yTicks = 4;
-  ctx.lineWidth = 1;
-  ctx.strokeStyle = "rgba(233,238,252,0.08)";
-  ctx.fillStyle = "rgba(233,238,252,0.62)";
-  ctx.font = "10px ui-sans-serif, system-ui"; // ✅ smaller labels
-  ctx.textAlign = "right";
-  ctx.textBaseline = "middle";
-
-  for (let t = 0; t <= yTicks; t++) {
-    const val = (maxY / yTicks) * t;
-    const y = yScale(val);
-
-    ctx.beginPath();
-    ctx.moveTo(padding.left, y);
-    ctx.lineTo(w - padding.right, y);
-    ctx.stroke();
-
-    // Y-axis labels (compact)
-    ctx.fillText(formatEURCompact(val), padding.left - 10, y);
-  }
-
-  // X-axis baseline
-  ctx.strokeStyle = "rgba(233,238,252,0.18)";
-  ctx.beginPath();
-  ctx.moveTo(padding.left, h - padding.bottom);
-  ctx.lineTo(w - padding.right, h - padding.bottom);
-  ctx.stroke();
-
-  // X-axis labels (years)
-  ctx.fillStyle = "rgba(233,238,252,0.55)";
-  ctx.font = "11px ui-sans-serif, system-ui";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "top";
-
-  const step = Math.max(12, Math.floor(maxX / 6)); // about 6 labels
-  for (let i = 0; i <= maxX; i += step) {
-    const x = xScale(i);
-    const years = Math.round(i / 12);
-    ctx.fillText(`${years}y`, x, h - padding.bottom + 6);
-  }
-
-  // Milestone lines
-  ctx.setLineDash([6, 6]);
-  ctx.strokeStyle = "rgba(132,255,199,0.18)";
-  milestones.forEach(m => {
-    const y = yScale(m);
-    ctx.beginPath();
-    ctx.moveTo(padding.left, y);
-    ctx.lineTo(w - padding.right, y);
-    ctx.stroke();
-  });
-  ctx.setLineDash([]);
-
-  // Draw series lines
-  function drawLine(data, strokeStyle) {
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = strokeStyle;
-    ctx.beginPath();
-    for (let i = 0; i < data.length; i++) {
-      const x = xScale(i);
-      const y = yScale(data[i]);
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-  }
-
-  // Without fee (blue-ish) and with fee (green-ish)
-  drawLine(noFee, "rgba(122,162,255,0.95)");
-  drawLine(withFee, "rgba(132,255,199,0.95)");
-
-  // Legend
-  ctx.font = "12px ui-sans-serif, system-ui";
-  ctx.textAlign = "left";
-  ctx.textBaseline = "middle";
-
-  // "Zonder fee"
-  ctx.fillStyle = "rgba(122,162,255,0.95)";
-  ctx.fillRect(padding.left, padding.top + 2, 14, 3);
-  ctx.fillStyle = "rgba(233,238,252,0.82)";
-  ctx.fillText("Zonder fee", padding.left + 20, padding.top + 4);
-
-  // "Met fee"
-  ctx.fillStyle = "rgba(132,255,199,0.95)";
-  ctx.fillRect(padding.left + 110, padding.top + 2, 14, 3);
-  ctx.fillStyle = "rgba(233,238,252,0.82)";
-  ctx.fillText("Met fee", padding.left + 130, padding.top + 4);
-}
-
-// ---------- Calculation ----------
-function calculate() {
-  // Inputs
-  const initial = Math.max(0, toNumber("initial"));
-  const monthly = Math.max(0, toNumber("monthly"));
-  const years = Math.max(1, Math.floor(toNumber("years")));
-  const returnRate = toNumber("returnRate");
-  const feeRate = Math.max(0, toNumber("feeRate"));
-  const inflationRate = Math.max(0, toNumber("inflationRate"));
-
-  const wealthGoal = Math.max(0, toNumber("wealthGoal"));
-  const incomeGoal = Math.max(0, toNumber("incomeGoal"));
-  const yieldRate = Math.max(0, toNumber("yieldRate"));
-
-  const months = years * 12;
-
-  const monthlyReturn = monthlyRateFromAnnualPercent(returnRate);
-  const monthlyFee = monthlyRateFromAnnualPercent(feeRate);
-
-  // Paths
-  const noFee = simulatePath({ initial, monthly, months, monthlyReturn, monthlyFee: 0 });
-  const withFee = simulatePath({ initial, monthly, months, monthlyReturn, monthlyFee });
-
-  // End values + inflation adjusted
-  const endWithFeeReal = inflationAdjust(withFee.end, inflationRate, years);
-  const endNoFeeReal = inflationAdjust(noFee.end, inflationRate, years);
-
-  // Update end boxes
-  $("endWithFee").textContent = formatEUR(withFee.end);
-  $("endNoFee").textContent = formatEUR(noFee.end);
-
-  $("endWithFeeReal").textContent =
-    inflationRate > 0 ? `Koopkracht vandaag: ${formatEUR(endWithFeeReal)}` : "Koopkracht vandaag: — (inflatie = 0)";
-  $("endNoFeeReal").textContent =
-    inflationRate > 0 ? `Koopkracht vandaag: ${formatEUR(endNoFeeReal)}` : "Koopkracht vandaag: — (inflatie = 0)";
-
-  // Wealth goal ETA (use with-fee path)
-  if (wealthGoal === 0) {
-    $("yearsToWealth").textContent = "—";
-    $("wealthGoalNote").textContent = "Geen vermogensdoel ingevuld.";
-  } else {
-    const mWealth = findMonthWhenCrossing(withFee.series, wealthGoal);
-    if (mWealth === null) {
-      $("yearsToWealth").textContent = "Niet gehaald";
-      $("wealthGoalNote").textContent = `Binnen ${years} jaar kom je uit op ${formatEUR(withFee.end)}.`;
-    } else {
-      const y = monthToYears(mWealth);
-      $("yearsToWealth").textContent = `${y.toFixed(1)} jaar`;
-      $("wealthGoalNote").textContent = `Doel: ${formatEUR(wealthGoal)} • bereikt rond maand ${mWealth}.`;
+  function getRoastPayload() {
+    try {
+      const raw = localStorage.getItem("moneymind_roast_result");
+      return raw ? JSON.parse(raw) : null;
+    } catch (err) {
+      console.warn("Could not read roast payload.", err);
+      return null;
     }
   }
 
-  // Financial freedom (income goal -> required capital based on yield %)
-  if (incomeGoal === 0) {
-    $("yearsToFreedom").textContent = "—";
-    $("freedomNote").textContent = "Geen income doel ingevuld.";
-  } else if (yieldRate <= 0) {
-    $("yearsToFreedom").textContent = "—";
-    $("freedomNote").textContent = "Yield moet > 0% zijn.";
-  } else {
-    const requiredCapital = (incomeGoal * 12) / (yieldRate / 100);
-    const mFreedom = findMonthWhenCrossing(withFee.series, requiredCapital);
-
-    if (mFreedom === null) {
-      $("yearsToFreedom").textContent = "Niet gehaald";
-      $("freedomNote").textContent =
-        `Benodigd: ${formatEUR(requiredCapital)} (bij ${yieldRate}% yield). Eind: ${formatEUR(withFee.end)}.`;
-    } else {
-      const y = monthToYears(mFreedom);
-      const now = new Date();
-      const freedomDate = new Date(now.getFullYear(), now.getMonth() + mFreedom, 1);
-      const monthNames = ["jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"];
-
-      $("yearsToFreedom").textContent = `${y.toFixed(1)} jaar`;
-      $("freedomNote").textContent =
-        `Benodigd: ${formatEUR(requiredCapital)} • vrijheid rond ~${monthNames[freedomDate.getMonth()]} ${freedomDate.getFullYear()} (bij ${yieldRate}% yield).`;
+  function getCapitalMapPayload() {
+    try {
+      const raw = localStorage.getItem("moneymind_capital_map");
+      return raw ? JSON.parse(raw) : null;
+    } catch (err) {
+      console.warn("Could not read capital map payload.", err);
+      return null;
     }
   }
 
-  // Next milestone based on withFee end
-  let next = null;
-  for (const m of MILESTONES) {
-    if (withFee.end < m) { next = m; break; }
+  function getAllocationPayload() {
+    try {
+      const raw = localStorage.getItem("moneymind_allocation");
+      return raw ? JSON.parse(raw) : null;
+    } catch (err) {
+      console.warn("Could not read allocation payload.", err);
+      return null;
+    }
   }
-  $("milestoneNext").textContent = next ? `Volgende milestone: ${formatEUR(next)}` : "Volgende milestone: €1M+ (lekker bezig)";
 
-  // Draw chart
-  drawChart({
-    withFee: withFee.series,
-    noFee: noFee.series,
-    milestones: MILESTONES
-  });
-}
+  function futureValue(startCapital, monthlyContribution, annualReturnPct, years) {
+    const annualReturn = annualReturnPct / 100;
+    const monthlyRate = annualReturn / 12;
+    const months = years * 12;
 
-// ---------- Reset ----------
-function resetForm() {
-  $("initial").value = 10000;
-  $("monthly").value = 500;
-  $("years").value = 30;
-  $("returnRate").value = 7;
-  $("feeRate").value = 0.6;
-  $("inflationRate").value = 0;
-  $("wealthGoal").value = 500000;
-  $("incomeGoal").value = 2000;
-  $("yieldRate").value = 4;
+    if (months <= 0) return startCapital;
 
-  // Clear UI quickly (optional)
-  $("endWithFee").textContent = "—";
-  $("endNoFee").textContent = "—";
-  $("endWithFeeReal").textContent = "—";
-  $("endNoFeeReal").textContent = "—";
-  $("yearsToWealth").textContent = "—";
-  $("wealthGoalNote").textContent = "—";
-  $("yearsToFreedom").textContent = "—";
-  $("freedomNote").textContent = "—";
-  $("milestoneNext").textContent = "Volgende milestone: —";
+    const futureStart = startCapital * Math.pow(1 + monthlyRate, months);
+    const futureContributions =
+      monthlyRate === 0
+        ? monthlyContribution * months
+        : monthlyContribution * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
 
-  calculate();
-}
+    return futureStart + futureContributions;
+  }
 
-// ---------- Wire up ----------
-$("calculateBtn")?.addEventListener("click", calculate);
-$("resetBtn")?.addEventListener("click", resetForm);
+  function prefillFromJourney() {
+    const roastPayload = getRoastPayload();
+    const capitalPayload = getCapitalMapPayload();
+    const allocationPayload = getAllocationPayload();
 
-// Redraw on resize (chart needs new dimensions)
-window.addEventListener("resize", () => calculate());
+    const profileName = roastPayload?.result?.profile?.name || "";
+    const profileDescription = roastPayload?.result?.profile?.description || "";
 
-// Run once on load
-calculate();
-const backBtn = document.getElementById("backToHub");
-if(backBtn){
-  backBtn.addEventListener("click", () => {
-    location.href = HUB_URL;
-  });
-}
+    const yearsTo60 = roastPayload?.answers?.age?.yearsTo60 || 25;
 
+    const capitalFromMap =
+      capitalPayload?.data?.netWorth ??
+      capitalPayload?.result?.netWorth ??
+      0;
 
-});
+    const directCapitalFallback =
+      capitalPayload?.data?.directCapital ??
+      0;
+
+    const currentCapital = capitalFromMap > 0 ? capitalFromMap : directCapitalFallback;
+
+    const allocationWealth =
+      allocationPayload?.data?.wealth ??
+      roastPayload?.answers?.invest?.amount ??
+      0;
+
+    const currentCapitalInput = document.getElementById("currentCapital");
+    const monthlyInvestingInput = document.getElementById("monthlyInvesting");
+    const yearsToGoalInput = document.getElementById("yearsToGoal");
+
+    if (currentCapitalInput && Number(currentCapitalInput.value) === 0 && currentCapital > 0) {
+      currentCapitalInput.value = Math.round(currentCapital);
+    }
+
+    if (monthlyInvestingInput && Number(monthlyInvestingInput.value) === 0 && allocationWealth > 0) {
+      monthlyInvestingInput.value = Math.round(allocationWealth);
+    }
+
+    if (yearsToGoalInput && Number(yearsToGoalInput.value) === 25 && yearsTo60 > 0) {
+      yearsToGoalInput.value = yearsTo60;
+    }
+
+    return {
+      profileName,
+      profileDescription,
+      currentCapital,
+      monthlyInvesting: allocationWealth,
+      yearsTo60
+    };
+  }
+
+  function renderJourneyImport(prefill) {
+    const card = document.getElementById("journeyProfileCard");
+    const profileName = document.getElementById("profileName");
+    const profileText = document.getElementById("profileText");
+    const profileBadge = document.getElementById("profileBadge");
+    const journeyCapitalValue = document.getElementById("journeyCapitalValue");
+    const journeyInvestValue = document.getElementById("journeyInvestValue");
+    const journeyYearsValue = document.getElementById("journeyYearsValue");
+
+    if (!prefill || !prefill.profileName) return;
+
+    if (profileName) profileName.textContent = prefill.profileName;
+    if (profileText) profileText.textContent = prefill.profileDescription || "";
+    if (profileBadge) profileBadge.textContent = prefill.profileName;
+    if (journeyCapitalValue) journeyCapitalValue.textContent = formatCurrency(prefill.currentCapital || 0);
+    if (journeyInvestValue) journeyInvestValue.textContent = formatCurrency(prefill.monthlyInvesting || 0);
+    if (journeyYearsValue) journeyYearsValue.textContent = `${prefill.yearsTo60 || 0} years`;
+
+    if (card) card.style.display = "block";
+  }
+
+  function calculateBuilderData() {
+    const currentCapital = getNumber("currentCapital");
+    const monthlyInvesting = getNumber("monthlyInvesting");
+    const yearsToGoal = getNumber("yearsToGoal");
+    const annualReturn = getNumber("annualReturn");
+
+    const optimizedMonthlyInvesting = Math.max(
+      monthlyInvesting,
+      Math.round(monthlyInvesting * 1.5)
+    );
+
+    const currentPath = futureValue(
+      currentCapital,
+      monthlyInvesting,
+      annualReturn,
+      yearsToGoal
+    );
+
+    const optimizedPath = futureValue(
+      currentCapital,
+      optimizedMonthlyInvesting,
+      annualReturn,
+      yearsToGoal
+    );
+
+    const delayedYears = Math.max(yearsToGoal - 5, 1);
+
+    const delayedPath = futureValue(
+      currentCapital,
+      optimizedMonthlyInvesting,
+      annualReturn,
+      delayedYears
+    );
+
+    const difference = optimizedPath - currentPath;
+    const delayCost = optimizedPath - delayedPath;
+
+    return {
+      currentCapital,
+      monthlyInvesting,
+      optimizedMonthlyInvesting,
+      yearsToGoal,
+      annualReturn,
+      currentPath,
+      optimizedPath,
+      delayedPath,
+      difference,
+      delayCost
+    };
+  }
+
+  function getBuilderInsight(data) {
+    const { monthlyInvesting, difference, delayCost } = data;
+
+    if (monthlyInvesting <= 0) {
+      return "Right now, your compounding engine is barely switched on. That keeps your future wealth heavily dependent on starting capital instead of consistent capital formation.";
+    }
+
+    if (difference < 50000) {
+      return "Your current path already builds some future capital, but the upside from structural improvement remains relatively modest.";
+    }
+
+    if (delayCost > difference) {
+      return "The time component is hitting harder than the allocation component. Delay is currently more expensive than most people intuitively think.";
+    }
+
+    return "Your structure already creates future wealth, but stronger monthly capital formation changes the outcome far more than it feels like in the present.";
+  }
+
+  function getFutureShockText(data) {
+    const { difference, delayCost, yearsToGoal } = data;
+
+    return `Over the next ${yearsToGoal} years, relatively small structural improvements could change your future wealth by ${formatCurrency(difference)}. Waiting five years could cost roughly ${formatCurrency(delayCost)} in missed compounding power.`;
+  }
+
+  function persistBuilderData(data) {
+    try {
+      localStorage.setItem("moneymind_builder", JSON.stringify({
+        updatedAt: new Date().toISOString(),
+        data
+      }));
+    } catch (err) {
+      console.warn("Could not save builder data.", err);
+    }
+  }
+
+  function renderBuilder() {
+    const data = calculateBuilderData();
+
+    document.getElementById("currentPathValue").textContent = formatCurrency(Math.round(data.currentPath));
+    document.getElementById("optimizedPathValue").textContent = formatCurrency(Math.round(data.optimizedPath));
+    document.getElementById("differenceValue").textContent = formatCurrency(Math.round(data.difference));
+    document.getElementById("delayCostValue").textContent = formatCurrency(Math.round(data.delayCost));
+    document.getElementById("builderInsight").textContent = getBuilderInsight(data);
+    document.getElementById("futureShockText").textContent = getFutureShockText(data);
+
+    const resultBlock = document.getElementById("resultBlock");
+    if (resultBlock) {
+      resultBlock.style.display = "grid";
+      resultBlock.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+
+    persistBuilderData({
+      currentCapital: data.currentCapital,
+      monthlyInvesting: data.monthlyInvesting,
+      yearsToGoal: data.yearsToGoal,
+      annualReturn: data.annualReturn,
+      currentPath: Math.round(data.currentPath),
+      optimizedPath: Math.round(data.optimizedPath),
+      difference: Math.round(data.difference),
+      delayCost: Math.round(data.delayCost)
+    });
+  }
+
+  function init() {
+    const calculateBtn = document.getElementById("calculateBtn");
+    const prefill = prefillFromJourney();
+    renderJourneyImport(prefill);
+
+    if (calculateBtn) {
+      calculateBtn.addEventListener("click", renderBuilder);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+})();
