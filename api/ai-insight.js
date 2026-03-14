@@ -19,53 +19,23 @@ function safeParseJSON(text) {
   }
 }
 
-export default async function handler(req, res) {
-  console.log("METHOD:", req.method);
+function buildCapitalMapPrompt(data, tool) {
+  const directCapital = Number(data.directCapital ?? 0);
+  const accessibleCapital = Number(data.accessibleCapital ?? 0);
+  const lockedCapital = Number(data.lockedCapital ?? 0);
+  const netWorth = Number(data.netWorth ?? 0);
+  const deployableCapital = Number(data.deployableCapital ?? 0);
 
-  if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "Method not allowed",
-      receivedMethod: req.method,
-    });
-  }
+  const totalCapital = directCapital + accessibleCapital + lockedCapital;
 
-  if (!process.env.OPENAI_API_KEY) {
-    console.error("OPENAI_API_KEY missing");
-    return res.status(500).json({
-      error: "OpenAI API key missing",
-    });
-  }
+  const directShare =
+    totalCapital > 0 ? ((directCapital / totalCapital) * 100).toFixed(1) : "0.0";
+  const accessibleShare =
+    totalCapital > 0 ? ((accessibleCapital / totalCapital) * 100).toFixed(1) : "0.0";
+  const lockedShare =
+    totalCapital > 0 ? ((lockedCapital / totalCapital) * 100).toFixed(1) : "0.0";
 
-  const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
-
-  try {
-    const { tool, data } = req.body || {};
-
-    console.log("REQ BODY:", JSON.stringify(req.body, null, 2));
-
-    if (!data) {
-      return res.status(400).json({
-        error: "Missing data payload",
-      });
-    }
-
-    const directCapital = Number(data.directCapital ?? 0);
-    const accessibleCapital = Number(data.accessibleCapital ?? 0);
-    const lockedCapital = Number(data.lockedCapital ?? 0);
-    const age = data.age ?? "not provided";
-
-    const totalCapital = directCapital + accessibleCapital + lockedCapital;
-
-    const directShare =
-      totalCapital > 0 ? ((directCapital / totalCapital) * 100).toFixed(1) : "0.0";
-    const accessibleShare =
-      totalCapital > 0 ? ((accessibleCapital / totalCapital) * 100).toFixed(1) : "0.0";
-    const lockedShare =
-      totalCapital > 0 ? ((lockedCapital / totalCapital) * 100).toFixed(1) : "0.0";
-
-    const prompt = `
+  return `
 You are the MoneyMind Financial Intelligence Engine.
 
 Your role is NOT to give generic personal finance advice.
@@ -73,13 +43,14 @@ Your role is to interpret a person's capital structure clearly, sharply, and str
 
 The user completed the Capital Map tool.
 
-Tool: ${tool || "capital-map"}
+Tool: ${tool}
 
 Capital structure data:
 - Direct Capital: €${directCapital}
 - Accessible Capital: €${accessibleCapital}
 - Locked Capital: €${lockedCapital}
-- Age: ${age}
+- Net Worth: €${netWorth}
+- Deployable Capital: €${deployableCapital}
 
 Capital mix:
 - Direct Capital Share: ${directShare}%
@@ -110,69 +81,276 @@ Use exactly this JSON shape:
   "moneymind_view": "...",
   "reflection": "..."
 }
-structure_signal:
-Short classification of the capital structure maturity.
 
-Possible examples:
-- "Early-stage structure"
-- "Balanced structure"
-- "Liquidity-heavy structure"
-- "Locked-heavy structure"
-- "Under-layered capital structure"
-- "Well-layered capital structure"
-
-Keep it short (max 4 words).
-
-liquidity_signal:
-Short description of how liquid the capital structure is.
-
-Possible examples:
-- "High liquidity"
-- "Moderate liquidity"
-- "Low liquidity"
-- "Highly deployable capital"
-- "Structurally locked capital"
-
-Keep it short (max 3 words).
-
-Rules for signals:
-- These signals must be short classifications, not sentences.
-- Do not repeat the same phrase in both signals.
-- Base the signals on the capital distribution.
-
-Writing rules:
-- Sound intelligent, calm, premium, and slightly sharp.
-- Be specific to the numbers given.
-- Do NOT sound like a generic finance blog.
-- Do NOT use clichés such as "diversification is important" unless directly relevant.
-- Do NOT give direct financial advice.
-- Do NOT tell the user what to buy, sell, or allocate.
-- Do NOT moralize.
-- Do NOT use hype.
-- Make the interpretation structural, not motivational.
-- Keep each field concise: 2 to 3 sentences maximum.
-- "MoneyMind view" should feel like a strategic interpretation of the structure.
-- "Reflection" should provoke thought, not give instructions.
-
-Tone examples:
-Good:
-- "This structure is highly liquid, but not yet deeply layered."
-- "The capital is available, but not strongly positioned."
-- "Flexibility is high, structural depth is limited."
-- "This looks more like capital in holding formation than a mature wealth structure."
-
-Bad:
-- "It is important to diversify for long-term success."
-- "Consider speaking to a financial advisor."
-- "This is a great starting point for your journey."
-- "Make sure you invest wisely."
+Rules:
+- structure_signal: short classification, max 4 words
+- liquidity_signal: short classification, max 3 words
+- each explanation field: max 2-3 sentences
+- intelligent, calm, premium, slightly sharp
+- no generic blog language
+- no financial advice
+- no hype
+- no moralizing
+- no buy/sell/allocation instructions
 
 Output must be valid JSON only.
 `;
+}
+
+function buildAllocationPrompt(data, tool) {
+  const income = Number(data.income ?? 0);
+  const fixed = Number(data.fixed ?? 0);
+  const wealth = Number(data.wealth ?? 0);
+  const flex = Number(data.flex ?? 0);
+  const wealthPct = Number(data.wealthPct ?? 0);
+  const fixedPct = Number(data.fixedPct ?? 0);
+  const flexPct = Number(data.flexPct ?? 0);
+
+  return `
+You are the MoneyMind Financial Intelligence Engine.
+
+Your role is to interpret a person's monthly allocation structure.
+Do NOT give generic budgeting tips or financial advice.
+
+The user completed the Allocation Reality Check tool.
+
+Tool: ${tool}
+
+Allocation data:
+- Monthly Net Income: €${income}
+- Fixed Structural Costs: €${fixed}
+- Monthly Wealth Building: €${wealth}
+- Flexible Spend: €${flex}
+
+Allocation ratios:
+- Wealth Building Ratio: ${wealthPct.toFixed(1)}%
+- Structural Cost Load: ${fixedPct.toFixed(1)}%
+- Flexible Spend Share: ${flexPct.toFixed(1)}%
+
+Interpret this through a cashflow allocation and wealth-building lens.
+
+Focus on:
+- whether the structure supports capital formation
+- whether too much income is trapped in structural costs
+- whether present consumption dominates future wealth
+- whether wealth building is weak, moderate, or strong
+- whether this structure looks reactive or intentional
+
+Return ONLY valid JSON.
+Do not add markdown.
+Do not add explanation before or after the JSON.
+
+Use exactly this JSON shape:
+
+{
+  "structure_signal": "...",
+  "liquidity_signal": "...",
+  "what_stands_out": "...",
+  "why_it_matters": "...",
+  "moneymind_view": "...",
+  "reflection": "..."
+}
+
+Signal rules:
+- structure_signal: short classification, max 4 words
+- liquidity_signal: short classification, max 3 words
+- signals must be short labels, not full sentences
+
+Writing rules:
+- each explanation field max 2-3 sentences
+- intelligent, calm, premium, slightly sharp
+- no generic finance blog tone
+- no direct financial advice
+- no moralizing
+- no hype
+- no clichés
+
+Good examples of signal style:
+- "Weak wealth allocation"
+- "Moderate wealth structure"
+- "Consumption-heavy"
+- "Balanced but tight"
+- "Low flexibility"
+- "Moderate liquidity"
+
+Output must be valid JSON only.
+`;
+}
+
+function buildLeakagePrompt(data, tool) {
+  const income = Number(data.income ?? 0);
+  const wealth = Number(data.wealth ?? 0);
+  const lifestyle = Number(data.lifestyle ?? 0);
+  const subscriptions = Number(data.subscriptions ?? 0);
+  const monthlyLeakage = Number(data.monthlyLeakage ?? 0);
+  const annualLeakage = Number(data.annualLeakage ?? 0);
+  const leakagePct = Number(data.leakagePct ?? 0);
+
+  return `
+You are the MoneyMind Financial Intelligence Engine.
+
+Your role is to interpret a person's wealth leakage pattern.
+Do NOT give generic budgeting advice and do NOT moralize spending.
+
+The user completed the Wealth Leakage tool.
+
+Tool: ${tool}
+
+Leakage data:
+- Monthly Net Income: €${income}
+- Monthly Wealth Building: €${wealth}
+- Lifestyle Spending: €${lifestyle}
+- Subscriptions and Small Drains: €${subscriptions}
+- Monthly Leakage: €${monthlyLeakage}
+- Annual Leakage: €${annualLeakage}
+- Leakage Ratio: ${leakagePct.toFixed(1)}%
+
+Interpret this through a wealth leakage and behavioral finance lens.
+
+Focus on:
+- whether leakage is low, moderate, or high
+- whether lifestyle spending competes with wealth building
+- whether recurring small drains are structurally meaningful
+- whether this pattern suggests lifestyle drift, loose spending discipline, or controlled leakage
+- whether leakage is quietly slowing wealth formation
+
+Return ONLY valid JSON.
+Do not add markdown.
+Do not add explanation before or after the JSON.
+
+Use exactly this JSON shape:
+
+{
+  "leakage_signal": "...",
+  "behavior_signal": "...",
+  "what_stands_out": "...",
+  "why_it_matters": "...",
+  "moneymind_view": "...",
+  "reflection": "..."
+}
+
+Signal rules:
+- leakage_signal: short classification, max 4 words
+- behavior_signal: short classification, max 4 words
+- signals must be short labels, not full sentences
+
+Writing rules:
+- each explanation field max 2-3 sentences
+- intelligent, calm, premium, slightly sharp
+- no guilt language
+- no moralizing
+- no direct advice
+- no blog clichés
+- no hype
+
+Good signal examples:
+- "Controlled leakage"
+- "Moderate leakage"
+- "Heavy leakage"
+- "Lifestyle drift"
+- "Consumption creep"
+- "Discipline pressure"
+
+Output must be valid JSON only.
+`;
+}
+
+function normalizeCapitalMapResponse(parsed) {
+  return {
+    success: true,
+    structure_signal: parsed.structure_signal || "",
+    liquidity_signal: parsed.liquidity_signal || "",
+    what_stands_out: parsed.what_stands_out || "No section returned.",
+    why_it_matters: parsed.why_it_matters || "No section returned.",
+    moneymind_view: parsed.moneymind_view || "No section returned.",
+    reflection: parsed.reflection || "No section returned."
+  };
+}
+
+function normalizeAllocationResponse(parsed) {
+  return {
+    success: true,
+    structure_signal: parsed.structure_signal || "",
+    liquidity_signal: parsed.liquidity_signal || "",
+    what_stands_out: parsed.what_stands_out || "No section returned.",
+    why_it_matters: parsed.why_it_matters || "No section returned.",
+    moneymind_view: parsed.moneymind_view || "No section returned.",
+    reflection: parsed.reflection || "No section returned."
+  };
+}
+
+function normalizeLeakageResponse(parsed) {
+  return {
+    success: true,
+    leakage_signal: parsed.leakage_signal || "",
+    behavior_signal: parsed.behavior_signal || "",
+    what_stands_out: parsed.what_stands_out || "No section returned.",
+    why_it_matters: parsed.why_it_matters || "No section returned.",
+    moneymind_view: parsed.moneymind_view || "No section returned.",
+    reflection: parsed.reflection || "No section returned."
+  };
+}
+
+export default async function handler(req, res) {
+  console.log("METHOD:", req.method);
+
+  if (req.method !== "POST") {
+    return res.status(405).json({
+      error: "Method not allowed",
+      receivedMethod: req.method
+    });
+  }
+
+  if (!process.env.OPENAI_API_KEY) {
+    console.error("OPENAI_API_KEY missing");
+    return res.status(500).json({
+      error: "OpenAI API key missing"
+    });
+  }
+
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+  });
+
+  try {
+    const { tool, data } = req.body || {};
+
+    console.log("REQ BODY:", JSON.stringify(req.body, null, 2));
+
+    if (!tool) {
+      return res.status(400).json({
+        error: "Missing tool identifier"
+      });
+    }
+
+    if (!data) {
+      return res.status(400).json({
+        error: "Missing data payload"
+      });
+    }
+
+    let prompt = "";
+    let normalizeResponse;
+
+    if (tool === "capital-map") {
+      prompt = buildCapitalMapPrompt(data, tool);
+      normalizeResponse = normalizeCapitalMapResponse;
+    } else if (tool === "allocation-reality-check") {
+      prompt = buildAllocationPrompt(data, tool);
+      normalizeResponse = normalizeAllocationResponse;
+    } else if (tool === "wealth-leakage") {
+      prompt = buildLeakagePrompt(data, tool);
+      normalizeResponse = normalizeLeakageResponse;
+    } else {
+      return res.status(400).json({
+        error: "Unsupported tool",
+        tool
+      });
+    }
 
     const response = await openai.responses.create({
       model: "gpt-4o-mini",
-      input: prompt,
+      input: prompt
     });
 
     const rawText =
@@ -195,19 +373,11 @@ Output must be valid JSON only.
       console.error("JSON PARSE FAILED");
       return res.status(500).json({
         error: "AI returned invalid JSON",
-        raw_insight: rawText,
+        raw_insight: rawText
       });
     }
 
-return res.status(200).json({
-  success: true,
-  structure_signal: parsed.structure_signal || "",
-  liquidity_signal: parsed.liquidity_signal || "",
-  what_stands_out: parsed.what_stands_out || "No section returned.",
-  why_it_matters: parsed.why_it_matters || "No section returned.",
-  moneymind_view: parsed.moneymind_view || "No section returned.",
-  reflection: parsed.reflection || "No section returned.",
-});
+    return res.status(200).json(normalizeResponse(parsed));
   } catch (error) {
     console.error("OPENAI ERROR FULL:", error);
     console.error("OPENAI ERROR MESSAGE:", error?.message);
@@ -217,13 +387,13 @@ return res.status(200).json({
       return res.status(500).json({
         error: "OpenAI quota exceeded",
         details:
-          "The OpenAI API key is connected, but the project has no available quota or billing is not active.",
+          "The OpenAI API key is connected, but the project has no available quota or billing is not active."
       });
     }
 
     return res.status(500).json({
       error: "AI request failed",
-      details: error?.message || "Unknown error",
+      details: error?.message || "Unknown error"
     });
   }
 }
