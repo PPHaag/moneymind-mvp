@@ -1,3 +1,20 @@
+function prefillAllocationFromProfile() {
+
+  const profile = JSON.parse(localStorage.getItem("mm_profile") || "{}");
+
+  const incomeField = document.getElementById("income");
+  const wealthField = document.getElementById("wealth");
+
+  if (incomeField && profile.income) {
+    incomeField.value = profile.income;
+  }
+
+  if (wealthField && profile.monthlyInvesting) {
+    wealthField.value = profile.monthlyInvesting;
+  }
+
+}
+
 (function(){
   function resetAIBlocks() {
     const structureSignalText = document.getElementById("structureSignalText");
