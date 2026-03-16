@@ -1,4 +1,5 @@
 (function(){
+
   function resetAIBlocks() {
     const aiLoading = document.getElementById("aiLoading");
     const aiResult = document.getElementById("aiResult");
@@ -20,10 +21,12 @@
   }
 
   function renderRoastImport(prefill) {
+
     const roastProfileCard = document.getElementById("roastProfileCard");
     const profileName = document.getElementById("profileName");
     const profileText = document.getElementById("profileText");
     const profileBadge = document.getElementById("profileBadge");
+
     const roastIncomeValue = document.getElementById("roastIncomeValue");
     const roastInvestValue = document.getElementById("roastInvestValue");
     const roastProfileValue = document.getElementById("roastProfileValue");
@@ -33,15 +36,45 @@
     if (profileName) profileName.textContent = prefill.profileName;
     if (profileText) profileText.textContent = prefill.profileDescription || "";
     if (profileBadge) profileBadge.textContent = prefill.profileName;
-    if (roastIncomeValue) roastIncomeValue.textContent = window.CapitalMapEngine.formatCurrency(prefill.incomeAmount || 0);
-    if (roastInvestValue) roastInvestValue.textContent = window.CapitalMapEngine.formatCurrency(prefill.investAmount || 0);
-    if (roastProfileValue) roastProfileValue.textContent = prefill.profileName;
 
-    if (roastProfileCard) roastProfileCard.style.display = "block";
+    if (roastIncomeValue) {
+      roastIncomeValue.textContent =
+        window.CapitalMapEngine.formatCurrency(prefill.incomeAmount || 0);
+    }
+
+    if (roastInvestValue) {
+      roastInvestValue.textContent =
+        window.CapitalMapEngine.formatCurrency(prefill.investAmount || 0);
+    }
+
+    if (roastProfileValue) {
+      roastProfileValue.textContent = prefill.profileName;
+    }
+
+    if (roastProfileCard) {
+      roastProfileCard.style.display = "block";
+    }
+
   }
 
   function renderCapitalMap() {
+
     const data = window.CapitalMapEngine.calculateCapitalMapData();
+
+    // 🔹 Nieuw: Capital Map opslaan in profiel
+    try {
+
+      const profile = JSON.parse(localStorage.getItem("mm_profile") || "{}");
+
+      localStorage.setItem("mm_profile", JSON.stringify({
+        ...profile,
+        capitalMap: data,
+        capitalMapUpdatedAt: new Date().toISOString()
+      }));
+
+    } catch(err) {
+      console.warn("Could not save capital map", err);
+    }
 
     document.getElementById("directCapitalValue").textContent =
       window.CapitalMapEngine.formatCurrency(data.directCapital);
@@ -59,18 +92,24 @@
       window.CapitalMapEngine.getCapitalInsight(data);
 
     const resultBlock = document.getElementById("resultBlock");
+
     if (resultBlock) {
+
       resultBlock.style.display = "grid";
+
       resultBlock.scrollIntoView({
         behavior: "smooth",
         block: "start"
       });
+
     }
 
     resetAIBlocks();
+
   }
 
   async function fetchAIInsight() {
+
     const aiExplainBtn = document.getElementById("aiExplainBtn");
     const aiLoading = document.getElementById("aiLoading");
     const aiResult = document.getElementById("aiResult");
@@ -81,7 +120,16 @@
     const aiViewText = document.getElementById("aiViewText");
     const aiReflectionText = document.getElementById("aiReflectionText");
 
-    if (!aiExplainBtn || !aiLoading || !aiResult || !aiError || !aiWhatText || !aiWhyText || !aiViewText || !aiReflectionText) {
+    if (
+      !aiExplainBtn ||
+      !aiLoading ||
+      !aiResult ||
+      !aiError ||
+      !aiWhatText ||
+      !aiWhyText ||
+      !aiViewText ||
+      !aiReflectionText
+    ) {
       console.error("AI UI elements not found.");
       return;
     }
@@ -95,6 +143,7 @@
     aiError.style.display = "none";
 
     try {
+
       const response = await fetch("/api/ai-insight", {
         method: "POST",
         headers: {
@@ -107,33 +156,47 @@
       });
 
       const result = await response.json();
-      console.log("AI RESULT FRONTEND:", result);
 
       if (!response.ok) {
         throw new Error(result.details || result.error || "AI request failed");
       }
 
-      aiWhatText.textContent = result.what_stands_out || "No section returned.";
-      aiWhyText.textContent = result.why_it_matters || "No section returned.";
-      aiViewText.textContent = result.moneymind_view || "No section returned.";
-      aiReflectionText.textContent = result.reflection || "No section returned.";
+      aiWhatText.textContent =
+        result.what_stands_out || "No section returned.";
+
+      aiWhyText.textContent =
+        result.why_it_matters || "No section returned.";
+
+      aiViewText.textContent =
+        result.moneymind_view || "No section returned.";
+
+      aiReflectionText.textContent =
+        result.reflection || "No section returned.";
 
       aiResult.style.display = "grid";
-    } catch (error) {
+
+    } catch(error) {
+
       console.error("AI insight error:", error);
       aiError.style.display = "block";
+
     } finally {
+
       aiLoading.style.display = "none";
       aiExplainBtn.disabled = false;
       aiExplainBtn.textContent = "Explain My Results";
+
     }
+
   }
 
   function init() {
+
     const calculateBtn = document.getElementById("calculateBtn");
     const aiExplainBtn = document.getElementById("aiExplainBtn");
 
     const prefill = window.CapitalMapEngine.prefillFromRoast();
+
     renderRoastImport(prefill);
 
     if (calculateBtn) {
@@ -143,7 +206,9 @@
     if (aiExplainBtn) {
       aiExplainBtn.addEventListener("click", fetchAIInsight);
     }
+
   }
 
   document.addEventListener("DOMContentLoaded", init);
+
 })();
