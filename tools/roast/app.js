@@ -144,6 +144,18 @@
         answers: state.answers,
         result
       }));
+
+      localStorage.setItem("mm_profile", JSON.stringify({
+      income: state.answers?.income?.amount || 0,
+      monthlyInvesting: state.answers?.invest?.amount || 0,
+      yearsTo60: state.answers?.age?.yearsTo60 || 25,
+      profileName: result?.profile?.name || "",
+      profileDescription: result?.profile?.description || "",
+      roastUpdatedAt: new Date().toISOString()
+    }));
+      alert("mm_profile saved");
+
+      
     } catch (err) {
       console.warn("Could not save roast result to localStorage.", err);
     }
