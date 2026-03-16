@@ -1,21 +1,25 @@
-function prefillAllocationFromProfile() {
-
-  const profile = JSON.parse(localStorage.getItem("mm_profile") || "{}");
-
-  const incomeField = document.getElementById("income");
-  const wealthField = document.getElementById("wealth");
-
-  if (incomeField && profile.income) {
-    incomeField.value = profile.income;
-  }
-
-  if (wealthField && profile.monthlyInvesting) {
-    wealthField.value = profile.monthlyInvesting;
-  }
-
-}
-
 (function(){
+
+  function prefillAllocationFromProfile() {
+    try {
+      const profile = JSON.parse(localStorage.getItem("mm_profile") || "{}");
+
+      const incomeField = document.getElementById("income");
+      const wealthField = document.getElementById("wealth");
+
+      if (incomeField && profile.income) {
+        incomeField.value = profile.income;
+      }
+
+      if (wealthField && profile.monthlyInvesting) {
+        wealthField.value = profile.monthlyInvesting;
+      }
+
+    } catch (err) {
+      console.warn("Prefill failed", err);
+    }
+  }
+
   function resetAIBlocks() {
     const structureSignalText = document.getElementById("structureSignalText");
     const cashflowSignalText = document.getElementById("cashflowSignalText");
@@ -80,6 +84,7 @@ function prefillAllocationFromProfile() {
       window.AllocationEngine.getAllocationInsight(data);
 
     const resultBlock = document.getElementById("resultBlock");
+
     if (resultBlock) {
       resultBlock.style.display = "grid";
       resultBlock.scrollIntoView({
@@ -92,6 +97,7 @@ function prefillAllocationFromProfile() {
   }
 
   async function fetchAIInsight() {
+
     const aiExplainBtn = document.getElementById("aiExplainBtn");
     const aiLoading = document.getElementById("aiLoading");
     const aiResult = document.getElementById("aiResult");
@@ -104,11 +110,6 @@ function prefillAllocationFromProfile() {
     const aiViewText = document.getElementById("aiViewText");
     const aiReflectionText = document.getElementById("aiReflectionText");
 
-    if (!aiExplainBtn || !aiLoading || !aiResult || !aiError || !structureSignalText || !cashflowSignalText || !aiWhatText || !aiWhyText || !aiViewText || !aiReflectionText) {
-      console.error("AI UI elements not found.");
-      return;
-    }
-
     const data = window.AllocationEngine.calculateAllocationData();
 
     aiExplainBtn.disabled = true;
@@ -118,6 +119,7 @@ function prefillAllocationFromProfile() {
     aiError.style.display = "none";
 
     try {
+
       const response = await fetch("/api/ai-insight", {
         method: "POST",
         headers: {
@@ -130,7 +132,6 @@ function prefillAllocationFromProfile() {
       });
 
       const result = await response.json();
-      console.log("AI RESULT FRONTEND:", result);
 
       if (!response.ok) {
         throw new Error(result.details || result.error || "AI request failed");
@@ -138,38 +139,49 @@ function prefillAllocationFromProfile() {
 
       structureSignalText.textContent = result.structure_signal || "";
       cashflowSignalText.textContent = result.liquidity_signal || "";
-      aiWhatText.textContent = result.what_stands_out || "No section returned.";
-      aiWhyText.textContent = result.why_it_matters || "No section returned.";
-      aiViewText.textContent = result.moneymind_view || "No section returned.";
-      aiReflectionText.textContent = result.reflection || "No section returned.";
+      aiWhatText.textContent = result.what_stands_out || "";
+      aiWhyText.textContent = result.why_it_matters || "";
+      aiViewText.textContent = result.moneymind_view || "";
+      aiReflectionText.textContent = result.reflection || "";
 
       aiResult.style.display = "grid";
+
     } catch (error) {
+
       console.error("AI insight error:", error);
       aiError.style.display = "block";
+
     } finally {
+
       aiLoading.style.display = "none";
       aiExplainBtn.disabled = false;
       aiExplainBtn.textContent = "Explain My Allocation";
+
     }
   }
 
   function init() {
-  const calculateBtn = document.getElementById("calculateBtn");
-  const aiExplainBtn = document.getElementById("aiExplainBtn");
 
-  const prefill = window.AllocationEngine.prefillFromJourney();
-  renderJourneyImport(prefill);
-  prefillAllocationFromProfile();
+    const calculateBtn = document.getElementById("calculateBtn");
+    const aiExplainBtn = document.getElementById("aiExplainBtn");
 
-  if (calculateBtn) {
-    calculateBtn.addEventListener("click", renderAllocation);
+    const prefill = window.AllocationEngine.prefillFromJourney();
+
+    renderJourneyImport(prefill);
+
+    // AUTOFILL FROM ROAST
+    prefillAllocationFromProfile();
+
+    if (calculateBtn) {
+      calculateBtn.addEventListener("click", renderAllocation);
+    }
+
+    if (aiExplainBtn) {
+      aiExplainBtn.addEventListener("click", fetchAIInsight);
+    }
+
   }
-
-  if (aiExplainBtn) {
-    aiExplainBtn.addEventListener("click", fetchAIInsight);
-  }
-}
 
   document.addEventListener("DOMContentLoaded", init);
+
 })();
