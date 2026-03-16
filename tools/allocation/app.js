@@ -138,20 +138,21 @@
   }
 
   function init() {
-    const calculateBtn = document.getElementById("calculateBtn");
-    const aiExplainBtn = document.getElementById("aiExplainBtn");
+  const calculateBtn = document.getElementById("calculateBtn");
+  const aiExplainBtn = document.getElementById("aiExplainBtn");
 
-    const prefill = window.AllocationEngine.prefillFromJourney();
-    renderJourneyImport(prefill);
+  const prefill = window.AllocationEngine.prefillFromJourney();
+  renderJourneyImport(prefill);
+  prefillAllocationFromProfile();
 
-    if (calculateBtn) {
-      calculateBtn.addEventListener("click", renderAllocation);
-    }
-
-    if (aiExplainBtn) {
-      aiExplainBtn.addEventListener("click", fetchAIInsight);
-    }
+  if (calculateBtn) {
+    calculateBtn.addEventListener("click", renderAllocation);
   }
+
+  if (aiExplainBtn) {
+    aiExplainBtn.addEventListener("click", fetchAIInsight);
+  }
+}
 
   document.addEventListener("DOMContentLoaded", init);
 })();
