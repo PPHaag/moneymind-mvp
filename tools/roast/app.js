@@ -131,11 +131,33 @@
     els.profileDescription.textContent = result.profile.description;
     els.profileOpportunity.textContent = result.profile.opportunity;
 
-    els.currentWealthText.textContent = window.RoastEngine.formatEuro(result.trajectory.currentWealth);
-    els.optimizedWealthText.textContent = window.RoastEngine.formatEuro(result.trajectory.optimizedWealth);
     els.currentAgeText.textContent = result.currentAgeText;
     els.optimizedAgeText.textContent = result.optimizedAgeText;
-    els.wealthDifferenceText.textContent = `+ ${window.RoastEngine.formatEuro(result.trajectory.wealthDifference)}`;
+    const formattedCurrentWealth = window.RoastEngine.formatEuro(result.trajectory.currentWealth);
+const formattedOptimizedWealth = window.RoastEngine.formatEuro(result.trajectory.optimizedWealth);
+const formattedDifference = window.RoastEngine.formatEuro(result.trajectory.wealthDifference);
+
+els.currentWealthText.textContent = formattedCurrentWealth;
+els.optimizedWealthText.textContent = formattedOptimizedWealth;
+els.currentAgeText.textContent = result.currentAgeText;
+els.optimizedAgeText.textContent = result.optimizedAgeText;
+els.wealthDifferenceText.textContent = `+ ${formattedDifference}`;
+
+if (els.shareImageTitle) {
+  els.shareImageTitle.textContent = `Same income. ${formattedDifference} difference.`;
+}
+
+if (els.shareCurrentWealth) {
+  els.shareCurrentWealth.textContent = formattedCurrentWealth;
+}
+
+if (els.shareOptimizedWealth) {
+  els.shareOptimizedWealth.textContent = formattedOptimizedWealth;
+}
+
+if (els.shareWealthDifference) {
+  els.shareWealthDifference.textContent = `+${formattedDifference} difference`;
+}
 
     els.behaviorTitle.textContent = result.behavior.title;
     els.behaviorText.textContent = result.behavior.text;
