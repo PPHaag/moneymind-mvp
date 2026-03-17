@@ -182,20 +182,62 @@
     showScreen(screens.intro);
   }
 
-  function init(){
+ function init(){
+  if (els.startBtn) {
     els.startBtn.addEventListener("click", startRoast);
+  }
+
+  if (els.backBtn) {
     els.backBtn.addEventListener("click", previousQuestion);
+  }
+
+  if (els.copyShareBtn) {
     els.copyShareBtn.addEventListener("click", copyShareText);
+  }
+
+  if (els.restartBtn) {
     els.restartBtn.addEventListener("click", restartRoast);
+  }
+
+  if (els.lessonBtn) {
     els.lessonBtn.addEventListener("click", () => {
       alert("Hook this to your Academy lesson route later. For now: this is your behavioral lesson CTA.");
     });
-
-    showScreen(screens.intro);
   }
 
-  init();
+  const downloadBtn = document.getElementById("downloadShareBtn");
+  if (downloadBtn) {
+    downloadBtn.addEventListener("click", function () {
+      const card = document.getElementById("shareImageCard");
 
+      if (!card) {
+        console.warn("shareImageCard not found.");
+        return;
+      }
+
+      if (typeof html2canvas === "undefined") {
+        console.warn("html2canvas is not loaded.");
+        return;
+      }
+
+      html2canvas(card, {
+        backgroundColor: null,
+        scale: 2
+      }).then(function (canvas) {
+        const link = document.createElement("a");
+        link.download = "moneymind-share-card.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      }).catch(function (err) {
+        console.warn("Download share card failed.", err);
+      });
+    });
+  }
+
+  showScreen(screens.intro);
+}
+
+init();
 const downloadBtn = document.getElementById("downloadShareBtn");
 
 if (downloadBtn) {
