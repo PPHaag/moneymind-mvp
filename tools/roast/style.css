@@ -377,4 +377,95 @@ body{
   font-weight: 800;
   font-size: 1rem;
 }
+.trajectory-card{
+  padding: 26px 22px;
+}
+
+.trajectory-card h3{
+  margin: 10px 0 0;
+  font-size: 1.05rem;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+}
+
+.trajectory-grid{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.trajectory-box{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(148,163,184,.14);
+}
+
+.trajectory-box.optimized{
+  border-color: rgba(45,212,191,.28);
+  background: rgba(45,212,191,.08);
+}
+
+.trajectory-label{
+  display: block;
+  color: var(--muted);
+  font-size: .82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.trajectory-big{
+  display: block;
+  margin-top: 10px;
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.trajectory-sub{
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: .92rem;
+  line-height: 1.45;
+}
+
+.difference-box{
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(45,212,191,.10), rgba(45,212,191,.04));
+  border: 1px solid rgba(45,212,191,.22);
+}
+
+.difference-label{
+  display: block;
+  color: var(--muted);
+  font-size: .84rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.difference-value{
+  display: block;
+  margin-top: 8px;
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+
+@media (max-width: 760px){
+  .trajectory-grid{
+    grid-template-columns: 1fr;
+  }
+}
   
