@@ -468,4 +468,86 @@ body{
     grid-template-columns: 1fr;
   }
 }
+.share-preview {
+  margin-top: 16px;
+}
+
+.share-image-card {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 28px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, #0b1220 0%, #0f172a 100%);
+  color: #ffffff;
+  border: 1px solid rgba(57, 208, 192, 0.25);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.share-image-brand {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #39d0c0;
+  margin-bottom: 12px;
+}
+
+.share-image-title {
+  font-size: 32px;
+  line-height: 1.15;
+  margin: 0 0 24px 0;
+  font-weight: 800;
+}
+
+.share-image-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.share-image-stat {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 18px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.share-image-stat-highlight {
+  border: 1px solid rgba(57, 208, 192, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(57, 208, 192, 0.12);
+}
+
+.share-image-label {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 10px;
+}
+
+.share-image-value {
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.share-image-difference {
+  font-size: 34px;
+  font-weight: 800;
+  color: #39d0c0;
+  margin-bottom: 10px;
+}
+
+.share-image-subline {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.share-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
   
