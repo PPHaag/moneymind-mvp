@@ -555,4 +555,84 @@ body{
   padding: 40px !important;
   border: 3px solid yellow !important;
 }
+#shareImageCard {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 24px;
+
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at top left, rgba(0,255,200,0.12), transparent 40%),
+    #0b1220;
+
+  box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+}
+/* ===== SHARE CARD FIX ===== */
+
+#shareImageCard {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 24px;
+
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at top left, rgba(0,255,200,0.12), transparent 40%),
+    #0b1220;
+
+  box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Alles binnen de card netjes centreren */
+#shareImageCard * {
+  text-align: center;
+}
+
+/* Headline (eerste element bovenin forceren) */
+#shareImageCard > *:first-child {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+
+/* Spacing fix */
+#shareImageCard > * {
+  margin-bottom: 10px;
+}
+
+#shareImageCard > *:last-child {
+  margin-bottom: 0;
+}
+
+/* Wealth verschil laten knallen */
+#wealthDifferenceText {
+  color: #00FFC6;
+  font-weight: 800;
+  font-size: 22px;
+  margin-top: 8px;
+}
+
+/* Current / Optimized labels automatisch */
+#currentWealthText::before {
+  content: "Current: ";
+  opacity: 0.7;
+  font-weight: 400;
+}
+
+#optimizedWealthText::before {
+  content: "Optimized: ";
+  opacity: 0.7;
+  font-weight: 400;
+}
   
