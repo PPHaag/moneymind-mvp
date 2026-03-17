@@ -550,4 +550,9 @@ body{
   margin-top: 28px;
   flex-wrap: wrap;
 }
+.share-image-card {
+  background: red !important;
+  padding: 40px !important;
+  border: 3px solid yellow !important;
+}
   
