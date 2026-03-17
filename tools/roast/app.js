@@ -137,7 +137,7 @@
     els.behaviorTitle.textContent = result.behavior.title;
     els.behaviorText.textContent = result.behavior.text;
     els.lessonBtn.textContent = result.behavior.lessonLabel;
-    //els.sharePreview.textContent = result.shareText;
+    els.sharePreview.textContent = result.shareText;
 
     try {
       localStorage.setItem("moneymind_roast_result", JSON.stringify({
