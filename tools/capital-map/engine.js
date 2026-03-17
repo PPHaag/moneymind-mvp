@@ -96,39 +96,45 @@
     return "You have meaningful deployable capital. That gives you room to act with intent instead of reacting late.";
   }
 
-  function prefillFromRoast() {
-    const roastPayload = getRoastPayload();
-    if (!roastPayload?.answers) return null;
+function prefillFromRoast() {
+  const roastPayload = getRoastPayload();
+  if (!roastPayload?.answers) return null;
 
-    const { answers, result } = roastPayload;
+  const { answers, result } = roastPayload;
 
-    const incomeAmount = answers?.income?.amount || 0;
-    const savingsAmount = answers?.savings?.amount || 0;
-    const investAmount = answers?.invest?.amount || 0;
+  const incomeAmount = Number(answers?.income?.amount || 0);
+  const investAmount = Number(answers?.invest?.amount || 0);
 
-    const cashEl = document.getElementById("cash");
-    const investmentsEl = document.getElementById("investments");
-    const cryptoEl = document.getElementById("crypto");
+  let savingsAmount = Number(answers?.savings?.amount || 0);
 
-    if (cashEl && Number(cashEl.value) === 0) {
-      cashEl.value = Math.round(savingsAmount * 0.35);
-    }
-
-    if (investmentsEl && Number(investmentsEl.value) === 0) {
-      investmentsEl.value = Math.round(savingsAmount * 0.55);
-    }
-
-    if (cryptoEl && Number(cryptoEl.value) === 0) {
-      cryptoEl.value = Math.round(savingsAmount * 0.10);
-    }
-
-    return {
-      incomeAmount,
-      investAmount,
-      profileName: result?.profile?.name || "",
-      profileDescription: result?.profile?.description || ""
-    };
+  // Fix: if Roast stores savings in thousands (e.g. 11 instead of 11000)
+  if (savingsAmount > 0 && savingsAmount < 1000) {
+    savingsAmount = savingsAmount * 1000;
   }
+
+  const cashEl = document.getElementById("cash");
+  const investmentsEl = document.getElementById("investments");
+  const cryptoEl = document.getElementById("crypto");
+
+  if (cashEl && Number(cashEl.value) === 0) {
+    cashEl.value = Math.round(savingsAmount * 0.35);
+  }
+
+  if (investmentsEl && Number(investmentsEl.value) === 0) {
+    investmentsEl.value = Math.round(savingsAmount * 0.55);
+  }
+
+  if (cryptoEl && Number(cryptoEl.value) === 0) {
+    cryptoEl.value = Math.round(savingsAmount * 0.10);
+  }
+
+  return {
+    incomeAmount,
+    investAmount,
+    profileName: result?.profile?.name || "",
+    profileDescription: result?.profile?.description || ""
+  };
+}
 
   window.CapitalMapEngine = {
     getNumber,
