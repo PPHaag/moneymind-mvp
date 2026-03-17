@@ -43,6 +43,9 @@
     sharePreview: document.getElementById("sharePreview"),
     copyShareBtn: document.getElementById("copyShareBtn"),
     restartBtn: document.getElementById("restartBtn")
+    sharePreview: document.getElementById("sharePreview"),
+    copyShareBtn: document.getElementById("copyShareBtn"),
+    restartBtn: document.getElementById("restartBtn")
   };
 
   function showScreen(target){
