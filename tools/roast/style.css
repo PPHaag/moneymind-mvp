@@ -547,7 +547,7 @@ body{
 .share-actions {
   display: flex;
   gap: 12px;
-  margin-top: 16px;
+  margin-top: 28px;
   flex-wrap: wrap;
 }
   
