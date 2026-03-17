@@ -238,21 +238,4 @@
 }
 
 init();
-const downloadBtn = document.getElementById("downloadShareBtn");
-
-if (downloadBtn) {
-  downloadBtn.addEventListener("click", function () {
-    const card = document.getElementById("shareImageCard");
-
-    html2canvas(card, {
-      backgroundColor: null,
-      scale: 2
-    }).then(function (canvas) {
-      const link = document.createElement("a");
-      link.download = "moneymind-share-card.png";
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-    });
-  });
-}
-  })();
+})();
