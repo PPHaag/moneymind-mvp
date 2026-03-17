@@ -195,7 +195,7 @@
   }
 
   init();
-})();
+
 const downloadBtn = document.getElementById("downloadShareBtn");
 
 if (downloadBtn) {
@@ -213,3 +213,4 @@ if (downloadBtn) {
     });
   });
 }
+  })();
