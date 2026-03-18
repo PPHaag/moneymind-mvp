@@ -429,3 +429,7 @@ body{
     width:100%;
   }
 }
+.mm-big {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
