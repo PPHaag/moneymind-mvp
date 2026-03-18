@@ -433,3 +433,20 @@ body{
   color: #ffffff !important;
   opacity: 1 !important;
 }
+.mm-metric,
+.mm-metric * {
+  opacity: 1 !important;
+}
+
+.mm-big,
+.mm-value,
+.value,
+#directCapital,
+#accessibleCapital,
+#lockedCapital {
+  color: #ffffff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  position: relative;
+  z-index: 5 !important;
+}
