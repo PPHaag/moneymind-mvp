@@ -171,19 +171,25 @@
     if (els.optimizedWealthText) els.optimizedWealthText.textContent = formattedOptimizedWealth;
     if (els.currentAgeText) els.currentAgeText.textContent = result.currentAgeText || "";
     if (els.optimizedAgeText) els.optimizedAgeText.textContent = result.optimizedAgeText || "";
-    if (els.wealthDifferenceText) els.wealthDifferenceText.textContent = `+ ${formattedDifference}`;
+
+    if (els.wealthDifferenceText) {
+      els.wealthDifferenceText.textContent = `Same income. ${formattedDifference} difference.`;
+    }
 
     if (els.shareImageTitle) {
       els.shareImageTitle.textContent = `Same income. ${formattedDifference} difference.`;
     }
+
     if (els.shareCurrentWealth) {
       els.shareCurrentWealth.textContent = formattedCurrentWealth;
     }
+
     if (els.shareOptimizedWealth) {
       els.shareOptimizedWealth.textContent = formattedOptimizedWealth;
     }
+
     if (els.shareWealthDifference) {
-      els.shareWealthDifference.textContent = `+${formattedDifference} difference`;
+      els.shareWealthDifference.textContent = "Same income. Better decisions.";
     }
 
     if (els.behaviorTitle) els.behaviorTitle.textContent = result.behavior?.title || "";
