@@ -379,3 +379,20 @@ body{
     transform:translateY(0);
   }
 }
+/* ===== SHARE BUTTON VISIBILITY FIX ===== */
+
+.share-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:28px;
+}
+
+#shareLinkedInBtn,
+#shareXBtn,
+#downloadShareBtn,
+#restartBtn{
+  display:inline-flex !important;
+  visibility:visible !important;
+  opacity:1 !important;
+}
