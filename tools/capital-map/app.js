@@ -1,27 +1,5 @@
-(function(){
-
-  function resetAIBlocks() {
-    const aiLoading = document.getElementById("aiLoading");
-    const aiResult = document.getElementById("aiResult");
-    const aiError = document.getElementById("aiError");
-
-    const aiWhatText = document.getElementById("aiWhatText");
-    const aiWhyText = document.getElementById("aiWhyText");
-    const aiViewText = document.getElementById("aiViewText");
-    const aiReflectionText = document.getElementById("aiReflectionText");
-
-    if (aiWhatText) aiWhatText.textContent = "";
-    if (aiWhyText) aiWhyText.textContent = "";
-    if (aiViewText) aiViewText.textContent = "";
-    if (aiReflectionText) aiReflectionText.textContent = "";
-
-    if (aiResult) aiResult.style.display = "none";
-    if (aiError) aiError.style.display = "none";
-    if (aiLoading) aiLoading.style.display = "none";
-  }
-
+(function () {
   function renderRoastImport(prefill) {
-
     const roastProfileCard = document.getElementById("roastProfileCard");
     const profileName = document.getElementById("profileName");
     const profileText = document.getElementById("profileText");
@@ -54,16 +32,12 @@
     if (roastProfileCard) {
       roastProfileCard.style.display = "block";
     }
-
   }
 
   function renderCapitalMap() {
-
     const data = window.CapitalMapEngine.calculateCapitalMapData();
 
-    // 🔹 Nieuw: Capital Map opslaan in profiel
     try {
-
       const profile = JSON.parse(localStorage.getItem("mm_profile") || "{}");
 
       localStorage.setItem("mm_profile", JSON.stringify({
@@ -71,130 +45,67 @@
         capitalMap: data,
         capitalMapUpdatedAt: new Date().toISOString()
       }));
-
-    } catch(err) {
+    } catch (err) {
       console.warn("Could not save capital map", err);
     }
 
-    document.getElementById("directCapitalValue").textContent =
-      window.CapitalMapEngine.formatCurrency(data.directCapital);
-
-    document.getElementById("accessibleCapitalValue").textContent =
-      window.CapitalMapEngine.formatCurrency(data.accessibleCapital);
-
-    document.getElementById("lockedCapitalValue").textContent =
-      window.CapitalMapEngine.formatCurrency(data.lockedCapital);
-
-    document.getElementById("netWorthValue").textContent =
-      window.CapitalMapEngine.formatCurrency(data.netWorth);
-
-    document.getElementById("capitalInsight").textContent =
-      window.CapitalMapEngine.getCapitalInsight(data);
-
+    const directCapitalValue = document.getElementById("directCapitalValue");
+    const lockedCapitalValue = document.getElementById("lockedCapitalValue");
+    const deployableCapitalValue = document.getElementById("deployableCapitalValue");
+    const netWorthValue = document.getElementById("netWorthValue");
+    const capitalInsight = document.getElementById("capitalInsight");
     const resultBlock = document.getElementById("resultBlock");
 
+    const nextStepText = document.getElementById("nextStepText");
+    const nextStepLink = document.getElementById("nextStepLink");
+
+    if (directCapitalValue) {
+      directCapitalValue.textContent =
+        window.CapitalMapEngine.formatCurrency(data.directCapital);
+    }
+
+    if (lockedCapitalValue) {
+      lockedCapitalValue.textContent =
+        window.CapitalMapEngine.formatCurrency(data.lockedCapital);
+    }
+
+    if (deployableCapitalValue) {
+      deployableCapitalValue.textContent =
+        window.CapitalMapEngine.formatCurrency(data.deployableCapital);
+    }
+
+    if (netWorthValue) {
+      netWorthValue.textContent =
+        window.CapitalMapEngine.formatCurrency(data.netWorth);
+    }
+
+    if (capitalInsight) {
+      capitalInsight.textContent =
+        window.CapitalMapEngine.getCapitalInsight(data);
+    }
+
+    const nextStep = window.CapitalMapEngine.getNextStep(data);
+
+    if (nextStepText) {
+      nextStepText.textContent = nextStep.text;
+    }
+
+    if (nextStepLink) {
+      nextStepLink.textContent = nextStep.label;
+      nextStepLink.setAttribute("href", nextStep.href);
+    }
+
     if (resultBlock) {
-
       resultBlock.style.display = "grid";
-
       resultBlock.scrollIntoView({
         behavior: "smooth",
         block: "start"
       });
-
     }
-
-    resetAIBlocks();
-
-  }
-
-  async function fetchAIInsight() {
-
-    const aiExplainBtn = document.getElementById("aiExplainBtn");
-    const aiLoading = document.getElementById("aiLoading");
-    const aiResult = document.getElementById("aiResult");
-    const aiError = document.getElementById("aiError");
-
-    const aiWhatText = document.getElementById("aiWhatText");
-    const aiWhyText = document.getElementById("aiWhyText");
-    const aiViewText = document.getElementById("aiViewText");
-    const aiReflectionText = document.getElementById("aiReflectionText");
-
-    if (
-      !aiExplainBtn ||
-      !aiLoading ||
-      !aiResult ||
-      !aiError ||
-      !aiWhatText ||
-      !aiWhyText ||
-      !aiViewText ||
-      !aiReflectionText
-    ) {
-      console.error("AI UI elements not found.");
-      return;
-    }
-
-    const data = window.CapitalMapEngine.calculateCapitalMapData();
-
-    aiExplainBtn.disabled = true;
-    aiExplainBtn.textContent = "Analyzing...";
-    aiLoading.style.display = "block";
-    aiResult.style.display = "none";
-    aiError.style.display = "none";
-
-    try {
-
-      const response = await fetch("/api/ai-insight", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          tool: "capital-map",
-          data
-        })
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.details || result.error || "AI request failed");
-      }
-
-      aiWhatText.textContent =
-        result.what_stands_out || "No section returned.";
-
-      aiWhyText.textContent =
-        result.why_it_matters || "No section returned.";
-
-      aiViewText.textContent =
-        result.moneymind_view || "No section returned.";
-
-      aiReflectionText.textContent =
-        result.reflection || "No section returned.";
-
-      aiResult.style.display = "grid";
-
-    } catch(error) {
-
-      console.error("AI insight error:", error);
-      aiError.style.display = "block";
-
-    } finally {
-
-      aiLoading.style.display = "none";
-      aiExplainBtn.disabled = false;
-      aiExplainBtn.textContent = "Explain My Results";
-
-    }
-
   }
 
   function init() {
-
     const calculateBtn = document.getElementById("calculateBtn");
-    const aiExplainBtn = document.getElementById("aiExplainBtn");
-
     const prefill = window.CapitalMapEngine.prefillFromRoast();
 
     renderRoastImport(prefill);
@@ -202,13 +113,7 @@
     if (calculateBtn) {
       calculateBtn.addEventListener("click", renderCapitalMap);
     }
-
-    if (aiExplainBtn) {
-      aiExplainBtn.addEventListener("click", fetchAIInsight);
-    }
-
   }
 
   document.addEventListener("DOMContentLoaded", init);
-
 })();
