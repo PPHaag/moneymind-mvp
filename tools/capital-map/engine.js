@@ -1,4 +1,4 @@
-(function(){
+(function () {
   function getNumber(id) {
     const el = document.getElementById(id);
     const value = Number(el?.value || 0);
@@ -10,7 +10,7 @@
       style: "currency",
       currency: "EUR",
       maximumFractionDigits: 0
-    }).format(value);
+    }).format(value || 0);
   }
 
   function getRoastPayload() {
@@ -26,34 +26,20 @@
   function calculateCapitalMapData() {
     const cash = getNumber("cash");
     const investments = getNumber("investments");
-    const crypto = getNumber("crypto");
-    const metals = getNumber("metals");
-    const homeEquity = getNumber("homeEquity");
-    const equity = getNumber("equity");
-    const pension = getNumber("pension");
-    const otherAssets = getNumber("otherAssets");
+    const lockedCapital = getNumber("lockedCapital");
     const debt = getNumber("debt");
 
-    const directCapital = cash + investments + crypto;
-    const accessibleCapital = metals + homeEquity + equity + otherAssets;
-    const lockedCapital = pension;
-    const totalAssets = directCapital + accessibleCapital + lockedCapital;
+    const directCapital = cash + investments;
+    const totalAssets = directCapital + lockedCapital;
     const netWorth = totalAssets - debt;
-    const deployableCapital = directCapital - debt;
+    const deployableCapital = Math.max(0, directCapital - debt);
 
     return {
       cash,
       investments,
-      crypto,
-      metals,
-      homeEquity,
-      equity,
-      pension,
-      otherAssets,
+      lockedCapital,
       debt,
       directCapital,
-      accessibleCapital,
-      lockedCapital,
       totalAssets,
       netWorth,
       deployableCapital
@@ -61,80 +47,94 @@
   }
 
   function getCapitalInsight(data) {
-    const {
-      netWorth,
-      deployableCapital,
-      directCapital,
-      accessibleCapital,
-      lockedCapital
-    } = data;
+    const { netWorth, deployableCapital, directCapital, lockedCapital, debt } = data;
 
     if (netWorth <= 0) {
-      return "Your capital structure is still under pressure. Before optimization comes stability.";
+      return "Your structure is under pressure. Before optimization comes stability.";
     }
 
-    if (deployableCapital <= 0) {
-      return "Debt is currently eating your flexibility. Net worth may exist on paper, but usable capital is under pressure.";
+    if (directCapital <= 0) {
+      return "You may own value on paper, but very little of it is directly usable right now.";
     }
 
-    if (lockedCapital > directCapital + accessibleCapital) {
-      return "A large share of your wealth is locked. Long-term strength is building, but flexibility is limited.";
+    if (debt > directCapital) {
+      return "Debt is putting pressure on flexibility. Your capital exists, but too little of it is ready to move.";
     }
 
-    if (accessibleCapital > directCapital && accessibleCapital > lockedCapital) {
-      return "Your structure leans toward accessible wealth, but not all of it is instantly deployable.";
+    if (lockedCapital > directCapital * 2) {
+      return "A large part of your capital is locked. Long-term value may be building, but flexibility is limited.";
     }
 
     if (deployableCapital < 5000) {
-      return "You own value, but not much of it is ready to move. That limits speed when opportunity appears.";
+      return "You have some capital, but not much of it is truly deployable yet. That limits speed and optionality.";
     }
 
     if (deployableCapital < 25000) {
-      return "You have some deployable capital, but much of your wealth still sits outside direct reach.";
+      return "You have usable capital, but not a huge margin for strategic moves. Structure matters from here.";
     }
 
     return "You have meaningful deployable capital. That gives you room to act with intent instead of reacting late.";
   }
 
-function prefillFromRoast() {
-  const roastPayload = getRoastPayload();
-  if (!roastPayload?.answers) return null;
+  function getNextStep(data) {
+    const { deployableCapital, directCapital, debt } = data;
 
-  const { answers, result } = roastPayload;
+    if (directCapital <= 0 || deployableCapital <= 0) {
+      return {
+        text: "Before thinking about optimization, first improve how much capital is actually within reach.",
+        label: "Review your structure",
+        href: "../allocation/"
+      };
+    }
 
-  const incomeAmount = Number(answers?.income?.amount || 0);
-  const investAmount = Number(answers?.invest?.amount || 0);
+    if (debt > 0 && debt >= directCapital * 0.5) {
+      return {
+        text: "Your next step is not complexity. It is understanding whether monthly cashflow is strengthening or weakening your structure.",
+        label: "See your Allocation",
+        href: "../allocation/"
+      };
+    }
 
-  let savingsAmount = Number(answers?.savings?.amount || 0);
-
-  // Fix: if Roast stores savings in thousands (e.g. 11 instead of 11000)
-  if (savingsAmount > 0 && savingsAmount < 1000) {
-    savingsAmount = savingsAmount * 1000;
+    return {
+      text: "You have deployable capital. Now the question becomes whether your money is allocated with enough intention.",
+      label: "See your Allocation",
+      href: "../allocation/"
+    };
   }
 
-  const cashEl = document.getElementById("cash");
-  const investmentsEl = document.getElementById("investments");
-  const cryptoEl = document.getElementById("crypto");
+  function prefillFromRoast() {
+    const roastPayload = getRoastPayload();
+    if (!roastPayload?.answers) return null;
 
-  if (cashEl && Number(cashEl.value) === 0) {
-    cashEl.value = Math.round(savingsAmount * 0.35);
+    const { answers, result } = roastPayload;
+
+    const incomeAmount = Number(answers?.income?.amount || 0);
+    const investAmount = Number(answers?.invest?.amount || 0);
+
+    let savingsAmount = Number(answers?.savings?.amount || 0);
+
+    if (savingsAmount > 0 && savingsAmount < 1000) {
+      savingsAmount = savingsAmount * 1000;
+    }
+
+    const cashEl = document.getElementById("cash");
+    const investmentsEl = document.getElementById("investments");
+
+    if (cashEl && Number(cashEl.value) === 0) {
+      cashEl.value = Math.round(savingsAmount * 0.5);
+    }
+
+    if (investmentsEl && Number(investmentsEl.value) === 0) {
+      investmentsEl.value = Math.round(savingsAmount * 0.5);
+    }
+
+    return {
+      incomeAmount,
+      investAmount,
+      profileName: result?.profile?.name || "",
+      profileDescription: result?.profile?.description || ""
+    };
   }
-
-  if (investmentsEl && Number(investmentsEl.value) === 0) {
-    investmentsEl.value = Math.round(savingsAmount * 0.55);
-  }
-
-  if (cryptoEl && Number(cryptoEl.value) === 0) {
-    cryptoEl.value = Math.round(savingsAmount * 0.10);
-  }
-
-  return {
-    incomeAmount,
-    investAmount,
-    profileName: result?.profile?.name || "",
-    profileDescription: result?.profile?.description || ""
-  };
-}
 
   window.CapitalMapEngine = {
     getNumber,
@@ -142,6 +142,7 @@ function prefillFromRoast() {
     getRoastPayload,
     calculateCapitalMapData,
     getCapitalInsight,
+    getNextStep,
     prefillFromRoast
   };
 })();
