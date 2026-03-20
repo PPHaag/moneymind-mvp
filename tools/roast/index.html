@@ -23,7 +23,7 @@
           <div class="pill">Step 1 of 5</div>
         </div>
 
-        <button class="btn btn-primary btn-lg" id="startBtn">
+        <button class="btn btn-primary btn-lg" id="startBtn" type="button">
           Start My Financial Roast
         </button>
       </div>
@@ -32,11 +32,13 @@
     <section class="screen" id="questionScreen">
       <div class="topbar">
         <button class="ghost-btn" id="backBtn" type="button">← Back</button>
+
         <div class="progress-wrap">
           <div class="progress-meta">
             <span id="progressText">Question 1 of 5</span>
             <span id="progressPct">20%</span>
           </div>
+
           <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
           </div>
@@ -55,6 +57,7 @@
       <div class="card loading-card">
         <div class="eyebrow">MoneyMind Analysis</div>
         <h2>Analyzing your financial DNA...</h2>
+
         <div class="loader"></div>
 
         <div class="scan-list">
@@ -78,10 +81,12 @@
               <span class="metric-label">Monthly Income</span>
               <span class="metric-value" id="incomeText"></span>
             </div>
+
             <div class="metric-card">
               <span class="metric-label">Monthly Investing</span>
               <span class="metric-value" id="investText"></span>
             </div>
+
             <div class="metric-card">
               <span class="metric-label">Investment Rate</span>
               <span class="metric-value" id="investRateText"></span>
@@ -93,6 +98,7 @@
           <div class="eyebrow">Your MoneyMind Profile</div>
           <div class="profile-badge" id="profileName"></div>
           <p class="profile-copy" id="profileDescription"></p>
+
           <div class="insight-callout">
             <strong>Opportunity</strong>
             <p id="profileOpportunity"></p>
@@ -127,6 +133,7 @@
           <div class="eyebrow">Behavior Insight</div>
           <h3 id="behaviorTitle"></h3>
           <p id="behaviorText"></p>
+
           <button class="btn btn-secondary" id="lessonBtn" type="button">
             Learn this concept (3 min)
           </button>
@@ -182,9 +189,18 @@
           </div>
 
           <div class="share-actions">
+            <button class="btn btn-secondary" id="shareLinkedInBtn" type="button">
+              Share on LinkedIn
+            </button>
+
+            <button class="btn btn-secondary" id="shareXBtn" type="button">
+              Share on X
+            </button>
+
             <button class="btn btn-secondary" id="downloadShareBtn" type="button">
               Download Share Card
             </button>
+
             <button class="btn btn-secondary" id="restartBtn" type="button">
               Roast Again
             </button>
