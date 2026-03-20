@@ -101,24 +101,24 @@
 
         <div class="card trajectory-card">
           <div class="eyebrow">Wealth Trajectory</div>
-          <h3>The gap between your current path and your optimized path</h3>
+          <h3>What your current setup is costing you</h3>
 
           <div class="trajectory-grid">
             <div class="trajectory-box">
-              <span class="trajectory-label">Current trajectory</span>
+              <span class="trajectory-label">Current path</span>
               <span class="trajectory-big" id="currentWealthText"></span>
               <span class="trajectory-sub" id="currentAgeText"></span>
             </div>
 
             <div class="trajectory-box optimized">
-              <span class="trajectory-label">Optimized trajectory</span>
+              <span class="trajectory-label">Optimized path</span>
               <span class="trajectory-big" id="optimizedWealthText"></span>
               <span class="trajectory-sub" id="optimizedAgeText"></span>
             </div>
           </div>
 
           <div class="difference-box">
-            <span class="difference-label">Potential wealth difference</span>
+            <span class="difference-label">Same income. Better decisions.</span>
             <span class="difference-value" id="wealthDifferenceText"></span>
           </div>
         </div>
@@ -135,9 +135,9 @@
         <div class="card next-step-card">
           <div>
             <div class="eyebrow">Your next step</div>
-            <h3>See how your wealth is structured.</h3>
+            <h3>See where your money actually sits.</h3>
             <p class="muted">
-              Your Roast is the wake-up call. Your Capital Map is where the real clarity starts.
+              The Roast shows your behavior. The Capital Map shows whether your wealth is actually built on something solid.
             </p>
           </div>
 
@@ -145,40 +145,53 @@
             See Your Capital Map
           </a>
         </div>
-<div class="card share-card">
-  <div class="eyebrow">Shareable Result</div>
 
-  <div class="share-preview" id="sharePreview">
-<div class="share-image-card" id="shareImageCard">
-  <div class="share-image-brand">MoneyMind</div>
-  <h3 class="share-image-title" id="shareImageTitle">Same income. €401K difference.</h3>
+        <div class="card share-card">
+          <div class="eyebrow">Shareable Result</div>
 
-  <div class="share-image-grid">
-    <div class="share-image-stat">
-      <div class="share-image-label">Current trajectory</div>
-      <div class="share-image-value" id="shareCurrentWealth">€276,185</div>
-    </div>
+          <div class="share-preview" id="sharePreview">
+            <div class="share-image-card" id="shareImageCard">
+              <div class="share-image-brand">MoneyMind</div>
 
-    <div class="share-image-stat share-image-stat-highlight">
-      <div class="share-image-label">Optimized trajectory</div>
-      <div class="share-image-value" id="shareOptimizedWealth">€677,991</div>
-    </div>
-  </div>
+              <h3 class="share-image-title" id="shareImageTitle">
+                Same income. €401K difference.
+              </h3>
 
-  <div class="share-image-difference" id="shareWealthDifference">+€401,806 difference</div>
-  <div class="share-image-subline">Small decisions. Massive difference.</div>
-</div>
-  </div>
+              <p class="share-image-supporting">
+                The gap between decent decisions and optimized ones.
+              </p>
 
-  <div class="share-actions">
-    <button class="btn btn-secondary" id="downloadShareBtn" type="button">
-      Download Share Card
-    </button>
-    <button class="btn btn-secondary" id="restartBtn" type="button">
-      Roast Again
-    </button>
-  </div>
-</div>
+              <div class="share-image-grid">
+                <div class="share-image-stat">
+                  <div class="share-image-label">Current path</div>
+                  <div class="share-image-value" id="shareCurrentWealth">€276,185</div>
+                </div>
+
+                <div class="share-image-stat share-image-stat-highlight">
+                  <div class="share-image-label">Optimized path</div>
+                  <div class="share-image-value" id="shareOptimizedWealth">€677,991</div>
+                </div>
+              </div>
+
+              <div class="share-image-difference" id="shareWealthDifference">
+                Same income. Better decisions.
+              </div>
+
+              <div class="share-image-subline">
+                Small decisions. Massive difference.
+              </div>
+            </div>
+          </div>
+
+          <div class="share-actions">
+            <button class="btn btn-secondary" id="downloadShareBtn" type="button">
+              Download Share Card
+            </button>
+            <button class="btn btn-secondary" id="restartBtn" type="button">
+              Roast Again
+            </button>
+          </div>
+        </div>
       </div>
     </section>
   </main>
