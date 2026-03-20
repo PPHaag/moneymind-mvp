@@ -46,6 +46,7 @@
     restartBtn: document.getElementById("restartBtn"),
 
     shareImageTitle: document.getElementById("shareImageTitle"),
+    shareImageSupporting: document.getElementById("shareImageSupporting"),
     shareCurrentWealth: document.getElementById("shareCurrentWealth"),
     shareOptimizedWealth: document.getElementById("shareOptimizedWealth"),
     shareWealthDifference: document.getElementById("shareWealthDifference")
@@ -150,6 +151,22 @@
     }, 2200);
   }
 
+  function getShareSupportingText(diff) {
+    if (diff >= 300000) {
+      return "Your current money habits are costing you more than you think.";
+    }
+
+    if (diff >= 150000) {
+      return "Small financial decisions. Big long-term consequences.";
+    }
+
+    if (diff >= 50000) {
+      return "Your current structure still leaves meaningful upside on the table.";
+    }
+
+    return "Your financial structure still has hidden upside.";
+  }
+
   function renderResult(result) {
     if (!result) return;
 
@@ -163,9 +180,13 @@
     if (els.profileDescription) els.profileDescription.textContent = result.profile?.description || "";
     if (els.profileOpportunity) els.profileOpportunity.textContent = result.profile?.opportunity || "";
 
-    const formattedCurrentWealth = window.RoastEngine.formatEuro(result.trajectory?.currentWealth || 0);
-    const formattedOptimizedWealth = window.RoastEngine.formatEuro(result.trajectory?.optimizedWealth || 0);
-    const formattedDifference = window.RoastEngine.formatEuro(result.trajectory?.wealthDifference || 0);
+    const currentWealth = result.trajectory?.currentWealth || 0;
+    const optimizedWealth = result.trajectory?.optimizedWealth || 0;
+    const wealthDifference = result.trajectory?.wealthDifference || 0;
+
+    const formattedCurrentWealth = window.RoastEngine.formatEuro(currentWealth);
+    const formattedOptimizedWealth = window.RoastEngine.formatEuro(optimizedWealth);
+    const formattedDifference = window.RoastEngine.formatEuro(wealthDifference);
 
     if (els.currentWealthText) els.currentWealthText.textContent = formattedCurrentWealth;
     if (els.optimizedWealthText) els.optimizedWealthText.textContent = formattedOptimizedWealth;
@@ -178,6 +199,10 @@
 
     if (els.shareImageTitle) {
       els.shareImageTitle.textContent = `Same income. ${formattedDifference} difference.`;
+    }
+
+    if (els.shareImageSupporting) {
+      els.shareImageSupporting.textContent = getShareSupportingText(wealthDifference);
     }
 
     if (els.shareCurrentWealth) {
