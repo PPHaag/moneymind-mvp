@@ -330,13 +330,36 @@
       });
     }
 
-    const downloadBtn = document.getElementById("downloadShareBtn");
-    if (downloadBtn) {
-      downloadBtn.addEventListener("click", downloadShareCard);
-    }
+const shareLinkedInBtn = document.getElementById("shareLinkedInBtn");
+if (shareLinkedInBtn) {
+  shareLinkedInBtn.addEventListener("click", () => {
+    const url = encodeURIComponent(window.location.href);
+    window.open(
+      `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  });
+}
 
-    showScreen(screens.intro);
-  }
+const shareXBtn = document.getElementById("shareXBtn");
+if (shareXBtn) {
+  shareXBtn.addEventListener("click", () => {
+    const text = encodeURIComponent(els.sharePreview?.innerText?.trim() || "My MoneyMind Roast");
+    window.open(
+      `https://twitter.com/intent/tweet?text=${text}`,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  });
+}
+
+const downloadBtn = document.getElementById("downloadShareBtn");
+if (downloadBtn) {
+  downloadBtn.addEventListener("click", downloadShareCard);
+}
+
+showScreen(screens.intro);  }
 
   init();
 })();
