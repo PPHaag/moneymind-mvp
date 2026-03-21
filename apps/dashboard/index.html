@@ -1,1 +1,139 @@
-test
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MoneyMind Dashboard</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #fff;
+      margin: 0;
+      padding: 16px;
+    }
+
+    h1, h2 {
+      margin: 0 0 8px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+
+    .highlight {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .sub {
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    .button {
+      display: block;
+      background: #22c55e;
+      color: #000;
+      text-align: center;
+      padding: 12px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 12px;
+    }
+
+    .status {
+      display: flex;
+      justify-content: space-between;
+      margin: 6px 0;
+      font-size: 14px;
+    }
+
+    .ok { color: #22c55e; }
+    .warn { color: #facc15; }
+    .bad { color: #ef4444; }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <h1>MoneyMind</h1>
+  <p class="sub">Understand money. Build wealth.</p>
+
+  <!-- Wealth Snapshot -->
+  <div class="card">
+    <h2>Your Wealth Snapshot</h2>
+    <div class="highlight">€85,000</div>
+    <div class="sub">Net Worth</div>
+
+    <div class="status">
+      <span>Direct Capital</span>
+      <span>€25,000</span>
+    </div>
+
+    <div class="status">
+      <span>Locked Capital</span>
+      <span>€60,000</span>
+    </div>
+  </div>
+
+  <!-- AI Insight -->
+  <div class="card">
+    <h2>What stands out</h2>
+    <p>A large part of your capital is locked and not contributing to growth.</p>
+    <p class="sub">This limits your ability to build wealth faster.</p>
+  </div>
+
+  <!-- Next Step -->
+  <div class="card">
+    <h2>Your Next Step</h2>
+    <p class="sub">Improve your capital allocation</p>
+    <a href="/tools/allocation/index.html" class="button">
+      Improve Allocation
+    </a>
+  </div>
+
+  <!-- Maintenance -->
+  <div class="card">
+    <h2>Your Financial Maintenance</h2>
+
+    <div class="status">
+      <span>Capital Map</span>
+      <span class="warn">45 days ago</span>
+    </div>
+
+    <div class="status">
+      <span>Allocation</span>
+      <span class="ok">10 days ago</span>
+    </div>
+
+    <div class="status">
+      <span>Leakage</span>
+      <span class="bad">Not completed</span>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="card">
+    <h2>Your Progress</h2>
+    <div class="highlight">Level 18</div>
+    <div class="sub">Financial Clarity Level</div>
+  </div>
+
+  <!-- Premium Teaser -->
+  <div class="card">
+    <h2>Unlock deeper insight</h2>
+    <p class="sub">See how much wealth you're missing over time</p>
+    <a href="#" class="button" style="background:#64748b; color:#fff;">
+      🔒 Advanced Analysis
+    </a>
+  </div>
+
+</body>
+</html>
