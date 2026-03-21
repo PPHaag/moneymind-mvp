@@ -1,158 +1,92 @@
-(function(){
+(function () {
+
   function getNumber(id) {
     const el = document.getElementById(id);
     const value = Number(el?.value || 0);
     return Number.isFinite(value) && value >= 0 ? value : 0;
   }
 
-  function formatCurrency(value) {
-    return new Intl.NumberFormat("nl-NL", {
-      style: "currency",
-      currency: "EUR",
-      maximumFractionDigits: 0
-    }).format(value);
+  function formatPercent(val) {
+    return `${Math.round(val * 100)}%`;
   }
 
-  function formatPercent(value) {
-    return `${Math.round(value)}%`;
-  }
-
-  function getRoastPayload() {
-    try {
-      const raw = localStorage.getItem("moneymind_roast_result");
-      return raw ? JSON.parse(raw) : null;
-    } catch (err) {
-      console.warn("Could not read roast payload.", err);
-      return null;
-    }
-  }
-
-  function prefillFromJourney() {
-    const roastPayload = getRoastPayload();
-    if (!roastPayload?.answers) return null;
-
-    const { answers, result } = roastPayload;
-
-    const incomeAmount = answers?.income?.amount || 0;
-    const investAmount = answers?.invest?.amount || 0;
-
-    const incomeEl = document.getElementById("income");
-    const wealthEl = document.getElementById("wealth");
-
-    if (incomeEl && Number(incomeEl.value) === 0) {
-      incomeEl.value = incomeAmount;
-    }
-
-    if (wealthEl && Number(wealthEl.value) === 0) {
-      wealthEl.value = investAmount;
-    }
-
-    return {
-      incomeAmount,
-      investAmount,
-      profileName: result?.profile?.name || "",
-      profileDescription: result?.profile?.description || ""
-    };
-  }
-
-  function renderJourneyImport(prefill) {
-    const journeyProfileCard = document.getElementById("journeyProfileCard");
-    const profileName = document.getElementById("profileName");
-    const profileText = document.getElementById("profileText");
-    const profileBadge = document.getElementById("profileBadge");
-    const journeyIncomeValue = document.getElementById("journeyIncomeValue");
-    const journeyInvestValue = document.getElementById("journeyInvestValue");
-    const journeyProfileValue = document.getElementById("journeyProfileValue");
-
-    if (!prefill || !prefill.profileName) return;
-
-    if (profileName) profileName.textContent = prefill.profileName;
-    if (profileText) profileText.textContent = prefill.profileDescription || "";
-    if (profileBadge) profileBadge.textContent = prefill.profileName;
-    if (journeyIncomeValue) journeyIncomeValue.textContent = formatCurrency(prefill.incomeAmount || 0);
-    if (journeyInvestValue) journeyInvestValue.textContent = formatCurrency(prefill.investAmount || 0);
-    if (journeyProfileValue) journeyProfileValue.textContent = prefill.profileName;
-
-    if (journeyProfileCard) journeyProfileCard.style.display = "block";
-  }
-
-  function calculateLeakageData() {
+  function calculate() {
     const income = getNumber("income");
-    const wealth = getNumber("wealth");
-    const lifestyle = getNumber("lifestyle");
-    const subscriptions = getNumber("subscriptions");
+    const spending = getNumber("spending");
+    const building = getNumber("building");
 
-    const monthlyLeakage = lifestyle + subscriptions;
-    const annualLeakage = monthlyLeakage * 12;
-    const leakagePct = income > 0 ? (monthlyLeakage / income) * 100 : 0;
+    if (income <= 0) return null;
+
+    const spendingRatio = spending / income;
+    const buildingRatio = building / income;
 
     return {
       income,
-      wealth,
-      lifestyle,
-      subscriptions,
-      monthlyLeakage,
-      annualLeakage,
-      leakagePct
+      spending,
+      building,
+      spendingRatio,
+      buildingRatio
     };
   }
 
-  function getLeakageInsight(data) {
-    const { leakagePct, wealth, monthlyLeakage } = data;
-
-    if (monthlyLeakage === 0) {
-      return "Your structure shows almost no visible leakage. Either you are extremely disciplined or suspiciously optimistic.";
+  function getHeadline(r) {
+    if (r.buildingRatio >= 0.2) {
+      return "You are building real financial momentum.";
     }
 
-    if (leakagePct <= 10) {
-      return "Your leakage appears relatively controlled. Most of your income still has room to support your financial progress.";
+    if (r.buildingRatio >= 0.1) {
+      return "You are building — but slower than you probably could.";
     }
 
-    if (leakagePct <= 20) {
-      return "A noticeable part of your monthly cashflow leaks into spending that does not strengthen long-term wealth.";
+    if (r.buildingRatio > 0) {
+      return "You are earning, but barely converting it into wealth.";
     }
 
-    if (wealth > 0 && monthlyLeakage > wealth) {
-      return "You are building wealth, but your leakage currently exceeds the capital you add each month. That slows progress more than it seems.";
-    }
-
-    return "A large share of your monthly income disappears before it can support real capital formation.";
+    return "Right now, your income is not building anything.";
   }
 
-  function resetAIBlocks() {
-    const leakageSignalText = document.getElementById("leakageSignalText");
-    const behaviorSignalText = document.getElementById("behaviorSignalText");
-    const aiWhatText = document.getElementById("aiWhatText");
-    const aiWhyText = document.getElementById("aiWhyText");
-    const aiViewText = document.getElementById("aiViewText");
-    const aiReflectionText = document.getElementById("aiReflectionText");
+  function getInsight(r) {
+    if (r.buildingRatio >= 0.2) {
+      return "A meaningful part of your income is working for your future. That puts you ahead of most people.";
+    }
 
-    const aiLoading = document.getElementById("aiLoading");
-    const aiResult = document.getElementById("aiResult");
-    const aiError = document.getElementById("aiError");
+    if (r.buildingRatio >= 0.1) {
+      return "You have a base, but a large part of your income still disappears into spending.";
+    }
 
-    if (leakageSignalText) leakageSignalText.textContent = "";
-    if (behaviorSignalText) behaviorSignalText.textContent = "";
-    if (aiWhatText) aiWhatText.textContent = "";
-    if (aiWhyText) aiWhyText.textContent = "";
-    if (aiViewText) aiViewText.textContent = "";
-    if (aiReflectionText) aiReflectionText.textContent = "";
+    if (r.buildingRatio > 0) {
+      return "Most of your income currently goes toward spending, not building long-term capital.";
+    }
 
-    if (aiResult) aiResult.style.display = "none";
-    if (aiError) aiError.style.display = "none";
-    if (aiLoading) aiLoading.style.display = "none";
+    return "Your entire income is currently consumed. Nothing is being converted into future wealth.";
   }
 
-  function renderLeakage() {
-    const data = calculateLeakageData();
+  function render() {
+    const data = calculate();
+    if (!data) return;
 
-    document.getElementById("leakagePctValue").textContent = formatPercent(data.leakagePct);
-    document.getElementById("monthlyLeakageValue").textContent = formatCurrency(data.monthlyLeakage);
-    document.getElementById("annualLeakageValue").textContent = formatCurrency(data.annualLeakage);
-    document.getElementById("wealthEuroValue").textContent = formatCurrency(data.wealth);
-    document.getElementById("leakageInsight").textContent = getLeakageInsight(data);
-
+    const spendingPct = document.getElementById("spendingPct");
+    const buildingPct = document.getElementById("buildingPct");
+    const headlineText = document.getElementById("headlineText");
+    const insightText = document.getElementById("insightText");
     const resultBlock = document.getElementById("resultBlock");
+
+    if (spendingPct) {
+      spendingPct.textContent = formatPercent(data.spendingRatio);
+    }
+
+    if (buildingPct) {
+      buildingPct.textContent = formatPercent(data.buildingRatio);
+    }
+
+    if (headlineText) {
+      headlineText.textContent = getHeadline(data);
+    }
+
+    if (insightText) {
+      insightText.textContent = getInsight(data);
+    }
+
     if (resultBlock) {
       resultBlock.style.display = "grid";
       resultBlock.scrollIntoView({
@@ -161,90 +95,26 @@
       });
     }
 
-    resetAIBlocks();
-  }
-
-  async function fetchAIInsight() {
-    const aiExplainBtn = document.getElementById("aiExplainBtn");
-    const aiLoading = document.getElementById("aiLoading");
-    const aiResult = document.getElementById("aiResult");
-    const aiError = document.getElementById("aiError");
-
-    const leakageSignalText = document.getElementById("leakageSignalText");
-    const behaviorSignalText = document.getElementById("behaviorSignalText");
-    const aiWhatText = document.getElementById("aiWhatText");
-    const aiWhyText = document.getElementById("aiWhyText");
-    const aiViewText = document.getElementById("aiViewText");
-    const aiReflectionText = document.getElementById("aiReflectionText");
-
-    if (!aiExplainBtn || !aiLoading || !aiResult || !aiError || !leakageSignalText || !behaviorSignalText || !aiWhatText || !aiWhyText || !aiViewText || !aiReflectionText) {
-      console.error("AI UI elements not found.");
-      return;
-    }
-
-    const data = calculateLeakageData();
-
-    aiExplainBtn.disabled = true;
-    aiExplainBtn.textContent = "Analyzing...";
-    aiLoading.style.display = "block";
-    aiResult.style.display = "none";
-    aiError.style.display = "none";
-
     try {
-      const response = await fetch("/api/ai-insight", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          tool: "wealth-leakage",
-          data
-        })
-      });
+      const profile = JSON.parse(localStorage.getItem("mm_profile") || "{}");
 
-      const result = await response.json();
-      console.log("LEAKAGE PAYLOAD:", {
-  tool: "wealth-leakage",
-  data
-});
-
-      if (!response.ok) {
-        throw new Error(result.details || result.error || "AI request failed");
-      }
-
-      leakageSignalText.textContent = result.leakage_signal || "";
-      behaviorSignalText.textContent = result.behavior_signal || "";
-      aiWhatText.textContent = result.what_stands_out || "No section returned.";
-      aiWhyText.textContent = result.why_it_matters || "No section returned.";
-      aiViewText.textContent = result.moneymind_view || "No section returned.";
-      aiReflectionText.textContent = result.reflection || "No section returned.";
-
-      aiResult.style.display = "grid";
-    } catch (error) {
-      console.error("AI insight error:", error);
-      aiError.style.display = "block";
-    } finally {
-      aiLoading.style.display = "none";
-      aiExplainBtn.disabled = false;
-      aiExplainBtn.textContent = "Explain My Leakage";
+      localStorage.setItem("mm_profile", JSON.stringify({
+        ...profile,
+        allocation: data,
+        allocationUpdatedAt: new Date().toISOString()
+      }));
+    } catch (err) {
+      console.warn("Could not save allocation data", err);
     }
   }
 
   function init() {
-    const calculateBtn = document.getElementById("calculateBtn");
-    const aiExplainBtn = document.getElementById("aiExplainBtn");
-
-    const prefill = prefillFromJourney();
-    renderJourneyImport(prefill);
-
-    if (calculateBtn) {
-      calculateBtn.addEventListener("click", renderLeakage);
-    }
-
-    if (aiExplainBtn) {
-      aiExplainBtn.addEventListener("click", fetchAIInsight);
+    const btn = document.getElementById("calculateBtn");
+    if (btn) {
+      btn.addEventListener("click", render);
     }
   }
 
   document.addEventListener("DOMContentLoaded", init);
+
 })();
