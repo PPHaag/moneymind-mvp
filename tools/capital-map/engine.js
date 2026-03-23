@@ -76,32 +76,31 @@
     return "You have meaningful deployable capital. That gives you room to act with intent instead of reacting late.";
   }
 
-  function getNextStep(data) {
-    const { deployableCapital, directCapital, debt } = data;
+function getNextStep(data) {
+  const { deployableCapital, directCapital, debt } = data;
 
-    if (directCapital <= 0 || deployableCapital <= 0) {
-      return {
-        text: "Before thinking about optimization, first improve how much capital is actually within reach.",
-        label: "Review your structure",
-        href: "../allocation/"
-      };
-    }
-
-    if (debt > 0 && debt >= directCapital * 0.5) {
-      return {
-        text: "Your next step is not complexity. It is understanding whether monthly cashflow is strengthening or weakening your structure.",
-        label: "See your Allocation",
-        href: "../allocation/"
-      };
-    }
-
+  if (directCapital <= 0 || deployableCapital <= 0) {
     return {
-      text: "You have deployable capital. Now the question becomes whether your money is allocated with enough intention.",
-      label: "See your Allocation",
-      href: "../allocation/"
+      text: "Before optimizing anything, first understand how much of your capital is actually usable.",
+      label: "Open Spending vs Building",
+      href: "../spending-vs-building/"
     };
   }
 
+  if (debt > 0 && debt >= directCapital * 0.5) {
+    return {
+      text: "Your next step is not complexity. It is understanding what your monthly income actually does.",
+      label: "Open Spending vs Building",
+      href: "../spending-vs-building/"
+    };
+  }
+
+  return {
+    text: "You have deployable capital. Now the question becomes whether your income is building more capital or just funding lifestyle.",
+    label: "Open Spending vs Building",
+    href: "../spending-vs-building/"
+  };
+}
   function prefillFromRoast() {
     const roastPayload = getRoastPayload();
     if (!roastPayload?.answers) return null;
