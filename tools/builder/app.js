@@ -87,4 +87,181 @@
     const profileName = document.getElementById("profileName");
     const profileText = document.getElementById("profileText");
     const profileBadge = document.getElementById("profileBadge");
-    const journeyCapitalValue = document.getElementById("journeyCapital
+    const journeyCapitalValue = document.getElementById("journeyCapitalValue");
+    const journeyInvestValue = document.getElementById("journeyInvestValue");
+    const journeyYearsValue = document.getElementById("journeyYearsValue");
+
+    if (!prefill || !prefill.profileName) return;
+
+    if (profileName) profileName.textContent = prefill.profileName;
+    if (profileText) profileText.textContent = prefill.profileDescription || "";
+    if (profileBadge) profileBadge.textContent = prefill.profileName;
+    if (journeyCapitalValue) journeyCapitalValue.textContent = formatCurrency(prefill.currentCapital || 0);
+    if (journeyInvestValue) journeyInvestValue.textContent = formatCurrency(prefill.monthlyInvesting || 0);
+    if (journeyYearsValue) journeyYearsValue.textContent = `${prefill.yearsTo60 || 0} years`;
+
+    if (card) {
+      card.style.display = "block";
+    }
+  }
+
+  function calculateBuilderData() {
+    const currentCapital = getNumber("currentCapital");
+    const monthlyInvesting = getNumber("monthlyInvesting");
+    const yearsToGoal = getNumber("yearsToGoal");
+
+    const annualReturn = 7;
+    const optimizedMonthlyInvesting = Math.max(
+      monthlyInvesting,
+      Math.round(monthlyInvesting * 1.5)
+    );
+
+    const currentPath = futureValue(
+      currentCapital,
+      monthlyInvesting,
+      annualReturn,
+      yearsToGoal
+    );
+
+    const optimizedPath = futureValue(
+      currentCapital,
+      optimizedMonthlyInvesting,
+      annualReturn,
+      yearsToGoal
+    );
+
+    const delayedYears = Math.max(yearsToGoal - 5, 1);
+
+    const delayedPath = futureValue(
+      currentCapital,
+      optimizedMonthlyInvesting,
+      annualReturn,
+      delayedYears
+    );
+
+    const difference = optimizedPath - currentPath;
+    const delayCost = optimizedPath - delayedPath;
+
+    return {
+      currentCapital,
+      monthlyInvesting,
+      optimizedMonthlyInvesting,
+      yearsToGoal,
+      annualReturn,
+      currentPath,
+      optimizedPath,
+      delayedPath,
+      difference,
+      delayCost
+    };
+  }
+
+  function getBuilderInsight(data) {
+    const { monthlyInvesting, difference, delayCost } = data;
+
+    if (monthlyInvesting <= 0) {
+      return "Right now, your future wealth depends almost entirely on what you already have, not on what you are consistently building.";
+    }
+
+    if (difference < 50000) {
+      return "Your current path builds something real, but the upside from stronger monthly building is still relatively modest.";
+    }
+
+    if (delayCost > difference) {
+      return "Time is hurting you more than most people realise. Delay is currently more expensive than suboptimal structure.";
+    }
+
+    return "Your current structure can build wealth, but stronger monthly building changes the outcome far more than it feels like in the present.";
+  }
+
+  function getFutureShockText(data) {
+    const { difference, delayCost, yearsToGoal } = data;
+
+    return `Over the next ${yearsToGoal} years, stronger monthly building could change your future wealth by ${formatCurrency(difference)}. Waiting five years could cost roughly ${formatCurrency(delayCost)} in lost compounding power.`;
+  }
+
+  function persistBuilderData(data) {
+    try {
+      const profile = getProfile();
+
+      localStorage.setItem("mm_profile", JSON.stringify({
+        ...profile,
+        builder: {
+          updatedAt: new Date().toISOString(),
+          data
+        }
+      }));
+    } catch (err) {
+      console.warn("Could not save builder data.", err);
+    }
+  }
+
+  function renderBuilder() {
+    const data = calculateBuilderData();
+
+    const currentPathValue = document.getElementById("currentPathValue");
+    const optimizedPathValue = document.getElementById("optimizedPathValue");
+    const differenceValue = document.getElementById("differenceValue");
+    const delayCostValue = document.getElementById("delayCostValue");
+    const builderInsight = document.getElementById("builderInsight");
+    const futureShockText = document.getElementById("futureShockText");
+    const resultBlock = document.getElementById("resultBlock");
+
+    if (currentPathValue) {
+      currentPathValue.textContent = formatCurrency(Math.round(data.currentPath));
+    }
+
+    if (optimizedPathValue) {
+      optimizedPathValue.textContent = formatCurrency(Math.round(data.optimizedPath));
+    }
+
+    if (differenceValue) {
+      differenceValue.textContent = formatCurrency(Math.round(data.difference));
+    }
+
+    if (delayCostValue) {
+      delayCostValue.textContent = formatCurrency(Math.round(data.delayCost));
+    }
+
+    if (builderInsight) {
+      builderInsight.textContent = getBuilderInsight(data);
+    }
+
+    if (futureShockText) {
+      futureShockText.textContent = getFutureShockText(data);
+    }
+
+    if (resultBlock) {
+      resultBlock.style.display = "grid";
+      resultBlock.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+
+    persistBuilderData({
+      currentCapital: data.currentCapital,
+      monthlyInvesting: data.monthlyInvesting,
+      yearsToGoal: data.yearsToGoal,
+      annualReturn: data.annualReturn,
+      currentPath: Math.round(data.currentPath),
+      optimizedPath: Math.round(data.optimizedPath),
+      difference: Math.round(data.difference),
+      delayCost: Math.round(data.delayCost)
+    });
+  }
+
+  function init() {
+    const calculateBtn = document.getElementById("calculateBtn");
+    const prefill = prefillFromJourney();
+
+    renderJourneyImport(prefill);
+
+    if (calculateBtn) {
+      calculateBtn.addEventListener("click", renderBuilder);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+
+})();
