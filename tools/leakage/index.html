@@ -3,109 +3,159 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MoneyMind • Spending vs Building</title>
+  <title>MoneyMind • Wealth Leakage</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<main class="mm-shell">
-  <div class="mm-wrap">
+  <main class="mm-shell">
+    <div class="mm-wrap">
 
-    <section class="mm-card mm-hero">
-      <div class="mm-eyebrow">MoneyMind • Step 3 of 5</div>
-      <h1>Spending vs Building</h1>
-      <p class="mm-lead">
-        What your income actually does every month.
-      </p>
-      <p class="mm-helperIntro">
-        This is not about budgeting. It’s about whether your money builds your future — or disappears.
-      </p>
-    </section>
+      <section class="mm-card mm-hero">
+        <div class="mm-eyebrow">MoneyMind • Step 4 of 5</div>
+        <h1>Wealth Leakage</h1>
+        <p class="mm-lead">
+          Not all spending is a problem. But some of it quietly drains your future without adding real value.
+        </p>
+        <p class="mm-helperIntro">
+          Use rough monthly estimates. This is not bookkeeping. It is a reality check.
+        </p>
+      </section>
 
-    <section class="mm-card mm-formCard">
-
-      <div class="mm-sectionHead">
-        <div class="mm-eyebrow">Monthly Flow</div>
-        <h3>Rough numbers are enough</h3>
-      </div>
-
-      <div class="mm-grid mm-grid2">
-
-        <div class="mm-field">
-          <label class="mm-label">Monthly Income</label>
-          <div class="mm-input">
-            <span>€</span>
-            <input id="income" type="number" value="0">
+      <section class="mm-card mm-importCard" id="profileCard" style="display:none;">
+        <div class="mm-eyebrow">Imported context</div>
+        <div class="mm-importTop">
+          <div>
+            <h2 id="profileName">Your profile</h2>
+            <p id="profileText" class="mm-muted"></p>
           </div>
+          <div class="mm-profileBadge" id="profileBadge">Profile</div>
         </div>
 
-        <div class="mm-field">
-          <label class="mm-label">Spending</label>
-          <div class="mm-input">
-            <span>€</span>
-            <input id="spending" type="number" value="0">
+        <div class="mm-summaryGrid">
+          <div class="mm-summaryCard">
+            <span class="mm-summaryLabel">Monthly income</span>
+            <span class="mm-summaryValue" id="incomeValue">€0</span>
           </div>
-        </div>
-
-        <div class="mm-field">
-          <label class="mm-label">Building (investing / saving)</label>
-          <div class="mm-input">
-            <span>€</span>
-            <input id="building" type="number" value="0">
+          <div class="mm-summaryCard">
+            <span class="mm-summaryLabel">Building</span>
+            <span class="mm-summaryValue" id="buildingValue">€0</span>
           </div>
-        </div>
-
-      </div>
-
-      <button class="mm-btn" id="calculateBtn">See My Flow</button>
-    </section>
-
-    <section id="resultBlock" class="mm-resultStack" style="display:none;">
-
-      <section class="mm-card mm-resultCard">
-        <div class="mm-eyebrow">Your Monthly Structure</div>
-
-        <h2 id="headlineText"></h2>
-
-        <div class="mm-resultGrid">
-          <div class="mm-metricCard">
-            <div class="mm-big" id="spendingPct">0%</div>
-            <div class="mm-sub">Spending</div>
-          </div>
-
-          <div class="mm-metricCard">
-            <div class="mm-big" id="buildingPct">0%</div>
-            <div class="mm-sub">Building</div>
-          </div>
-        </div>
-
-        <div class="mm-impact">
-          <div class="mm-impactMain" id="insightText"></div>
-          <div class="mm-impactSub">
-            Income feels like progress. Building capital is actual progress.
+          <div class="mm-summaryCard">
+            <span class="mm-summaryLabel">Flow status</span>
+            <span class="mm-summaryValue mm-summaryValueSmall" id="flowValue">-</span>
           </div>
         </div>
       </section>
 
-      <section class="mm-card mm-nextCard">
-        <div>
-          <div class="mm-eyebrow">Next Step</div>
-          <h3>Now look at where money quietly leaks.</h3>
-          <p class="mm-muted">
-            Not all spending is equal. Some of it adds value. Some of it disappears.
-          </p>
+      <section class="mm-card mm-formCard">
+        <div class="mm-sectionHead">
+          <div class="mm-eyebrow">Leakage Inputs</div>
+          <h3>Where money tends to disappear</h3>
         </div>
 
-        <a class="mm-btn" href="../leakage/">
-          Continue
-        </a>
+        <div class="mm-grid mm-grid2">
+          <div class="mm-field">
+            <label class="mm-label" for="subscriptions">Subscriptions</label>
+            <div class="mm-input">
+              <span>€</span>
+              <input id="subscriptions" type="number" min="0" value="0">
+            </div>
+            <div class="mm-fieldHint">Streaming, apps, memberships, tools you barely use.</div>
+          </div>
+
+          <div class="mm-field">
+            <label class="mm-label" for="impulse">Impulse spending</label>
+            <div class="mm-input">
+              <span>€</span>
+              <input id="impulse" type="number" min="0" value="0">
+            </div>
+            <div class="mm-fieldHint">Random purchases, online orders, small unnecessary buys.</div>
+          </div>
+
+          <div class="mm-field">
+            <label class="mm-label" for="convenience">Convenience spending</label>
+            <div class="mm-input">
+              <span>€</span>
+              <input id="convenience" type="number" min="0" value="0">
+            </div>
+            <div class="mm-fieldHint">Takeaway, expensive convenience, “easy but unnecessary” spend.</div>
+          </div>
+
+          <div class="mm-field">
+            <label class="mm-label" for="misc">Hidden / forgotten spend</label>
+            <div class="mm-input">
+              <span>€</span>
+              <input id="misc" type="number" min="0" value="0">
+            </div>
+            <div class="mm-fieldHint">Stuff that just seems to happen without much thought.</div>
+          </div>
+        </div>
+
+        <button class="mm-btn" id="calculateBtn" type="button">
+          Reveal My Leakage
+        </button>
       </section>
 
-    </section>
+      <section id="resultBlock" class="mm-resultStack" style="display:none;">
 
-  </div>
-</main>
+        <section class="mm-card mm-resultCard">
+          <div class="mm-eyebrow">Your Leakage Result</div>
+          <h2 id="headlineText">Your money is leaking faster than you think.</h2>
 
-<script src="app.js"></script>
+          <div class="mm-resultGrid">
+            <div class="mm-metricCard">
+              <div class="mm-big" id="monthlyLeakageValue">€0</div>
+              <div class="mm-sub">Monthly leakage</div>
+            </div>
+
+            <div class="mm-metricCard">
+              <div class="mm-big" id="annualLeakageValue">€0</div>
+              <div class="mm-sub">Annual leakage</div>
+            </div>
+
+            <div class="mm-metricCard">
+              <div class="mm-big" id="leakageRatioValue">0%</div>
+              <div class="mm-sub">Leakage ratio</div>
+            </div>
+          </div>
+
+          <div class="mm-impact">
+            <div class="mm-impactMain" id="insightText"></div>
+            <div class="mm-impactSub">
+              Leakage is not about guilt. It is about spotting the part of spending that adds nothing to your future.
+            </div>
+          </div>
+        </section>
+
+        <section class="mm-card mm-breakdownCard">
+          <div class="mm-eyebrow">Leakage Breakdown</div>
+          <h3>What stands out</h3>
+
+          <div class="mm-breakdownList" id="breakdownList">
+            <!-- injected by JS -->
+          </div>
+        </section>
+
+        <section class="mm-card mm-nextCard">
+          <div>
+            <div class="mm-eyebrow">Next Step</div>
+            <h3>Now translate awareness into trajectory.</h3>
+            <p class="mm-muted">
+              You now know what leaks, what builds, and what capital exists. The next question is what this means over time.
+            </p>
+          </div>
+
+          <a class="mm-btn" href="../builder/">
+            Open Builder
+          </a>
+        </section>
+
+      </section>
+
+    </div>
+  </main>
+
+  <script src="app.js"></script>
 </body>
 </html>
