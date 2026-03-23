@@ -42,30 +42,6 @@ body{
   padding:24px 18px 48px;
 }
 
-.mm-toolnav{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-bottom:18px;
-}
-
-.mm-toolnav a{
-  color:var(--muted);
-  text-decoration:none;
-  padding:10px 14px;
-  border-radius:999px;
-  background:rgba(255,255,255,.03);
-  border:1px solid var(--border-soft);
-  font-size:.92rem;
-  font-weight:700;
-}
-
-.mm-toolnav a.active{
-  color:var(--accent);
-  border-color:rgba(45,212,191,.28);
-  background:rgba(45,212,191,.08);
-}
-
 .mm-card{
   background:var(--panel);
   border:1px solid var(--border);
@@ -106,7 +82,7 @@ body{
 
 .mm-lead{
   margin:16px 0 0;
-  color:var(--muted);
+  color:var(--text);
   line-height:1.7;
   font-size:1.02rem;
   max-width:720px;
@@ -115,6 +91,7 @@ body{
 .mm-helperIntro{
   margin-top:12px;
   color:var(--muted);
+  line-height:1.6;
 }
 
 .mm-journeyTop{
@@ -206,44 +183,6 @@ body{
   font-size:.95rem;
 }
 
-.mm-info{
-  position:relative;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:18px;
-  height:18px;
-  border-radius:999px;
-  background:rgba(255,255,255,.08);
-  color:var(--muted);
-  font-size:.75rem;
-  cursor:help;
-}
-
-.mm-tooltip{
-  position:absolute;
-  left:50%;
-  bottom:130%;
-  transform:translateX(-50%);
-  width:220px;
-  padding:10px 12px;
-  border-radius:12px;
-  background:#0f172a;
-  border:1px solid var(--border-soft);
-  color:var(--text);
-  font-size:.8rem;
-  line-height:1.5;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .15s ease;
-  z-index:10;
-}
-
-.mm-info:hover .mm-tooltip,
-.mm-info:focus .mm-tooltip{
-  opacity:1;
-}
-
 .mm-input{
   display:flex;
   align-items:center;
@@ -298,6 +237,13 @@ body{
   gap:18px;
 }
 
+.mm-resultCard h2,
+.mm-futureShockCard h3,
+.mm-nextCard h3{
+  margin:10px 0 0;
+  letter-spacing:-.4px;
+}
+
 .mm-trajectoryGrid{
   display:grid;
   grid-template-columns:repeat(2, 1fr);
@@ -324,6 +270,7 @@ body{
   font-size:clamp(1.6rem, 3vw, 2.3rem);
   font-weight:900;
   letter-spacing:-1px;
+  line-height:1.1;
 }
 
 .mm-sub{
@@ -368,12 +315,6 @@ body{
   margin-top:10px;
   color:var(--muted);
   line-height:1.6;
-}
-
-.mm-futureShockCard h3,
-.mm-nextCard h3{
-  margin:10px 0 0;
-  letter-spacing:-.4px;
 }
 
 .mm-muted{
