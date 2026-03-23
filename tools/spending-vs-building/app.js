@@ -10,6 +10,25 @@
     return `${Math.round(val * 100)}%`;
   }
 
+  function prefillFromProfile() {
+    try {
+      const profile = JSON.parse(localStorage.getItem("mm_profile") || "{}");
+
+      const incomeInput = document.getElementById("income");
+      const buildingInput = document.getElementById("building");
+
+      if (profile.income && incomeInput && Number(incomeInput.value) === 0) {
+        incomeInput.value = profile.income;
+      }
+
+      if (profile.monthlyInvesting && buildingInput && Number(buildingInput.value) === 0) {
+        buildingInput.value = profile.monthlyInvesting;
+      }
+    } catch (err) {
+      console.warn("Prefill failed", err);
+    }
+  }
+
   function calculate() {
     const income = getNumber("income");
     const spending = getNumber("spending");
@@ -109,6 +128,8 @@
   }
 
   function init() {
+    prefillFromProfile();
+
     const btn = document.getElementById("calculateBtn");
     if (btn) {
       btn.addEventListener("click", render);
