@@ -1,1 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoneyMind • Academy</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+  <main class="mm-shell">
+    <div class="mm-wrap">
+
+      <section class="mm-card mm-hero">
+        <div class="mm-eyebrow">MoneyMind Academy</div>
+        <h1>Understand what sits behind your numbers.</h1>
+        <p class="mm-lead">
+          MoneyMind is not only about seeing your financial structure. It is about understanding why it looks the way it does — and what that means.
+        </p>
+        <p class="mm-helperIntro">
+          Start with the lessons that explain the patterns most people never see clearly.
+        </p>
+      </section>
+
+      <section class="mm-grid mm-grid2">
+
+        <section class="mm-card mm-overviewCard">
+          <div class="mm-eyebrow">Start Here</div>
+          <h2>Your first learning loop</h2>
+          <p class="mm-muted">
+            Tools give you awareness. The Academy gives you understanding. These first lessons connect directly to the signals MoneyMind already shows you.
+          </p>
+
+          <div class="mm-pillRow">
+            <span class="mm-pill">Awareness</span>
+            <span class="mm-pill">Behavior</span>
+            <span class="mm-pill">Wealth Building</span>
+          </div>
+        </section>
+
+        <section class="mm-card mm-progressCard">
+          <div class="mm-eyebrow">Progress</div>
+          <h2>Your Academy start</h2>
+
+          <div class="mm-progressStat">
+            <div class="mm-big" id="academyProgressValue">0/3</div>
+            <div class="mm-sub">Lessons completed</div>
+          </div>
+
+          <div class="mm-progressBar">
+            <div class="mm-progressFill" id="academyProgressFill"></div>
+          </div>
+
+          <p class="mm-muted">
+            You do not need more information. You need the right concepts in the right order.
+          </p>
+        </section>
+
+      </section>
+
+      <section class="mm-card mm-listCard">
+        <div class="mm-eyebrow">Core Lessons</div>
+        <h2>What to learn next</h2>
+
+        <div class="mm-lessonList" id="lessonList">
+
+          <article class="mm-lessonCard" data-lesson-id="assets-liabilities">
+            <div class="mm-lessonTop">
+              <div>
+                <div class="mm-lessonMeta">Lesson 1 • Foundations</div>
+                <h3>Assets vs Liabilities</h3>
+              </div>
+              <span class="mm-statusTag" id="status-assets-liabilities">Start</span>
+            </div>
+            <p class="mm-muted">
+              Why some things feel like wealth, while they quietly drain your financial momentum.
+            </p>
+            <button class="mm-btn mm-btn-secondary lesson-open-btn" data-lesson-id="assets-liabilities">
+              Open Lesson
+            </button>
+          </article>
+
+          <article class="mm-lessonCard" data-lesson-id="lifestyle-inflation">
+            <div class="mm-lessonTop">
+              <div>
+                <div class="mm-lessonMeta">Lesson 2 • Behavior</div>
+                <h3>Lifestyle Inflation</h3>
+              </div>
+              <span class="mm-statusTag" id="status-lifestyle-inflation">Start</span>
+            </div>
+            <p class="mm-muted">
+              Why earning more often changes your lifestyle faster than it changes your wealth.
+            </p>
+            <button class="mm-btn mm-btn-secondary lesson-open-btn" data-lesson-id="lifestyle-inflation">
+              Open Lesson
+            </button>
+          </article>
+
+          <article class="mm-lessonCard" data-lesson-id="cost-of-delay">
+            <div class="mm-lessonTop">
+              <div>
+                <div class="mm-lessonMeta">Lesson 3 • Wealth</div>
+                <h3>Cost of Delay</h3>
+              </div>
+              <span class="mm-statusTag" id="status-cost-of-delay">Start</span>
+            </div>
+            <p class="mm-muted">
+              Why waiting feels harmless in the present but becomes brutally expensive over time.
+            </p>
+            <button class="mm-btn mm-btn-secondary lesson-open-btn" data-lesson-id="cost-of-delay">
+              Open Lesson
+            </button>
+          </article>
+
+        </div>
+      </section>
+
+      <section class="mm-card mm-detailCard" id="lessonDetailCard" style="display:none;">
+        <div class="mm-detailHeader">
+          <div>
+            <div class="mm-eyebrow" id="lessonEyebrow">Lesson</div>
+            <h2 id="lessonTitle">Lesson title</h2>
+          </div>
+          <button class="mm-closeBtn" id="closeLessonBtn" type="button">Close</button>
+        </div>
+
+        <div class="mm-detailBody">
+          <section class="mm-detailSection">
+            <h3>Concept</h3>
+            <p id="lessonConcept"></p>
+          </section>
+
+          <section class="mm-detailSection">
+            <h3>Why it matters</h3>
+            <p id="lessonWhy"></p>
+          </section>
+
+          <section class="mm-detailSection">
+            <h3>Real-world example</h3>
+            <p id="lessonExample"></p>
+          </section>
+
+          <section class="mm-detailSection">
+            <h3>Key insight</h3>
+            <p id="lessonInsight"></p>
+          </section>
+
+          <section class="mm-detailSection">
+            <h3>Reflection</h3>
+            <p id="lessonReflection"></p>
+          </section>
+        </div>
+
+        <div class="mm-detailFooter">
+          <button class="mm-btn" id="markCompleteBtn" type="button">Mark as Complete</button>
+        </div>
+      </section>
+
+      <section class="mm-card mm-nextCard">
+        <div>
+          <div class="mm-eyebrow">Next Layer</div>
+          <h3>Later, this becomes smarter.</h3>
+          <p class="mm-muted">
+            In later versions, Academy lessons can connect dynamically to your MoneyMind results and suggest the most relevant concept at the right moment.
+          </p>
+        </div>
+
+        <a class="mm-btn mm-btn-secondary" href="../dashboard/index.html">
+          Back to Dashboard
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
