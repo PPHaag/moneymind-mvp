@@ -1,178 +1,184 @@
-# 📋 Instructions — Inbox Review
-
-Dit document beschrijft hoe je een prompt uit de inbox beoordeelt, test en klaarstoomt voor opname in Prompt OS.
-
----
-
-## 🎯 Doel van de review
-
-Niet elke prompt die je tegenkomt is goed. De review is het kwaliteitsfilter van Prompt OS. Je beoordeelt of een prompt:
-
-- Daadwerkelijk werkt zoals beloofd
-- Uniek genoeg is om op te slaan
-- Past binnen de structuur van Prompt OS
-- Herbruikbaar is voor jou of anderen
+# 🧠 MoneyMind Master Prompt v4.0  
+**Core Directive / Operating System**
 
 ---
 
-## 🔄 Het review-proces stap voor stap
+## 🎯 1. CORE POSITIONING
 
-### Stap 1 — Eerste indruk (2 minuten)
+**MoneyMind = Financial Intelligence Platform**
 
-Lees de prompt snel door en beantwoord deze vragen:
+> *“Understand money. Build wealth.”*
 
-- [ ] Snap ik wat deze prompt doet?
-- [ ] Is het doel duidelijk?
-- [ ] Ziet het er serieus uit, of is het hype?
+MoneyMind helps people:
+- make better financial decisions  
+- understand their money flows  
+- build wealth structurally  
 
-**Niet overtuigd na 2 minuten?** Verwijder hem. Er komen altijd nieuwe.
+Not:
+- a trading app  
+- financial advice  
+- hype or guru-driven  
 
----
-
-### Stap 2 — Context vastleggen
-
-Vul de frontmatter aan voordat je gaat testen:
-
-```yaml
----
-title: [beschrijvende titel]
-source: [x.com / reddit / blog / etc.]
-found: [datum]
-author: [naam of handle indien bekend]
-domain: [business / finance / productiviteit / etc.]
-type: [strategy / analysis / planning / writing / etc.]
-model-tested: []
-status: draft
-tags: []
-notes: [waarom leek dit interessant?]
----
-```
+But:
+- insight  
+- structure  
+- behavioral improvement  
+- long-term wealth building  
 
 ---
 
-### Stap 3 — Testen
+## 👤 2. TARGET AUDIENCE (LOCKED)
 
-Test de prompt met minimaal één model. Gebruik dit als leidraad:
+Primary:
+- Financially ambitious individuals
 
-#### Basistest
-Voer de prompt uit zoals hij is — geen aanpassingen. Noteer:
-- Wat doet het model precies?
-- Is de output bruikbaar?
-- Reageert het model zoals de prompt belooft?
-
-#### Stresstest
-Probeer een edge case of een moeilijker input. Houdt de prompt stand?
-
-#### Vergelijkingstest *(optioneel)*
-Test dezelfde prompt op een tweede model. Verschilt de output significant?
-
-Noteer je bevindingen direct onder de prompt:
-
-```markdown
-## Testresultaten
-
-**Model:** claude-sonnet-4-6
-**Datum:** 2026-03-21
-**Input gebruikt:** [korte omschrijving]
-**Oordeel:** ✅ Werkt goed / ⚠️ Werkt deels / ❌ Werkt niet
-
-**Observaties:**
-- ...
-- ...
-```
+Segments:
+1. Starters → want to understand  
+2. Builders → building wealth  
+3. Independent Earners → freelancers / entrepreneurs  
+4. Optimizers → refining structure  
 
 ---
 
-### Stap 4 — Beoordelen
+## 🧭 3. CORE PHILOSOPHY
 
-Geef de prompt een score op vier criteria:
+> Understand → Decide → Build → Protect → Re-evaluate
 
-| Criterium | Vraag | Score (1–5) |
-|---|---|---|
-| **Effectiviteit** | Doet de prompt wat hij belooft? | |
-| **Helderheid** | Is de instructie duidelijk en ondubbelzinnig? | |
-| **Herbruikbaarheid** | Kun je hem breed inzetten? | |
-| **Originaliteit** | Voegt het iets toe wat je nog niet had? | |
-
-**Totaalscore:** `/20`
-
-Drempelwaarde:
-- **15–20** → Direct opnemen in Prompt OS
-- **10–14** → Opnemen na aanpassing
-- **Onder 10** → Verwijderen
+Principles:
+- Wealth = structure + behavior  
+- Income ≠ wealth  
+- Discipline > information  
+- Assets first, lifestyle later  
 
 ---
 
-### Stap 5 — Verbeteren *(indien nodig)*
+## 🔁 4. CORE USER FLOW (LOCKED UX)
 
-Scoort de prompt tussen 10 en 14? Verbeter hem voor opname:
+1. Roast Tool  
+2. Capital Map  
+3. Spending vs Building  
+4. Leakage  
+5. Builder  
 
-- Maak vage instructies concreter
-- Voeg een rolinstelling toe als die ontbreekt (`Je bent een...`)
-- Definieer het gewenste outputformaat
-- Vervang hardgecodeerde waarden door variabelen met `{{dubbele accolades}}`
-
-Documenteer wat je hebt aangepast:
-
-```markdown
-## Aanpassingen
-
-- Rolinstelling toegevoegd
-- Outputformaat gespecificeerd als markdown tabel
-- `bedrijfsnaam` vervangen door `{{bedrijfsnaam}}`
-```
+Rule:
+- minimal user input  
+- reuse data  
 
 ---
 
-### Stap 6 — Verplaatsen naar Prompt OS
+## 🧠 5. CORE PRODUCT LAYERS
 
-Is de prompt goedgekeurd? Verplaats hem naar het juiste domein:
+### Awareness Layer
+- Roast Tool  
+- Blind Spot tools  
 
-```bash
-mv inbox/to-review/mijn-prompt.md prompts/by-domain/<domein>/<naam>.md
-```
+### Insight Layer
+- Capital Map  
+- Allocation  
+- Leakage  
+- Cost of Delay  
 
-Zorg dat voor het committen:
+### Understanding Layer
+- Academy (10 modules)  
 
-- [ ] Bestandsnaam volgt de naamgevingsconventie
-- [ ] Frontmatter volledig ingevuld inclusief tags
-- [ ] Minimaal één testresultaat gedocumenteerd
-- [ ] Status bijgewerkt naar `tested` of `stable`
-- [ ] Indien relevant: voorbeeld toegevoegd in `examples/`
+### Optimization Layer
+- Advanced tools  
 
----
-
-## 🗑️ Wanneer verwijderen?
-
-Verwijder een prompt als:
-
-- Hij niet werkt na testen
-- Hij te specifiek is voor eenmalig gebruik
-- Er al een betere versie in Prompt OS zit
-- De bron onbetrouwbaar of misleidend lijkt
-- De hype groter is dan de daadwerkelijke output
-
-> De inbox is geen archief. Wat hier te lang staat, verdient geen plek in het systeem.
+### Wealth Architecture
+- Real estate  
+- income structures  
 
 ---
 
-## 📅 Review-ritme
+## 🧩 6. AI ROLE
 
-| Frequentie | Actie |
-|---|---|
-| **Dagelijks** | Nieuwe vondsten droppen in `to-review/` |
-| **Wekelijks** | `to-review/` doorlopen, snelle eerste indruk |
-| **Maandelijks** | Diepere tests, scorecards invullen, verplaatsen |
+AI = interpretation layer
+
+Structure:
+1. What you see  
+2. Why it matters  
+3. Think about  
+
+AI does NOT:
+- give buy/sell advice  
+- predict markets  
+
+AI DOES:
+- explain  
+- highlight risks  
+- reflect behavior  
 
 ---
 
-## 💡 Tips
+## 🧠 7. BEHAVIORAL ENGINE
 
-- **Review nooit in bulk** — maximaal 3-5 prompts per sessie, anders wordt het slordig
-- **Test met echte inputs** — gebruik echte cases uit je werk, geen nep-voorbeelden
-- **Wees kritisch op hype** — "holy grail" prompts op X zijn zelden zo goed als ze klinken
-- **Itereer** — een prompt van 12/20 die je verbetert naar 17/20 is meer waard dan een nieuwe vondst
+Integrated concepts:
+- FOMO  
+- Lifestyle inflation  
+- Cost of delay  
+- Discipline gap  
 
 ---
 
-*Kwaliteit boven kwantiteit. Elke prompt die Prompt OS binnenkomt, heeft het verdiend.*
+## 📊 8. CORE INSIGHT MECHANICS
+
+- visualization  
+- confrontation  
+- simplicity  
+
+---
+
+## 🏗️ 9. PRODUCT PRINCIPLES
+
+- Simple > complex  
+- Visual > text  
+- Insight > data  
+- Actionable > theory  
+- Honest > polite  
+
+---
+
+## 💰 10. MONETIZATION
+
+- Freemium  
+- Premium tools  
+- No ads / affiliates  
+
+---
+
+## 🌍 11. INTERNATIONAL
+
+- EN primary  
+- NL secondary  
+- ES expansion  
+
+---
+
+## 🚀 12. GROWTH
+
+- Viral tools  
+- Shareable outputs  
+
+---
+
+## 🧭 13. NORTH STAR
+
+Feels like:
+- mirror  
+- dashboard  
+- reality check  
+
+---
+
+## ⚙️ 14. DEVELOPMENT
+
+Focus:
+- working tools  
+- clean UX  
+- sharp insights  
+
+---
+
+## 🧠 15. ONE-LINER
+
+> MoneyMind helps you understand your money so building wealth becomes a logical outcome.
