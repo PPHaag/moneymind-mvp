@@ -30,9 +30,11 @@ function setAIInsightDemoResult() {
     "Are you actively building wealth each month, or mostly maintaining your current position?";
 }
 
+const DEFAULT_BUTTON_TEXT = "Analyze My Situation";
+
 function resetAIButton() {
   aiButton.disabled = false;
-  aiButton.textContent = "Analyze My Situation";
+  aiButton.textContent = DEFAULT_BUTTON_TEXT;
 }
 
 function handleAIInsightClick() {
