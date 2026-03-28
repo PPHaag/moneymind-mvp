@@ -1,22 +1,82 @@
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const dashboardData = req.body;
+    const data = req.body;
 
-    return res.status(200).json({
-      title: "Your financial pattern",
-      whatYouSee:
-        "Your wealth base exists, but too much capital is still tied up while your building ratio remains low.",
-      whyItMatters:
-        "That reduces flexibility and slows the speed at which income turns into long-term capital.",
-      thinkAbout:
-        "Are you actively building wealth each month, or mostly maintaining your current position?"
+    const prompt = `
+You are the MoneyMind AI Insight Layer.
+
+Your task is to interpret a user's financial dashboard in a sharp, structured, and practical way.
+
+STRICT RULES:
+- Do NOT give financial advice
+- Do NOT recommend products
+- Do NOT say "you should invest"
+- Focus on understanding and structure
+- Be clear, slightly confronting when needed, but never aggressive
+- Avoid generic AI language
+
+OUTPUT FORMAT:
+Return ONLY valid JSON with:
+{
+  "title": "...",
+  "whatYouSee": "...",
+  "whyItMatters": "...",
+  "thinkAbout": "..."
+}
+
+TONE:
+- intelligent
+- calm
+- sharp
+- practical
+- no fluff
+
+USER DATA:
+${JSON.stringify(data, null, 2)}
+`;
+
+    const response = await client.responses.create({
+      model: "gpt-5.4-mini",
+      input: prompt
     });
+
+    const text = response.output_text;
+
+    let parsed;
+
+    try {
+      parsed = JSON.parse(text);
+    } catch (err) {
+      console.error("AI returned invalid JSON:", text);
+
+      return res.status(500).json({
+        title: "AI response error",
+        whatYouSee: "The AI returned an invalid response format.",
+        whyItMatters: "This usually happens when the output is not strict JSON.",
+        thinkAbout: "Check prompt structure and enforce JSON-only output."
+      });
+    }
+
+    return res.status(200).json(parsed);
+
   } catch (error) {
-    console.error("AI insight route error:", error);
-    return res.status(500).json({ error: "Failed to generate insight" });
+    console.error("AI route error:", error);
+
+    return res.status(500).json({
+      title: "AI unavailable",
+      whatYouSee: "We could not generate your insight right now.",
+      whyItMatters: "The AI connection failed or the API key is missing.",
+      thinkAbout: "Check your OpenAI API key and deployment settings."
+    });
   }
 }
