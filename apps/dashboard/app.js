@@ -8,6 +8,7 @@ const aiTitle = document.getElementById("ai-insight-title");
 const aiWhatYouSee = document.getElementById("ai-what-you-see");
 const aiWhyItMatters = document.getElementById("ai-why-it-matters");
 const aiThinkAbout = document.getElementById("ai-think-about");
+const aiNextStep = document.getElementById("ai-next-step");
 const aiLoading = document.getElementById("ai-loading");
 
 function showLoading() {
@@ -25,15 +26,23 @@ function showLoading() {
   }
 
   if (aiWhatYouSee) {
-    aiWhatYouSee.textContent = "Reviewing the structure behind your current dashboard.";
+    aiWhatYouSee.textContent =
+      "Reviewing the structure behind your current dashboard.";
   }
 
   if (aiWhyItMatters) {
-    aiWhyItMatters.textContent = "Looking for the financial pattern that matters most right now.";
+    aiWhyItMatters.textContent =
+      "Looking for the financial pattern that matters most right now.";
   }
 
   if (aiThinkAbout) {
-    aiThinkAbout.textContent = "Preparing your MoneyMind insight.";
+    aiThinkAbout.textContent =
+      "Preparing your MoneyMind insight.";
+  }
+
+  if (aiNextStep) {
+    aiNextStep.textContent =
+      "Determining your next move...";
   }
 }
 
@@ -48,17 +57,26 @@ function showResult(result) {
 
   if (aiWhatYouSee) {
     aiWhatYouSee.textContent =
-      result.whatYouSee || "No insight returned for this section.";
+      result.whatYouSee ||
+      "No insight returned for this section.";
   }
 
   if (aiWhyItMatters) {
     aiWhyItMatters.textContent =
-      result.whyItMatters || "No impact explanation returned.";
+      result.whyItMatters ||
+      "No impact explanation returned.";
   }
 
   if (aiThinkAbout) {
     aiThinkAbout.textContent =
-      result.thinkAbout || "No reflection returned.";
+      result.thinkAbout ||
+      "No reflection returned.";
+  }
+
+  if (aiNextStep) {
+    aiNextStep.textContent =
+      result.nextStep ||
+      "Bring clarity to your monthly flow before optimizing anything else.";
   }
 
   if (aiButton) {
@@ -89,6 +107,11 @@ function showError() {
   if (aiThinkAbout) {
     aiThinkAbout.textContent =
       "Check the API route, environment key, and response format, then try again.";
+  }
+
+  if (aiNextStep) {
+    aiNextStep.textContent =
+      "Unable to determine your next step right now.";
   }
 
   if (aiButton) {
