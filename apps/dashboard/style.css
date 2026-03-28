@@ -189,3 +189,21 @@ body{
     grid-template-columns:1fr;
   }
 }
+.maintenance-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:12px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  font-size:14px;
+}
+
+.maintenance-row span:first-child{
+  flex:1;
+  min-width:0;
+}
+
+.tag{
+  flex-shrink:0;
+}
