@@ -1,3 +1,5 @@
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
 console.log("MoneyMind dashboard loaded 🚀");
 
 const DEFAULT_BUTTON_TEXT = "Analyze My Situation";
