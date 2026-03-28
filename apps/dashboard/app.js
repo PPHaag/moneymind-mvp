@@ -11,6 +11,8 @@ const aiThinkAbout = document.getElementById("ai-think-about");
 const aiLoading = document.getElementById("ai-loading");
 
 function showLoading() {
+  console.log("showLoading fired");
+
   if (aiButton) {
     aiButton.disabled = true;
     aiButton.textContent = LOADING_BUTTON_TEXT;
@@ -38,6 +40,8 @@ function showLoading() {
 }
 
 function showDemoResult() {
+  console.log("showDemoResult fired");
+
   if (aiLoading) {
     aiLoading.hidden = true;
   }
@@ -70,12 +74,10 @@ function showDemoResult() {
 function handleAIInsightClick() {
   showLoading();
 
-  window.setTimeout(() => {
-    showDemoResult();
-  }, 1200);
+  setTimeout(showDemoResult, 1200);
 }
 
 if (aiButton) {
   aiButton.textContent = DEFAULT_BUTTON_TEXT;
-  aiButton.addEventListener("click", handleAIInsightClick);
+  aiButton.onclick = handleAIInsightClick;
 }
