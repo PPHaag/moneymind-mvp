@@ -1,5 +1,10 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
+const supabaseUrl = "https://hhopspedkbidzrffgqrt.supabase.co";
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhob3BzcGVka2JpZHpyZmZncXJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0NzUxODgsImV4cCI6MjA4ODA1MTE4OH0.sUD3cgteOBJ9vpOr5lgXYmauE1P-BtaaqHP_DL4nZBk";
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
 console.log("MoneyMind dashboard loaded 🚀");
 
 const DEFAULT_BUTTON_TEXT = "Analyze My Situation";
