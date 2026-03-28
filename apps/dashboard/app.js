@@ -216,3 +216,18 @@ if (aiButton) {
   aiButton.onclick = handleAIInsightClick;
 }
 fetchMarketPulse();
+async function testSupabaseConnection() {
+  const { data, error } = await supabase
+    .from("tool_runs")
+    .select("*")
+    .limit(3);
+
+  if (error) {
+    console.error("Supabase connection error:", error);
+    return;
+  }
+
+  console.log("Supabase tool_runs test data:", data);
+}
+
+testSupabaseConnection();
