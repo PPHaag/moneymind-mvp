@@ -3,6 +3,8 @@ console.log("MoneyMind dashboard loaded 🚀");
 const DEFAULT_BUTTON_TEXT = "Analyze My Situation";
 const LOADING_BUTTON_TEXT = "Analyzing...";
 
+const btcEurValue = document.getElementById("btc-eur-value");
+const eurUsdValue = document.getElementById("eur-usd-value");
 const aiButton = document.getElementById("generate-ai-insight-btn");
 const aiTitle = document.getElementById("ai-insight-title");
 const aiWhatYouSee = document.getElementById("ai-what-you-see");
