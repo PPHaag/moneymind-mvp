@@ -306,3 +306,6 @@ body{
     transform:rotate(360deg);
   }
 }
+.ai-loading[hidden]{
+  display:none !important;
+}
