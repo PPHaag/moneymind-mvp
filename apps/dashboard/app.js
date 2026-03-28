@@ -122,6 +122,48 @@ function showError() {
   }
 }
 
+async function fetchMarketPulse() {
+  try {
+    const response = await fetch(
+      "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=eur,usd"
+    );
+
+    if (!response.ok) {
+      throw new Error(`Market API failed with status ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    const btcEur = data?.bitcoin?.eur;
+    const btcUsd = data?.bitcoin?.usd;
+
+    if (btcEurValue) {
+      btcEurValue.textContent =
+        typeof btcEur === "number"
+          ? `€${btcEur.toLocaleString("nl-NL")}`
+          : "Unavailable";
+    }
+
+    if (eurUsdValue) {
+      if (typeof btcEur === "number" && typeof btcUsd === "number" && btcEur !== 0) {
+        const eurUsd = btcUsd / btcEur;
+        eurUsdValue.textContent = eurUsd.toFixed(4);
+      } else {
+        eurUsdValue.textContent = "Unavailable";
+      }
+    }
+  } catch (error) {
+    console.error("Market pulse error:", error);
+
+    if (btcEurValue) {
+      btcEurValue.textContent = "Unavailable";
+    }
+
+    if (eurUsdValue) {
+      eurUsdValue.textContent = "Unavailable";
+    }
+  }
+}
 async function fetchAIInsight() {
   const dashboardData = {
     netWorth: 85000,
