@@ -34,6 +34,11 @@ Return ONLY valid JSON with:
   "thinkAbout": "...",
   "nextStep": "..."
 }
+- Use double quotes for all keys and string values.
+- Do not use single quotes.
+- Do not use markdown.
+- Do not wrap the JSON in code fences.
+- Do not add any text before or after the JSON
 
 NEXT STEP RULES:
 - "nextStep" must be practical
