@@ -62,23 +62,35 @@ ${JSON.stringify(data, null, 2)}
       input: prompt
     });
 
-    const text = response.output_text;
+const text = response.output_text;
+console.log("Raw AI output:", text);
 
-    let parsed;
+let parsed;
 
-    try {
-      parsed = JSON.parse(text);
-    } catch (err) {
-      console.error("AI returned invalid JSON:", text);
+try {
+  parsed = JSON.parse(text);
+} catch (err) {
+  console.error("AI returned invalid JSON:", text);
 
-      return res.status(500).json({
-        title: "AI response error",
-        whatYouSee: "The AI returned an invalid response format.",
-        whyItMatters: "This usually happens when the output is not strict JSON.",
-        thinkAbout: "Check prompt structure and enforce JSON-only output.",
-        nextStep: "Review the API output format before trying again."
-      });
-    }
+  // Simple repair attempt for common quote mistakes
+  const repaired = text
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/":\s*"([^"]*)'\s*,/g, '": "$1",');
+
+  try {
+    parsed = JSON.parse(repaired);
+    console.log("Recovered AI JSON after repair");
+  } catch (repairErr) {
+    return res.status(500).json({
+      title: "AI response error",
+      whatYouSee: "The AI returned an invalid response format.",
+      whyItMatters: "The content looked useful, but the JSON structure was broken.",
+      thinkAbout: "This usually happens when the model mixes quote styles inside the response.",
+      nextStep: "Try again while we tighten the output formatting."
+    });
+  }
+}
 
     return res.status(200).json(parsed);
 
