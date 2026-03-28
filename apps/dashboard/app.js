@@ -11,8 +11,6 @@ const aiThinkAbout = document.getElementById("ai-think-about");
 const aiLoading = document.getElementById("ai-loading");
 
 function showLoading() {
-  console.log("showLoading fired");
-
   if (aiButton) {
     aiButton.disabled = true;
     aiButton.textContent = LOADING_BUTTON_TEXT;
@@ -39,30 +37,28 @@ function showLoading() {
   }
 }
 
-function showDemoResult() {
-  console.log("showDemoResult fired");
-
+function showResult(result) {
   if (aiLoading) {
     aiLoading.hidden = true;
   }
 
   if (aiTitle) {
-    aiTitle.textContent = "Your financial pattern";
+    aiTitle.textContent = result.title || "Your financial pattern";
   }
 
   if (aiWhatYouSee) {
     aiWhatYouSee.textContent =
-      "Your wealth base is real, but too much of it is still tied up while your building ratio remains low.";
+      result.whatYouSee || "No insight returned for this section.";
   }
 
   if (aiWhyItMatters) {
     aiWhyItMatters.textContent =
-      "That reduces flexibility and slows the speed at which income turns into long-term capital.";
+      result.whyItMatters || "No impact explanation returned.";
   }
 
   if (aiThinkAbout) {
     aiThinkAbout.textContent =
-      "Are you actively building wealth each month, or mostly maintaining your current position?";
+      result.thinkAbout || "No reflection returned.";
   }
 
   if (aiButton) {
@@ -71,10 +67,74 @@ function showDemoResult() {
   }
 }
 
-function handleAIInsightClick() {
+function showError() {
+  if (aiLoading) {
+    aiLoading.hidden = true;
+  }
+
+  if (aiTitle) {
+    aiTitle.textContent = "AI insight unavailable";
+  }
+
+  if (aiWhatYouSee) {
+    aiWhatYouSee.textContent =
+      "We could not generate your insight right now.";
+  }
+
+  if (aiWhyItMatters) {
+    aiWhyItMatters.textContent =
+      "The AI connection may be unavailable or the response was incomplete.";
+  }
+
+  if (aiThinkAbout) {
+    aiThinkAbout.textContent =
+      "Check the API route, environment key, and response format, then try again.";
+  }
+
+  if (aiButton) {
+    aiButton.disabled = false;
+    aiButton.textContent = DEFAULT_BUTTON_TEXT;
+  }
+}
+
+async function fetchAIInsight() {
+  const dashboardData = {
+    netWorth: 85000,
+    directCapital: 25000,
+    accessibleCapital: 10000,
+    lockedCapital: 50000,
+    buildingRatio: 12,
+    leakageStatus: "missing",
+    capitalMapStatus: "review recommended",
+    clarityLevel: 18,
+    clarityStage: "Foundation"
+  };
+
+  const response = await fetch("/api/ai-insight", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(dashboardData)
+  });
+
+  if (!response.ok) {
+    throw new Error(`API request failed with status ${response.status}`);
+  }
+
+  return response.json();
+}
+
+async function handleAIInsightClick() {
   showLoading();
 
-  setTimeout(showDemoResult, 1200);
+  try {
+    const result = await fetchAIInsight();
+    showResult(result);
+  } catch (error) {
+    console.error("AI insight error:", error);
+    showError();
+  }
 }
 
 if (aiButton) {
