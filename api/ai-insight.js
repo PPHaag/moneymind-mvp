@@ -31,8 +31,15 @@ Return ONLY valid JSON with:
   "title": "...",
   "whatYouSee": "...",
   "whyItMatters": "...",
-  "thinkAbout": "..."
+  "thinkAbout": "...",
+  "nextStep": "..."
 }
+
+NEXT STEP RULES:
+- "nextStep" must be practical
+- It must identify the most logical next area of attention
+- It must guide focus, not prescribe investment action
+- It should feel useful and specific, not generic
 
 TONE:
 - intelligent
@@ -46,7 +53,7 @@ ${JSON.stringify(data, null, 2)}
 `;
 
     const response = await client.responses.create({
-      model: "gpt-5.4-mini",
+      model: "gpt-4o-mini",
       input: prompt
     });
 
@@ -63,7 +70,8 @@ ${JSON.stringify(data, null, 2)}
         title: "AI response error",
         whatYouSee: "The AI returned an invalid response format.",
         whyItMatters: "This usually happens when the output is not strict JSON.",
-        thinkAbout: "Check prompt structure and enforce JSON-only output."
+        thinkAbout: "Check prompt structure and enforce JSON-only output.",
+        nextStep: "Review the API output format before trying again."
       });
     }
 
@@ -76,7 +84,8 @@ ${JSON.stringify(data, null, 2)}
       title: "AI unavailable",
       whatYouSee: "We could not generate your insight right now.",
       whyItMatters: "The AI connection failed or the API key is missing.",
-      thinkAbout: "Check your OpenAI API key and deployment settings."
+      thinkAbout: "Check your OpenAI API key and deployment settings.",
+      nextStep: "Restore the AI connection before relying on this insight."
     });
   }
 }
