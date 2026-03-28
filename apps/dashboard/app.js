@@ -208,3 +208,4 @@ if (aiButton) {
   aiButton.textContent = DEFAULT_BUTTON_TEXT;
   aiButton.onclick = handleAIInsightClick;
 }
+fetchMarketPulse();
