@@ -162,57 +162,59 @@
     </section>
 
     <!-- AI INSIGHT -->
+<section class="card mt-16" id="ai-insight-card">
+  <div class="eyebrow">AI Insight</div>
+  <h3 id="ai-insight-title">Your financial pattern</h3>
 
-    <section class="card mt-16" id="ai-insight-card">
-      <div class="eyebrow">AI Insight</div>
-      <h3 id="ai-insight-title">Your financial pattern</h3>
+  <p class="sub">
+    This is what your current financial structure actually looks like.
+  </p>
 
-      <p class="sub">
-        This is what your current financial structure actually looks like.
+  <div class="ai-loading" id="ai-loading" hidden>
+    <div class="ai-spinner" aria-hidden="true"></div>
+    <div class="ai-loading-text">Analyzing your financial structure...</div>
+  </div>
+
+  <div class="ai-insight-content">
+
+    <div class="ai-section">
+      <div class="ai-label">What you see</div>
+      <p class="sub" id="ai-what-you-see">
+        Click below to generate a live interpretation of your dashboard.
+      </p>
+    </div>
+
+    <div class="ai-section">
+      <div class="ai-label">Why it matters</div>
+      <p class="sub" id="ai-why-it-matters">
+        This helps translate numbers into something more meaningful.
+      </p>
+    </div>
+
+    <div class="ai-section">
+      <div class="ai-label">Think about</div>
+      <p class="sub" id="ai-think-about">
+        A strong financial system starts with understanding what is actually happening.
+      </p>
+    </div>
+
+    <div class="ai-section">
+      <div class="ai-label">Next Step</div>
+      <p class="sub" id="ai-next-step">
+        Your next step will appear here.
       </p>
 
-      <!-- LOADING STATE -->
-      <div class="ai-loading" id="ai-loading" hidden>
-        <div class="ai-spinner"></div>
-        <div class="ai-loading-text">Analyzing your financial structure...</div>
-      </div>
+      <a href="/tools/spending-vs-building/index.html" class="button secondary">
+        Go to Next Step
+      </a>
+    </div>
 
-      <div class="ai-insight-content">
-
-  <div class="ai-section">
-    <div class="ai-label">What you see</div>
-    <p class="sub" id="ai-what-you-see">
-      Click below to generate a live interpretation of your dashboard.
-    </p>
   </div>
 
-  <div class="ai-section">
-    <div class="ai-label">Why it matters</div>
-    <p class="sub" id="ai-why-it-matters">
-      This helps translate numbers into something more meaningful.
-    </p>
-  </div>
-
-  <div class="ai-section">
-    <div class="ai-label">Think about</div>
-    <p class="sub" id="ai-think-about">
-      A strong financial system starts with understanding what is actually happening.
-    </p>
-  </div>
-
-<div class="ai-section">
-  <div class="ai-label">Next Step</div>
-  <p class="sub" id="ai-next-step"></p>
-
-  <a href="/tools/spending-vs-building/index.html" class="button secondary">
-    Go to Next Step
-  </a>
-</div>
   <button id="generate-ai-insight-btn" class="button" type="button">
     Analyze My Situation
   </button>
-
-    </section>
+</section>
 
     <div class="footer-grid">
 
