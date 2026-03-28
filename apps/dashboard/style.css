@@ -316,3 +316,32 @@ body{
     grid-template-columns:1fr;
   }
 }
+#generate-ai-insight-btn{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  min-height:48px !important;
+  padding:12px 18px !important;
+  margin-top:14px !important;
+  border:none !important;
+  border-radius:12px !important;
+  background:var(--accent) !important;
+  color:#052e16 !important;
+  font:inherit !important;
+  font-weight:700 !important;
+  line-height:1 !important;
+  text-decoration:none !important;
+  cursor:pointer !important;
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  box-shadow:var(--shadow) !important;
+}
+
+#generate-ai-insight-btn:hover{
+  opacity:.95 !important;
+}
+
+#generate-ai-insight-btn:disabled{
+  opacity:.65 !important;
+  cursor:wait !important;
+}
