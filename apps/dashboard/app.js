@@ -10,60 +10,68 @@ const aiWhyItMatters = document.getElementById("ai-why-it-matters");
 const aiThinkAbout = document.getElementById("ai-think-about");
 const aiLoading = document.getElementById("ai-loading");
 
-function setAIInsightLoadingState() {
-  if (!aiButton || !aiTitle || !aiWhatYouSee || !aiWhyItMatters || !aiThinkAbout) {
-    return;
+function showLoading() {
+  if (aiButton) {
+    aiButton.disabled = true;
+    aiButton.textContent = LOADING_BUTTON_TEXT;
   }
-
-  aiButton.disabled = true;
-  aiButton.textContent = LOADING_BUTTON_TEXT;
 
   if (aiLoading) {
     aiLoading.hidden = false;
   }
 
-  aiTitle.textContent = "Analyzing your financial pattern...";
-  aiWhatYouSee.textContent = "Reviewing the structure behind your current dashboard.";
-  aiWhyItMatters.textContent = "Looking for the financial pattern that matters most right now.";
-  aiThinkAbout.textContent = "Preparing your MoneyMind insight.";
-}
-
-function setAIInsightDemoResult() {
-  if (!aiTitle || !aiWhatYouSee || !aiWhyItMatters || !aiThinkAbout) {
-    return;
+  if (aiTitle) {
+    aiTitle.textContent = "Analyzing your financial pattern...";
   }
 
+  if (aiWhatYouSee) {
+    aiWhatYouSee.textContent = "Reviewing the structure behind your current dashboard.";
+  }
+
+  if (aiWhyItMatters) {
+    aiWhyItMatters.textContent = "Looking for the financial pattern that matters most right now.";
+  }
+
+  if (aiThinkAbout) {
+    aiThinkAbout.textContent = "Preparing your MoneyMind insight.";
+  }
+}
+
+function showDemoResult() {
   if (aiLoading) {
     aiLoading.hidden = true;
   }
 
-  aiTitle.textContent = "Your financial pattern";
-
-  aiWhatYouSee.textContent =
-    "Your wealth base is real, but too much of it is still tied up while your building ratio remains low.";
-
-  aiWhyItMatters.textContent =
-    "That reduces flexibility and slows the speed at which income turns into long-term capital.";
-
-  aiThinkAbout.textContent =
-    "Are you actively building wealth each month, or mostly maintaining your current position?";
-}
-
-function resetAIButton() {
-  if (!aiButton) {
-    return;
+  if (aiTitle) {
+    aiTitle.textContent = "Your financial pattern";
   }
 
-  aiButton.disabled = false;
-  aiButton.textContent = DEFAULT_BUTTON_TEXT;
+  if (aiWhatYouSee) {
+    aiWhatYouSee.textContent =
+      "Your wealth base is real, but too much of it is still tied up while your building ratio remains low.";
+  }
+
+  if (aiWhyItMatters) {
+    aiWhyItMatters.textContent =
+      "That reduces flexibility and slows the speed at which income turns into long-term capital.";
+  }
+
+  if (aiThinkAbout) {
+    aiThinkAbout.textContent =
+      "Are you actively building wealth each month, or mostly maintaining your current position?";
+  }
+
+  if (aiButton) {
+    aiButton.disabled = false;
+    aiButton.textContent = DEFAULT_BUTTON_TEXT;
+  }
 }
 
 function handleAIInsightClick() {
-  setAIInsightLoadingState();
+  showLoading();
 
   window.setTimeout(() => {
-    setAIInsightDemoResult();
-    resetAIButton();
+    showDemoResult();
   }, 1200);
 }
 
