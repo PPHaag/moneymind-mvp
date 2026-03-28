@@ -345,3 +345,6 @@ body{
   opacity:.65 !important;
   cursor:wait !important;
 }
+.mb-16{
+  margin-bottom:16px;
+}
