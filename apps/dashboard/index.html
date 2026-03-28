@@ -155,46 +155,59 @@
         </div>
 
         <a href="/apps/academy/index.html" class="button secondary">
-        Explore Academy
+          Open Academy
         </a>
       </div>
 
     </section>
-<section class="card mt-16" id="ai-insight-card">
-  <div class="eyebrow">AI Insight</div>
-  <h3 id="ai-insight-title">Your financial pattern</h3>
 
-  <p class="sub">
-    This is what your current financial structure actually looks like.
-  </p>
+    <!-- AI INSIGHT -->
 
-  <div class="ai-insight-content">
-    <div class="ai-section">
-      <div class="ai-label">What you see</div>
-      <p class="sub" id="ai-what-you-see">
-        Click below to generate a live interpretation of your current dashboard.
+    <section class="card mt-16" id="ai-insight-card">
+      <div class="eyebrow">AI Insight</div>
+      <h3 id="ai-insight-title">Your financial pattern</h3>
+
+      <p class="sub">
+        This is what your current financial structure actually looks like.
       </p>
-    </div>
 
-    <div class="ai-section">
-      <div class="ai-label">Why it matters</div>
-      <p class="sub" id="ai-why-it-matters">
-        This helps turn numbers into something more useful than a static summary.
-      </p>
-    </div>
+      <!-- LOADING STATE -->
+      <div class="ai-loading" id="ai-loading" hidden>
+        <div class="ai-spinner"></div>
+        <div class="ai-loading-text">Analyzing your financial structure...</div>
+      </div>
 
-    <div class="ai-section">
-      <div class="ai-label">Think about</div>
-      <p class="sub" id="ai-think-about">
-        A better financial system starts with understanding what is actually happening.
-      </p>
-    </div>
-  </div>
+      <div class="ai-insight-content">
 
-<button class="button" id="generate-ai-insight-btn" type="button">
-  Show Me What’s Really Going On
-</button>
-</section>
+        <div class="ai-section">
+          <div class="ai-label">What you see</div>
+          <p class="sub" id="ai-what-you-see">
+            Click below to generate a live interpretation of your dashboard.
+          </p>
+        </div>
+
+        <div class="ai-section">
+          <div class="ai-label">Why it matters</div>
+          <p class="sub" id="ai-why-it-matters">
+            This helps translate numbers into something more meaningful.
+          </p>
+        </div>
+
+        <div class="ai-section">
+          <div class="ai-label">Think about</div>
+          <p class="sub" id="ai-think-about">
+            A strong financial system starts with understanding what is actually happening.
+          </p>
+        </div>
+
+      </div>
+
+      <button class="button" id="generate-ai-insight-btn" type="button">
+        Analyze My Situation
+      </button>
+
+    </section>
+
     <div class="footer-grid">
 
       <section class="card">
@@ -242,18 +255,6 @@
       </section>
 
     </div>
-
-    <section class="card mt-16">
-      <div class="eyebrow">Advanced Layer</div>
-      <h3>Unlock deeper financial intelligence</h3>
-      <p class="sub">
-        Go beyond surface numbers with deeper insight into wealth leakage, time loss,
-        capital structure, and the trade-offs that are quietly slowing your progress.
-      </p>
-      <a href="#" class="button secondary">
-        🔒 Advanced Analysis
-      </a>
-    </section>
 
   </main>
 
