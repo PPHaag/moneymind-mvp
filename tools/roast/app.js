@@ -1,9 +1,17 @@
 (function () {
   const questions = window.ROAST_DATA?.questions || [];
 
+  const DASHBOARD_PATH = "/apps/dashboard/index.html";
+  const STORAGE_KEYS = {
+    roastResult: "moneymind_roast_result",
+    profile: "mm_profile",
+    userData: "userData"
+  };
+
   const state = {
     currentQuestionIndex: 0,
-    answers: {}
+    answers: {},
+    lastResult: null
   };
 
   const screens = {
@@ -29,22 +37,25 @@
     incomeText: document.getElementById("incomeText"),
     investText: document.getElementById("investText"),
     investRateText: document.getElementById("investRateText"),
+
     profileName: document.getElementById("profileName"),
     profileDescription: document.getElementById("profileDescription"),
     profileOpportunity: document.getElementById("profileOpportunity"),
+
     currentWealthText: document.getElementById("currentWealthText"),
     optimizedWealthText: document.getElementById("optimizedWealthText"),
     currentAgeText: document.getElementById("currentAgeText"),
     optimizedAgeText: document.getElementById("optimizedAgeText"),
     wealthDifferenceText: document.getElementById("wealthDifferenceText"),
+
     behaviorTitle: document.getElementById("behaviorTitle"),
     behaviorText: document.getElementById("behaviorText"),
     lessonBtn: document.getElementById("lessonBtn"),
 
-    sharePreview: document.getElementById("sharePreview"),
-    copyShareBtn: document.getElementById("copyShareBtn"),
+    goDashboardBtn: document.getElementById("goDashboardBtn"),
     restartBtn: document.getElementById("restartBtn"),
 
+    sharePreview: document.getElementById("sharePreview"),
     shareImageTitle: document.getElementById("shareImageTitle"),
     shareImageSupporting: document.getElementById("shareImageSupporting"),
     shareCurrentWealth: document.getElementById("shareCurrentWealth"),
@@ -71,6 +82,13 @@
     showScreen(screens.question);
   }
 
+  function restartRoast() {
+    state.currentQuestionIndex = 0;
+    state.answers = {};
+    state.lastResult = null;
+    showScreen(screens.intro);
+  }
+
   function renderQuestion() {
     if (!questions.length) {
       console.warn("No roast questions found.");
@@ -90,9 +108,9 @@
     if (els.progressPct) els.progressPct.textContent = `${pct}%`;
     if (els.progressFill) els.progressFill.style.width = `${pct}%`;
 
-    if (els.questionEyebrow) els.questionEyebrow.textContent = q.eyebrow || "";
+    if (els.questionEyebrow) els.questionEyebrow.textContent = q.eyebrow || "MoneyMind Roast";
     if (els.questionTitle) els.questionTitle.textContent = q.title || "";
-    if (els.questionHint) els.questionHint.textContent = q.hint || "";
+    if (els.questionHint) els.questionHint.textContent = q.hint || "Choose the option that fits best.";
 
     if (els.optionsContainer) {
       els.optionsContainer.innerHTML = "";
@@ -142,13 +160,35 @@
 
     setTimeout(() => {
       try {
-        const result = window.RoastEngine.analyzeRoast(state.answers);
+        const result = window.RoastEngine?.analyzeRoast?.(state.answers);
+
+        if (!result) {
+          throw new Error("RoastEngine returned no result.");
+        }
+
+        state.lastResult = result;
         renderResult(result);
+        persistResult(result);
         showScreen(screens.result);
       } catch (err) {
         console.error("Roast analysis failed:", err);
+        alert("Something went wrong while generating your roast. Check the console and roast engine output.");
+        showScreen(screens.intro);
       }
-    }, 2200);
+    }, 1800);
+  }
+
+  function formatEuro(value) {
+    if (window.RoastEngine?.formatEuro) {
+      return window.RoastEngine.formatEuro(value);
+    }
+
+    const number = Number(value) || 0;
+    return new Intl.NumberFormat("nl-NL", {
+      style: "currency",
+      currency: "EUR",
+      maximumFractionDigits: 0
+    }).format(number);
   }
 
   function getShareSupportingText(diff) {
@@ -184,18 +224,19 @@
     const optimizedWealth = result.trajectory?.optimizedWealth || 0;
     const wealthDifference = result.trajectory?.wealthDifference || 0;
 
-    const formattedCurrentWealth = window.RoastEngine.formatEuro(currentWealth);
-    const formattedOptimizedWealth = window.RoastEngine.formatEuro(optimizedWealth);
-    const formattedDifference = window.RoastEngine.formatEuro(wealthDifference);
+    const formattedCurrentWealth = formatEuro(currentWealth);
+    const formattedOptimizedWealth = formatEuro(optimizedWealth);
+    const formattedDifference = formatEuro(wealthDifference);
 
     if (els.currentWealthText) els.currentWealthText.textContent = formattedCurrentWealth;
     if (els.optimizedWealthText) els.optimizedWealthText.textContent = formattedOptimizedWealth;
     if (els.currentAgeText) els.currentAgeText.textContent = result.currentAgeText || "";
     if (els.optimizedAgeText) els.optimizedAgeText.textContent = result.optimizedAgeText || "";
+    if (els.wealthDifferenceText) els.wealthDifferenceText.textContent = `Same income. ${formattedDifference} difference.`;
 
-    if (els.wealthDifferenceText) {
-      els.wealthDifferenceText.textContent = `Same income. ${formattedDifference} difference.`;
-    }
+    if (els.behaviorTitle) els.behaviorTitle.textContent = result.behavior?.title || "";
+    if (els.behaviorText) els.behaviorText.textContent = result.behavior?.text || "";
+    if (els.lessonBtn) els.lessonBtn.textContent = result.behavior?.lessonLabel || "Learn this concept (3 min)";
 
     if (els.shareImageTitle) {
       els.shareImageTitle.textContent = `Same income. ${formattedDifference} difference.`;
@@ -216,22 +257,46 @@
     if (els.shareWealthDifference) {
       els.shareWealthDifference.textContent = "Same income. Better decisions.";
     }
+  }
 
-    if (els.behaviorTitle) els.behaviorTitle.textContent = result.behavior?.title || "";
-    if (els.behaviorText) els.behaviorText.textContent = result.behavior?.text || "";
-    if (els.lessonBtn) els.lessonBtn.textContent = result.behavior?.lessonLabel || "Learn this concept";
+  function buildRoastStoragePayload(result) {
+    return {
+      completed: true,
+      answers: state.answers,
+      headline: result.headline || "",
+      observation: result.observation || "",
+      incomeText: result.incomeText || "",
+      investText: result.investText || "",
+      investRateText: result.investRateText || "",
+      profile: {
+        name: result.profile?.name || "",
+        description: result.profile?.description || "",
+        opportunity: result.profile?.opportunity || ""
+      },
+      behavior: {
+        title: result.behavior?.title || "",
+        text: result.behavior?.text || "",
+        lessonLabel: result.behavior?.lessonLabel || ""
+      },
+      trajectory: {
+        currentWealth: result.trajectory?.currentWealth || 0,
+        optimizedWealth: result.trajectory?.optimizedWealth || 0,
+        wealthDifference: result.trajectory?.wealthDifference || 0
+      },
+      currentAgeText: result.currentAgeText || "",
+      optimizedAgeText: result.optimizedAgeText || "",
+      updatedAt: new Date().toISOString()
+    };
+  }
 
+  function persistResult(result) {
     try {
-      localStorage.setItem(
-        "moneymind_roast_result",
-        JSON.stringify({
-          answers: state.answers,
-          result
-        })
-      );
+      const roastPayload = buildRoastStoragePayload(result);
+
+      localStorage.setItem(STORAGE_KEYS.roastResult, JSON.stringify(roastPayload));
 
       localStorage.setItem(
-        "mm_profile",
+        STORAGE_KEYS.profile,
         JSON.stringify({
           income: state.answers?.income?.amount || 0,
           monthlyInvesting: state.answers?.invest?.amount || 0,
@@ -241,42 +306,27 @@
           roastUpdatedAt: new Date().toISOString()
         })
       );
+
+      const existingUserData = JSON.parse(localStorage.getItem(STORAGE_KEYS.userData) || "{}");
+
+      const userData = {
+        ...existingUserData,
+        roast: roastPayload,
+        capitalMap: existingUserData.capitalMap || { completed: false, updatedAt: null },
+        allocation: existingUserData.allocation || { completed: false, updatedAt: null },
+        spendingVsBuilding: existingUserData.spendingVsBuilding || { completed: false, updatedAt: null },
+        leakage: existingUserData.leakage || { completed: false, updatedAt: null },
+        builder: existingUserData.builder || { completed: false, updatedAt: null }
+      };
+
+      localStorage.setItem(STORAGE_KEYS.userData, JSON.stringify(userData));
     } catch (err) {
       console.warn("Could not save roast result to localStorage.", err);
     }
   }
 
-  async function copyShareText() {
-    const text = els.sharePreview?.innerText?.trim();
-
-    if (!text) {
-      console.warn("No share text available to copy.");
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(text);
-
-      if (els.copyShareBtn) {
-        els.copyShareBtn.textContent = "Copied";
-        setTimeout(() => {
-          els.copyShareBtn.textContent = "Copy Result";
-        }, 1400);
-      }
-    } catch (err) {
-      console.warn("Clipboard copy failed.", err);
-
-      if (els.copyShareBtn) {
-        els.copyShareBtn.textContent = "Copy Failed";
-        setTimeout(() => {
-          els.copyShareBtn.textContent = "Copy Result";
-        }, 1400);
-      }
-    }
-  }
-
-  function restartRoast() {
-    showScreen(screens.intro);
+  function openDashboard() {
+    window.location.href = DASHBOARD_PATH;
   }
 
   function downloadShareCard() {
@@ -307,29 +357,7 @@
       });
   }
 
-  function init() {
-    if (els.startBtn) {
-      els.startBtn.addEventListener("click", startRoast);
-    }
-
-    if (els.backBtn) {
-      els.backBtn.addEventListener("click", previousQuestion);
-    }
-
-    if (els.copyShareBtn) {
-      els.copyShareBtn.addEventListener("click", copyShareText);
-    }
-
-    if (els.restartBtn) {
-      els.restartBtn.addEventListener("click", restartRoast);
-    }
-
-    if (els.lessonBtn) {
-      els.lessonBtn.addEventListener("click", () => {
-        alert("Hook this to your Academy lesson route later. For now: this is your behavioral lesson CTA.");
-      });
-    }
-
+  function bindShareActions() {
     const shareLinkedInBtn = document.getElementById("shareLinkedInBtn");
     if (shareLinkedInBtn) {
       shareLinkedInBtn.addEventListener("click", () => {
@@ -361,7 +389,30 @@
     if (downloadBtn) {
       downloadBtn.addEventListener("click", downloadShareCard);
     }
+  }
 
+  function init() {
+    if (els.startBtn) {
+      els.startBtn.addEventListener("click", startRoast);
+    }
+
+    if (els.backBtn) {
+      els.backBtn.addEventListener("click", previousQuestion);
+    }
+
+    if (els.restartBtn) {
+      els.restartBtn.addEventListener("click", restartRoast);
+    }
+
+    if (els.lessonBtn) {
+      els.lessonBtn.addEventListener("click", openDashboard);
+    }
+
+    if (els.goDashboardBtn) {
+      els.goDashboardBtn.addEventListener("click", openDashboard);
+    }
+
+    bindShareActions();
     showScreen(screens.intro);
   }
 
