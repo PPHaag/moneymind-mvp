@@ -1,7 +1,7 @@
 (function () {
 const questions = window.ROAST_DATA?.questions || [];
 
-const DASHBOARD_PATH = “/apps/dashboard/index.html”;
+const DASHBOARD_PATH = '/apps/dashboard/index.html';
 
 // ─── Single storage key ───────────────────────────────────────────────────────
 // All roast data lives in ONE key: “moneymind_user_data”
