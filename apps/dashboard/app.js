@@ -4,7 +4,7 @@
 
 // NOTE: Supabase is imported but kept dormant until backend is ready.
 // Remove testSupabaseConnection() call or wire it to real data when needed.
-import { createClient } from “https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm”;
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
 // ⚠️ Move this key to a Vercel environment variable when going to production.
 // In Vercel: Settings → Environment Variables → SUPABASE_ANON_KEY
