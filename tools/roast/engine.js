@@ -3,7 +3,7 @@
 // ─── Utilities ───────────────────────────────────────────────────────────────
 
 function safe(val, fallback = 0) {
-return typeof val === “number” && !isNaN(val) ? val : fallback;
+return typeof val === 'number' && !isNaN(val) ? val : fallback;
 }
 
 function formatEuro(value) {
