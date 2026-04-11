@@ -440,9 +440,9 @@ const data     = buildDashboardData(userData);
 setAIState(“loading”);
 
 try {
-const response = await fetch("/api/ai-insight", {
+const response = await fetch('/api/ai-insight', {
   method: "POST",
-  headers: { "Content-Type": "application/json" },
+  headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify(data)
 });
 
