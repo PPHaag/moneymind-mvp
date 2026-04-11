@@ -440,15 +440,12 @@ const data     = buildDashboardData(userData);
 setAIState(“loading”);
 
 try {
-const response = await fetch(“https://api.anthropic.com/v1/messages”, {
-method: “POST”,
-headers: { “Content-Type”: “application/json” },
-body: JSON.stringify({
-model:      AI_MODEL,
-max_tokens: 1000,
-messages:   [{ role: “user”, content: buildAIPrompt(data) }]
-})
+const response = await fetch("/api/ai-insight", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(data)
 });
+
 
 ```
 if (!response.ok) throw new Error(`Anthropic API status ${response.status}`);
