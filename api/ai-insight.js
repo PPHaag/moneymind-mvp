@@ -1,3 +1,8 @@
+module.exports = async function handler(req, res) {
+  console.log("API KEY aanwezig:", !!process.env.ANTHROPIC_API_KEY);
+  console.log("API KEY start:", process.env.ANTHROPIC_API_KEY?.slice(0, 8));
+  // ... rest van je code
+
 const Anthropic = require("@anthropic-ai/sdk");
 
 const client = new Anthropic.default
