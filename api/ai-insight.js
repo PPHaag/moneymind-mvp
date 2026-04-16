@@ -1,8 +1,5 @@
-const Anthropic = require("@anthropic-ai/sdk");
-
-const client = new Anthropic.default
-  ? new Anthropic.default({ apiKey: process.env.ANTHROPIC_API_KEY })
-  : new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const { Anthropic } = require("@anthropic-ai/sdk");
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 module.exports = async function handler(req, res) {
   console.log("API KEY aanwezig:", !!process.env.ANTHROPIC_API_KEY);
