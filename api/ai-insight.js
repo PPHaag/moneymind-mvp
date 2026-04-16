@@ -1,10 +1,10 @@
-import Anthropic from "@anthropic-ai/sdk";
+const Anthropic = require("@anthropic-ai/sdk");
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+const client = new Anthropic.default
+  ? new Anthropic.default({ apiKey: process.env.ANTHROPIC_API_KEY })
+  : new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -100,4 +100,4 @@ ${JSON.stringify(data, null, 2)}`;
       nextStep: "Restore the AI connection before relying on this insight.",
     });
   }
-}
+};
