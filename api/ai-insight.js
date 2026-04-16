@@ -4,7 +4,7 @@ const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -13,7 +13,6 @@ module.exports = async function handler(req, res) {
     const data = req.body;
 
     const prompt = `You are the MoneyMind AI Insight Layer.
-
 Your task is to interpret a user's financial dashboard in a sharp, structured, and practical way.
 
 STRICT RULES:
@@ -36,7 +35,6 @@ Return ONLY valid JSON with:
   "thinkAbout": "...",
   "nextStep": "..."
 }
-
 - Use double quotes for all keys and string values.
 - Do not use single quotes.
 - Do not use markdown.
@@ -69,17 +67,14 @@ ${JSON.stringify(data, null, 2)}`;
     console.log("Raw AI output:", text);
 
     let parsed;
-
     try {
       parsed = JSON.parse(text);
     } catch (err) {
       console.error("AI returned invalid JSON:", text);
-
       const repaired = text
         .replace(/[\u2018\u2019]/g, "'")
         .replace(/[\u201C\u201D]/g, '"')
         .replace(/":\s*"([^"]*)'\s*,/g, '": "$1",');
-
       try {
         parsed = JSON.parse(repaired);
         console.log("Recovered AI JSON after repair");
@@ -97,7 +92,6 @@ ${JSON.stringify(data, null, 2)}`;
     return res.status(200).json(parsed);
   } catch (error) {
     console.error("AI route error:", error.message, error.stack);
-
     return res.status(500).json({
       title: "AI unavailable",
       whatYouSee: "We could not generate your insight right now.",
@@ -106,4 +100,4 @@ ${JSON.stringify(data, null, 2)}`;
       nextStep: "Restore the AI connection before relying on this insight.",
     });
   }
-};
+}
