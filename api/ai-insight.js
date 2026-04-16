@@ -1,8 +1,3 @@
-module.exports = async function handler(req, res) {
-  console.log("API KEY aanwezig:", !!process.env.ANTHROPIC_API_KEY);
-  console.log("API KEY start:", process.env.ANTHROPIC_API_KEY?.slice(0, 8));
-  // ... rest van je code
-
 const Anthropic = require("@anthropic-ai/sdk");
 
 const client = new Anthropic.default
@@ -10,6 +5,9 @@ const client = new Anthropic.default
   : new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 module.exports = async function handler(req, res) {
+  console.log("API KEY aanwezig:", !!process.env.ANTHROPIC_API_KEY);
+  console.log("API KEY start:", process.env.ANTHROPIC_API_KEY?.slice(0, 8));
+
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
