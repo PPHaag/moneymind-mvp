@@ -4,32 +4,34 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MoneyMind Dashboard</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg: #0a0a0a;
-      --surface: #111111;
-      --surface2: #1a1a1a;
-      --border: #222222;
-      --text: #f0ede8;
-      --muted: #666;
-      --accent: #c8f060;
-      --accent-dim: rgba(200, 240, 96, 0.12);
-      --accent-border: rgba(200, 240, 96, 0.25);
-      --red: #ff4d4d;
-      --yellow: #f5c542;
+      --bg: #0b1220;
+      --panel: #111827;
+      --panel-2: #0f172a;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #2dd4bf;
+      --accent-dark: #022c22;
+      --border: rgba(45,212,191,.16);
+      --border-soft: rgba(148,163,184,.14);
+      --shadow: 0 18px 40px rgba(0,0,0,.30);
+      --radius: 24px;
+      --red: #f87171;
+      --yellow: #fbbf24;
     }
 
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body { min-height: 100%; }
+
     body {
-      background: var(--bg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 800px at 20% 0%, rgba(45,212,191,.15), transparent 60%),
+        radial-gradient(800px 700px at 90% 100%, rgba(45,212,191,.08), transparent 60%),
+        var(--bg);
       color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      min-height: 100vh;
-      padding: 0;
       overflow-x: hidden;
     }
 
@@ -42,136 +44,138 @@
       border-bottom: 1px solid var(--border);
       position: sticky;
       top: 0;
-      background: rgba(10,10,10,0.92);
-      backdrop-filter: blur(12px);
+      background: rgba(11,18,32,0.88);
+      backdrop-filter: blur(14px);
       z-index: 100;
     }
 
     .brand {
-      font-family: 'Syne', sans-serif;
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 800;
-      letter-spacing: -0.5px;
+      letter-spacing: -0.3px;
       color: var(--text);
     }
 
-    .brand span {
-      color: var(--accent);
-    }
+    .brand span { color: var(--accent); }
 
     .topbar-right {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--muted);
-      letter-spacing: 0.05em;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
     }
 
-    /* MAIN LAYOUT */
+    /* SHELL */
     .shell {
-      max-width: 680px;
+      max-width: 720px;
       margin: 0 auto;
-      padding: 48px 24px 80px;
+      padding: 40px 18px 72px;
     }
 
-    /* STATUS HEADER */
-    .status-header {
-      margin-bottom: 48px;
+    /* CARD BASE */
+    .card {
+      background: rgba(17,24,39,.82);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      padding: 24px 22px;
+      margin-bottom: 18px;
+    }
+
+    /* EYEBROW */
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .78rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    /* STATUS HEADER CARD */
+    .header-card {
+      text-align: center;
+      padding: 36px 28px;
       opacity: 0;
       animation: fadeUp 0.5s ease forwards;
     }
 
-    .eyebrow {
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent);
-      font-weight: 500;
+    .header-card h1 {
+      font-size: clamp(1.7rem, 4vw, 2.4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
       margin-bottom: 12px;
     }
 
-    .status-header h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(28px, 5vw, 40px);
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -1px;
-      color: var(--text);
-      margin-bottom: 16px;
-    }
-
-    .status-header p {
-      font-size: 15px;
+    .header-card .lead {
       color: var(--muted);
-      line-height: 1.6;
+      font-size: 1rem;
+      line-height: 1.7;
       max-width: 480px;
+      margin: 0 auto;
     }
 
     /* SNAPSHOT STRIP */
-    .snapshot-strip {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 16px;
+    .snapshot-card {
+      padding: 0;
       overflow: hidden;
-      margin-bottom: 16px;
       opacity: 0;
       animation: fadeUp 0.5s ease 0.1s forwards;
     }
 
-    .snap-cell {
-      background: var(--surface);
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .metric-card {
+      background: rgba(17,24,39,.95);
       padding: 20px 18px;
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
 
-    .snap-label {
-      font-size: 11px;
+    .metric-label {
+      font-size: .8rem;
       color: var(--muted);
-      letter-spacing: 0.06em;
       text-transform: uppercase;
+      letter-spacing: 0.06em;
     }
 
-    .snap-value {
-      font-family: 'Syne', sans-serif;
+    .metric-value {
       font-size: 20px;
-      font-weight: 700;
+      font-weight: 800;
       color: var(--text);
       letter-spacing: -0.5px;
     }
 
-    .snap-value.unknown {
+    .metric-value.unknown {
       color: var(--muted);
       font-size: 14px;
-      font-family: 'DM Sans', sans-serif;
       font-weight: 400;
     }
 
-    /* AI INSIGHT BLOCK */
-    .ai-block {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
-      margin-bottom: 16px;
+    /* AI INSIGHT CARD */
+    .ai-card {
       opacity: 0;
       animation: fadeUp 0.5s ease 0.2s forwards;
     }
 
-    .ai-block-header {
+    .ai-card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px 24px 16px;
-      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-soft);
     }
 
-    .ai-block-header .eyebrow {
-      margin-bottom: 0;
-    }
+    .ai-card-header .eyebrow { margin-bottom: 0; }
 
     .ai-status-dot {
       width: 7px;
@@ -185,29 +189,22 @@
       box-shadow: 0 0 8px var(--accent);
     }
 
-    .ai-content {
-      padding: 24px;
-    }
-
     .ai-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
+      font-size: 1.2rem;
+      font-weight: 800;
       color: var(--text);
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       letter-spacing: -0.3px;
     }
 
-    .ai-row {
-      margin-bottom: 18px;
-    }
+    .ai-row { margin-bottom: 16px; }
 
     .ai-row-label {
-      font-size: 10px;
-      letter-spacing: 0.1em;
+      font-size: .75rem;
+      letter-spacing: .1em;
       text-transform: uppercase;
       color: var(--muted);
-      margin-bottom: 6px;
+      margin-bottom: 5px;
     }
 
     .ai-row-text {
@@ -221,11 +218,7 @@
       font-size: 15px;
     }
 
-    .ai-placeholder {
-      padding: 32px 0;
-      text-align: center;
-    }
-
+    .ai-placeholder { padding: 24px 0; text-align: center; }
     .ai-placeholder p {
       font-size: 14px;
       color: var(--muted);
@@ -233,17 +226,16 @@
       margin-bottom: 20px;
     }
 
-    /* LOADING */
     .ai-loading {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 32px 0;
+      gap: 14px;
+      padding: 28px 0;
     }
 
     .ai-spinner {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       border: 2px solid var(--border);
       border-top-color: var(--accent);
       border-radius: 50%;
@@ -251,75 +243,95 @@
       flex-shrink: 0;
     }
 
-    .ai-loading-text {
-      font-size: 13px;
-      color: var(--muted);
-    }
+    .ai-loading-text { font-size: 13px; color: var(--muted); }
 
-    /* NEXT STEP BLOCK */
-    .next-block {
-      background: var(--accent-dim);
-      border: 1px solid var(--accent-border);
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 16px;
+    /* NEXT STEP CARD */
+    .next-card {
+      background: rgba(45,212,191,.07);
+      border-color: rgba(45,212,191,.25);
       opacity: 0;
       animation: fadeUp 0.5s ease 0.3s forwards;
     }
 
-    .next-block .eyebrow {
-      margin-bottom: 10px;
-    }
-
     .next-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 20px;
-      font-weight: 700;
+      font-size: 1.25rem;
+      font-weight: 800;
       color: var(--text);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       letter-spacing: -0.3px;
       line-height: 1.2;
     }
 
     .next-desc {
       font-size: 14px;
-      color: #999;
+      color: var(--muted);
       line-height: 1.6;
       margin-bottom: 20px;
     }
 
+    /* TOOL LIST CARD */
+    .tools-card {
+      opacity: 0;
+      animation: fadeUp 0.5s ease 0.4s forwards;
+    }
+
+    .tool-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--border-soft);
+      text-decoration: none;
+    }
+
+    .tool-row:last-child { border-bottom: none; }
+
+    .tool-name { font-size: 14px; color: var(--text); }
+
+    .tool-tag {
+      font-size: 11px;
+      padding: 3px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .tag-ok  { background: rgba(45,212,191,.12); color: var(--accent); border: 1px solid rgba(45,212,191,.25); }
+    .tag-warn { background: rgba(251,191,36,.12); color: var(--yellow); border: 1px solid rgba(251,191,36,.25); }
+    .tag-bad  { background: rgba(248,113,113,.10); color: var(--red); border: 1px solid rgba(248,113,113,.22); }
+
     /* BUTTONS */
     .btn {
-      display: inline-block;
-      padding: 12px 22px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       border: none;
-      font-family: 'DM Sans', sans-serif;
-      transition: opacity 0.15s, transform 0.15s;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 12px 22px;
+      font-weight: 800;
+      font-size: 14px;
+      font-family: inherit;
+      transition: .15s ease;
+      text-decoration: none;
     }
 
     .btn:active { transform: scale(0.98); }
 
     .btn-primary {
       background: var(--accent);
-      color: #0a0a0a;
-      font-weight: 600;
+      color: var(--accent-dark);
     }
 
     .btn-primary:hover { opacity: 0.9; }
     .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .btn-ghost {
-      background: transparent;
-      color: var(--muted);
-      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border-soft);
+      color: var(--text);
     }
 
-    .btn-ghost:hover { color: var(--text); border-color: #444; }
+    .btn-ghost:hover { border-color: rgba(45,212,191,.35); background: rgba(45,212,191,.06); }
 
     .btn-row {
       display: flex;
@@ -328,72 +340,19 @@
       align-items: center;
     }
 
-    /* DIVIDER */
-    .divider {
-      height: 1px;
-      background: var(--border);
-      margin: 8px 0 16px;
-      opacity: 0;
-      animation: fadeUp 0.5s ease 0.35s forwards;
-    }
-
-    /* TOOL LIST */
-    .tool-list {
-      opacity: 0;
-      animation: fadeUp 0.5s ease 0.4s forwards;
-    }
-
-    .tool-list-label {
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 12px;
-    }
-
-    .tool-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 13px 0;
-      border-bottom: 1px solid var(--border);
-      text-decoration: none;
-    }
-
-    .tool-row:last-child { border-bottom: none; }
-
-    .tool-name {
-      font-size: 14px;
-      color: var(--text);
-    }
-
-    .tool-tag {
-      font-size: 11px;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-weight: 500;
-    }
-
-    .tag-ok { background: rgba(200,240,96,0.15); color: var(--accent); }
-    .tag-warn { background: rgba(245,197,66,0.15); color: var(--yellow); }
-    .tag-bad { background: rgba(255,77,77,0.12); color: var(--red); }
-
     /* ANIMATIONS */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     /* MOBILE */
     @media (max-width: 480px) {
-      .topbar { padding: 16px 20px; }
-      .shell { padding: 32px 16px 60px; }
-      .snapshot-strip { grid-template-columns: repeat(3, 1fr); }
-      .snap-value { font-size: 16px; }
+      .topbar { padding: 16px 18px; }
+      .shell { padding: 28px 14px 56px; }
+      .metric-value { font-size: 16px; }
     }
   </style>
 </head>
@@ -407,86 +366,82 @@
   <main class="shell">
 
     <!-- STATUS HEADER -->
-    <div class="status-header">
+    <div class="card header-card">
       <div class="eyebrow">Your financial picture</div>
       <h1 id="dash-headline">Your first pattern is visible.</h1>
-      <p id="dash-sub">Here is where you stand and what to focus on next.</p>
+      <p class="lead" id="dash-sub">Here is where you stand and what to focus on next.</p>
     </div>
 
     <!-- SNAPSHOT STRIP -->
-    <div class="snapshot-strip">
-      <div class="snap-cell">
-        <div class="snap-label">Direct</div>
-        <div class="snap-value" id="snap-direct">—</div>
-      </div>
-      <div class="snap-cell">
-        <div class="snap-label">Accessible</div>
-        <div class="snap-value" id="snap-accessible">—</div>
-      </div>
-      <div class="snap-cell">
-        <div class="snap-label">Locked</div>
-        <div class="snap-value" id="snap-locked">—</div>
+    <div class="card snapshot-card">
+      <div class="metric-grid">
+        <div class="metric-card">
+          <div class="metric-label">Direct</div>
+          <div class="metric-value" id="snap-direct">—</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Accessible</div>
+          <div class="metric-value" id="snap-accessible">—</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Locked</div>
+          <div class="metric-value" id="snap-locked">—</div>
+        </div>
       </div>
     </div>
 
     <!-- AI INSIGHT -->
-    <div class="ai-block">
-      <div class="ai-block-header">
+    <div class="card ai-card">
+      <div class="ai-card-header">
         <div class="eyebrow">AI Insight</div>
         <div class="ai-status-dot" id="ai-dot"></div>
       </div>
-      <div class="ai-content">
 
-        <div id="ai-placeholder" class="ai-placeholder">
-          <p>Let the AI read your current financial structure and tell you what it actually sees.</p>
-          <button class="btn btn-primary" id="generate-ai-insight-btn">Analyze My Situation</button>
+      <div id="ai-placeholder" class="ai-placeholder">
+        <p>Let the AI read your current financial structure and tell you what it actually sees.</p>
+        <button class="btn btn-primary" id="generate-ai-insight-btn">Analyze My Situation</button>
+      </div>
+
+      <div id="ai-loading" class="ai-loading" hidden>
+        <div class="ai-spinner"></div>
+        <div class="ai-loading-text">Reading your financial structure...</div>
+      </div>
+
+      <div id="ai-result" hidden>
+        <div class="ai-title" id="ai-insight-title">—</div>
+        <div class="ai-row">
+          <div class="ai-row-label">What you see</div>
+          <div class="ai-row-text highlight" id="ai-what-you-see">—</div>
         </div>
-
-        <div id="ai-loading" class="ai-loading" hidden>
-          <div class="ai-spinner"></div>
-          <div class="ai-loading-text">Reading your financial structure...</div>
+        <div class="ai-row">
+          <div class="ai-row-label">Why it matters</div>
+          <div class="ai-row-text" id="ai-why-it-matters">—</div>
         </div>
-
-        <div id="ai-result" hidden>
-          <div class="ai-title" id="ai-insight-title">—</div>
-          <div class="ai-row">
-            <div class="ai-row-label">What you see</div>
-            <div class="ai-row-text highlight" id="ai-what-you-see">—</div>
-          </div>
-          <div class="ai-row">
-            <div class="ai-row-label">Why it matters</div>
-            <div class="ai-row-text" id="ai-why-it-matters">—</div>
-          </div>
-          <div class="ai-row">
-            <div class="ai-row-label">Think about</div>
-            <div class="ai-row-text" id="ai-think-about">—</div>
-          </div>
-          <div class="ai-row">
-            <div class="ai-row-label">Next step</div>
-            <div class="ai-row-text" id="ai-next-step">—</div>
-          </div>
-          <div class="btn-row" style="margin-top:20px">
-            <button class="btn btn-ghost" id="regenerate-btn">Refresh insight</button>
-          </div>
+        <div class="ai-row">
+          <div class="ai-row-label">Think about</div>
+          <div class="ai-row-text" id="ai-think-about">—</div>
         </div>
-
+        <div class="ai-row">
+          <div class="ai-row-label">Next step</div>
+          <div class="ai-row-text" id="ai-next-step">—</div>
+        </div>
+        <div class="btn-row" style="margin-top:20px">
+          <button class="btn btn-ghost" id="regenerate-btn">Refresh insight</button>
+        </div>
       </div>
     </div>
 
-    <!-- NEXT STEP -->
-    <div class="next-block">
+    <!-- NEXT MOVE -->
+    <div class="card next-card">
       <div class="eyebrow">Next move</div>
       <div class="next-title" id="next-title">Map your capital structure</div>
       <div class="next-desc" id="next-desc">Before optimizing anything else, understand what is directly usable, accessible, and locked.</div>
       <a href="#" class="btn btn-primary" id="next-btn">Open tool</a>
     </div>
 
-    <!-- DIVIDER -->
-    <div class="divider"></div>
-
     <!-- TOOL STATUS -->
-    <div class="tool-list">
-      <div class="tool-list-label">Your tools</div>
+    <div class="card tools-card">
+      <div class="eyebrow">Your tools</div>
       <div class="tool-row">
         <span class="tool-name">Roast</span>
         <span class="tool-tag" id="tag-roast">—</span>
