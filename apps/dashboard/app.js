@@ -138,7 +138,10 @@ function renderToolStatus(userData) {
 
 // AI INSIGHT
 
+let currentAIState = 'placeholder';
+
 function setAIState(state) {
+  currentAIState = state;
   const placeholder = document.getElementById('ai-placeholder');
   const loading = document.getElementById('ai-loading');
   const result = document.getElementById('ai-result');
@@ -167,10 +170,10 @@ function setAIState(state) {
 
 function renderAIResult(result) {
   setText('ai-insight-title', result.title || 'Your financial pattern');
-  setText('ai-what-you-see', result.whatYouSee || '—');
-  setText('ai-why-it-matters', result.whyItMatters || '—');
-  setText('ai-think-about', result.thinkAbout || '—');
-  setText('ai-next-step', result.nextStep || '—');
+  setText('ai-what-you-see', result.whatYouSee || result.whatyousee || '—');
+  setText('ai-why-it-matters', result.whyItMatters || result.whyitmatters || '—');
+  setText('ai-think-about', result.thinkAbout || result.thinkabout || '—');
+  setText('ai-next-step', result.nextStep || result.nextstep || '—');
   setAIState('result');
 }
 
@@ -195,6 +198,18 @@ async function handleAIClick() {
 
   setAIState('loading');
 
+  // Fallback: als na 30s nog steeds loading, herstel naar vorige state
+  const fallbackTimer = setTimeout(() => {
+    if (currentAIState === 'loading') {
+      const saved = readUserData();
+      if (saved.ai?.lastInsight) {
+        renderAIResult(saved.ai.lastInsight);
+      } else {
+        setAIState('placeholder');
+      }
+    }
+  }, 30000);
+
   try {
     const response = await fetch('/api/ai-insight', {
       method: 'POST',
@@ -202,9 +217,12 @@ async function handleAIClick() {
       body: JSON.stringify(data)
     });
 
+    clearTimeout(fallbackTimer);
+
     if (!response.ok) throw new Error('API status ' + response.status);
 
     const result = await response.json();
+    console.log('AI result received:', result);
     renderAIResult(result);
 
     const updated = readUserData();
@@ -212,6 +230,7 @@ async function handleAIClick() {
     writeUserData(updated);
 
   } catch (err) {
+    clearTimeout(fallbackTimer);
     console.error('AI insight error:', err);
     setAIState('placeholder');
     alert('Could not load AI insight. Try again in a moment.');
