@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MoneyMind • Spending vs Building</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #111827;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #2dd4bf;
+      --accent-dark: #022c22;
+      --border: rgba(45,212,191,.16);
+      --border-soft: rgba(148,163,184,.14);
+      --shadow: 0 18px 40px rgba(0,0,0,.30);
+      --radius: 24px;
+      --spending: #f87171;
+      --lifestyle: #f59e0b;
+      --building: #2dd4bf;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 800px at 20% 0%, rgba(45,212,191,.15), transparent 60%),
+        radial-gradient(800px 700px at 90% 100%, rgba(45,212,191,.08), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 32px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(11,18,32,0.88);
+      backdrop-filter: blur(14px);
+      z-index: 100;
+    }
+
+    .brand { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; color: var(--text); }
+    .brand span { color: var(--accent); }
+    .topbar-right { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+    .shell {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 40px 18px 72px;
+    }
+
+    .card {
+      background: rgba(17,24,39,.82);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      padding: 28px 24px;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .78rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .progress-wrap { margin-bottom: 32px; opacity: 0; animation: fadeUp 0.4s ease forwards; }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+    .progress-bar { height: 3px; background: var(--border-soft); border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width 0.4s ease; }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .step-card { opacity: 0; animation: fadeUp 0.45s ease forwards; }
+
+    .step-card h2 {
+      font-size: clamp(1.4rem, 3.5vw, 1.9rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+    }
+
+    .step-hint { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 28px; }
+
+    .bucket-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .bucket-badge .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    .badge-income   { background: rgba(45,212,191,.12); color: var(--building); border: 1px solid rgba(45,212,191,.25); }
+    .badge-income .dot { background: var(--building); }
+    .badge-fixed    { background: rgba(248,113,113,.12); color: var(--spending); border: 1px solid rgba(248,113,113,.25); }
+    .badge-fixed .dot { background: var(--spending); }
+    .badge-lifestyle { background: rgba(245,158,11,.10); color: var(--lifestyle); border: 1px solid rgba(245,158,11,.22); }
+    .badge-lifestyle .dot { background: var(--lifestyle); }
+
+    .input-wrap { position: relative; margin-bottom: 8px; }
+    .currency-prefix {
+      position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+      font-size: 16px; font-weight: 700; color: var(--muted); pointer-events: none;
+    }
+
+    .amount-input {
+      width: 100%;
+      padding: 16px 16px 16px 36px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border-soft);
+      border-radius: 16px;
+      color: var(--text);
+      font-size: 24px;
+      font-weight: 800;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+      -moz-appearance: textfield;
+    }
+
+    .amount-input::-webkit-outer-spin-button,
+    .amount-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    .amount-input:focus {
+      border-color: rgba(45,212,191,.45);
+      background: rgba(45,212,191,.04);
+    }
+
+    .input-label { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+    /* REMAINING INDICATOR */
+    .remaining-indicator {
+      margin-top: 20px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border-soft);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .remaining-indicator .remaining-value {
+      font-weight: 800;
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    .remaining-indicator.warning .remaining-value { color: var(--spending); }
+    .remaining-indicator.good .remaining-value { color: var(--building); }
+
+    .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; }
+    .back-btn { background: none; border: none; color: var(--muted); font-size: 13px; cursor: pointer; font-family: inherit; padding: 8px 0; }
+    .back-btn:hover { color: var(--text); }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      border: none; cursor: pointer; border-radius: 999px;
+      padding: 13px 24px; font-weight: 800; font-size: 14px;
+      font-family: inherit; transition: .15s ease; text-decoration: none;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: var(--accent); color: var(--accent-dark); }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-ghost { background: rgba(255,255,255,.04); border: 1px solid var(--border-soft); color: var(--text); }
+    .btn-ghost:hover { border-color: rgba(45,212,191,.35); background: rgba(45,212,191,.06); }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 20px; }
+
+    /* RESULT */
+    .result-header {
+      text-align: center;
+      padding: 36px 24px 28px;
+      opacity: 0;
+      animation: fadeUp 0.45s ease forwards;
+    }
+
+    .result-header h1 {
+      font-size: clamp(1.5rem, 4vw, 2.1rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+    }
+
+    .result-header p { font-size: 15px; color: var(--muted); line-height: 1.6; }
+
+    /* BIG RATIO */
+    .ratio-card {
+      text-align: center;
+      padding: 36px 24px;
+      opacity: 0;
+      animation: fadeUp 0.45s ease 0.1s forwards;
+    }
+
+    .ratio-number {
+      font-size: clamp(3.5rem, 12vw, 6rem);
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .ratio-number.strong { color: var(--building); }
+    .ratio-number.ok     { color: var(--lifestyle); }
+    .ratio-number.weak   { color: var(--spending); }
+
+    .ratio-label { font-size: 14px; color: var(--muted); }
+    .ratio-sublabel { font-size: 13px; color: var(--muted); margin-top: 6px; }
+
+    /* BAR */
+    .bar-card { opacity: 0; animation: fadeUp 0.45s ease 0.2s forwards; }
+    .bar-title { font-size: 13px; color: var(--muted); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
+
+    .bar-track {
+      display: flex;
+      height: 14px;
+      border-radius: 99px;
+      overflow: hidden;
+      gap: 2px;
+      margin-bottom: 16px;
+    }
+
+    .bar-segment { height: 100%; border-radius: 99px; transition: width 0.8s cubic-bezier(.4,0,.2,1); }
+    .bar-segment.fixed     { background: var(--spending); }
+    .bar-segment.lifestyle { background: var(--lifestyle); }
+    .bar-segment.building  { background: var(--building); }
+
+    .bar-legend { display: flex; gap: 20px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    /* BREAKDOWN */
+    .breakdown-card { opacity: 0; animation: fadeUp 0.45s ease 0.3s forwards; }
+    .breakdown-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 13px 0; border-bottom: 1px solid var(--border-soft);
+    }
+    .breakdown-row:last-child { border-bottom: none; }
+    .breakdown-name { font-size: 14px; color: var(--text); }
+    .breakdown-amount { font-size: 14px; font-weight: 700; }
+    .breakdown-pct { font-size: 12px; color: var(--muted); min-width: 36px; text-align: right; }
+
+    .amount-income     { color: var(--building); }
+    .amount-fixed      { color: var(--spending); }
+    .amount-lifestyle  { color: var(--lifestyle); }
+    .amount-building   { color: var(--building); }
+
+    /* VERDICT */
+    .verdict-card { opacity: 0; animation: fadeUp 0.45s ease 0.35s forwards; }
+    .verdict-text { font-size: 15px; line-height: 1.7; color: var(--muted); }
+    .verdict-text strong { color: var(--text); }
+
+    /* CTA */
+    .cta-card { opacity: 0; animation: fadeUp 0.45s ease 0.4s forwards; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 480px) {
+      .topbar { padding: 16px 18px; }
+      .shell { padding: 28px 14px 56px; }
+      .ratio-number { font-size: 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="brand">Money<span>Mind</span></div>
+    <div class="topbar-right">Spending vs Building</div>
+  </div>
+
+  <main class="shell">
+
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-meta">
+        <span id="progressText">Step 1 of 3</span>
+        <span id="progressPct">33%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:33%"></div>
+      </div>
+    </div>
+
+    <!-- STEP 1: INCOME -->
+    <div class="screen active" id="step1">
+      <div class="card step-card">
+        <div class="bucket-badge badge-income"><div class="dot"></div>Income</div>
+        <div class="eyebrow">Step 1 of 3</div>
+        <h2>What lands in your account each month?</h2>
+        <p class="step-hint">Your net monthly income after tax. Salary, freelance, side income — everything that actually comes in.</p>
+        <div class="input-wrap">
+          <span class="currency-prefix">€</span>
+          <input type="number" class="amount-input" id="input-income" placeholder="0" min="0" />
+        </div>
+        <div class="input-label">Total net monthly income</div>
+        <div class="nav-row">
+          <span></span>
+          <button class="btn btn-primary" id="next1">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: FIXED COSTS -->
+    <div class="screen" id="step2">
+      <div class="card step-card">
+        <div class="bucket-badge badge-fixed"><div class="dot"></div>Fixed costs</div>
+        <div class="eyebrow">Step 2 of 3</div>
+        <h2>What do you pay every month no matter what?</h2>
+        <p class="step-hint">Rent or mortgage, insurance, subscriptions, phone, utilities — the bills that show up whether you like it or not.</p>
+        <div class="input-wrap">
+          <span class="currency-prefix">€</span>
+          <input type="number" class="amount-input" id="input-fixed" placeholder="0" min="0" />
+        </div>
+        <div class="input-label">Total monthly fixed obligations</div>
+        <div class="remaining-indicator" id="remaining2">
+          <span>Remaining after fixed costs</span>
+          <span class="remaining-value" id="remaining2-val">—</span>
+        </div>
+        <div class="nav-row">
+          <button class="back-btn" id="back2">← Back</button>
+          <button class="btn btn-primary" id="next2">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: LIFESTYLE -->
+    <div class="screen" id="step3">
+      <div class="card step-card">
+        <div class="bucket-badge badge-lifestyle"><div class="dot"></div>Lifestyle spending</div>
+        <div class="eyebrow">Step 3 of 3</div>
+        <h2>How much do you spend on your lifestyle?</h2>
+        <p class="step-hint">Restaurants, clothes, travel, going out, streaming, gadgets — the spending that's a choice, not an obligation. Be honest.</p>
+        <div class="input-wrap">
+          <span class="currency-prefix">€</span>
+          <input type="number" class="amount-input" id="input-lifestyle" placeholder="0" min="0" />
+        </div>
+        <div class="input-label">Monthly lifestyle spending</div>
+        <div class="remaining-indicator" id="remaining3">
+          <span>Left for building wealth</span>
+          <span class="remaining-value" id="remaining3-val">—</span>
+        </div>
+        <div class="nav-row">
+          <button class="back-btn" id="back3">← Back</button>
+          <button class="btn btn-primary" id="next3">See my results →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULT -->
+    <div class="screen" id="resultScreen">
+
+      <div class="card result-header">
+        <div class="eyebrow">Spending vs Building</div>
+        <h1 id="result-headline">—</h1>
+        <p id="result-sub">—</p>
+      </div>
+
+      <div class="card ratio-card">
+        <div class="ratio-number" id="ratio-number">0%</div>
+        <div class="ratio-label">of your income is going toward building wealth</div>
+        <div class="ratio-sublabel" id="ratio-sublabel">—</div>
+      </div>
+
+      <div class="card bar-card">
+        <div class="bar-title">Where your money goes</div>
+        <div class="bar-track">
+          <div class="bar-segment fixed"     id="bar-fixed"     style="width:0%"></div>
+          <div class="bar-segment lifestyle" id="bar-lifestyle" style="width:0%"></div>
+          <div class="bar-segment building"  id="bar-building"  style="width:0%"></div>
+        </div>
+        <div class="bar-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--spending)"></div><span id="legend-fixed">Fixed 0%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--lifestyle)"></div><span id="legend-lifestyle">Lifestyle 0%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--building)"></div><span id="legend-building">Building 0%</span></div>
+        </div>
+      </div>
+
+      <div class="card breakdown-card">
+        <div class="eyebrow">Monthly breakdown</div>
+        <div class="breakdown-row">
+          <span class="breakdown-name">Net income</span>
+          <span class="breakdown-pct" id="bp-income-pct">100%</span>
+          <span class="breakdown-amount amount-income" id="bp-income">—</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="breakdown-name">Fixed costs</span>
+          <span class="breakdown-pct" id="bp-fixed-pct">—</span>
+          <span class="breakdown-amount amount-fixed" id="bp-fixed">—</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="breakdown-name">Lifestyle spending</span>
+          <span class="breakdown-pct" id="bp-lifestyle-pct">—</span>
+          <span class="breakdown-amount amount-lifestyle" id="bp-lifestyle">—</span>
+        </div>
+        <div class="breakdown-row" style="border-top: 1px solid var(--border); margin-top:4px; padding-top:16px;">
+          <span class="breakdown-name" style="font-weight:800;">Available to build</span>
+          <span class="breakdown-pct" id="bp-building-pct">—</span>
+          <span class="breakdown-amount amount-building" style="font-size:16px;" id="bp-building">—</span>
+        </div>
+      </div>
+
+      <div class="card verdict-card">
+        <div class="eyebrow">What this means</div>
+        <p class="verdict-text" id="verdict-text">—</p>
+      </div>
+
+      <div class="card cta-card">
+        <div class="eyebrow">Next move</div>
+        <h2 style="font-size:1.2rem;font-weight:800;margin-bottom:8px;">Back to your dashboard</h2>
+        <p style="font-size:14px;color:var(--muted);line-height:1.6;">Your spending pattern is mapped. The dashboard will show your updated picture.</p>
+        <div class="btn-row">
+          <a href="/apps/dashboard/" class="btn btn-primary">Go to Dashboard</a>
+          <button class="btn btn-ghost" id="redoBtn">Redo</button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'moneymind_user_data';
+
+    const steps = ['step1','step2','step3','resultScreen'];
+    const progressLabels = ['Step 1 of 3','Step 2 of 3','Step 3 of 3','Done'];
+    const progressPcts   = [33, 66, 100, 100];
+
+    let currentStep = 0;
+
+    function fmt(v) {
+      return new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(v);
+    }
+
+    function pct(part, total) {
+      if (!total) return 0;
+      return Math.round((part / total) * 100);
+    }
+
+    function getVal(id) {
+      return parseFloat(document.getElementById(id).value) || 0;
+    }
+
+    function showStep(idx) {
+      steps.forEach((id, i) => {
+        const el = document.getElementById(id);
+        el.classList.toggle('active', i === idx);
+        if (i === idx) {
+          const card = el.querySelector('.step-card, .result-header');
+          if (card) { card.style.animation = 'none'; card.offsetHeight; card.style.animation = ''; }
+        }
+      });
+      currentStep = idx;
+
+      const pw = document.getElementById('progressWrap');
+      pw.style.display = idx === 3 ? 'none' : 'block';
+      document.getElementById('progressText').textContent = progressLabels[idx];
+      document.getElementById('progressPct').textContent  = progressPcts[idx] + '%';
+      document.getElementById('progressFill').style.width = progressPcts[idx] + '%';
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateRemaining2() {
+      const income = getVal('input-income');
+      const fixed  = getVal('input-fixed');
+      const rem    = income - fixed;
+      const el     = document.getElementById('remaining2');
+      const val    = document.getElementById('remaining2-val');
+      if (!income) { val.textContent = '—'; el.className = 'remaining-indicator'; return; }
+      val.textContent = fmt(rem);
+      el.className = 'remaining-indicator ' + (rem < 0 ? 'warning' : 'good');
+    }
+
+    function updateRemaining3() {
+      const income    = getVal('input-income');
+      const fixed     = getVal('input-fixed');
+      const lifestyle = getVal('input-lifestyle');
+      const rem       = income - fixed - lifestyle;
+      const el        = document.getElementById('remaining3');
+      const val       = document.getElementById('remaining3-val');
+      if (!income) { val.textContent = '—'; el.className = 'remaining-indicator'; return; }
+      val.textContent = fmt(rem);
+      el.className = 'remaining-indicator ' + (rem <= 0 ? 'warning' : rem / income > 0.2 ? 'good' : '');
+    }
+
+    function getVerdict(ratio, building, income) {
+      if (ratio >= 30) return `<strong>${ratio}% building ratio</strong> — that's genuinely strong. Most people never get here. The question now is whether that capital is being deployed intelligently, or just sitting still.`;
+      if (ratio >= 20) return `<strong>${ratio}% building ratio</strong> — solid, but there's room. You're doing better than most, but ${fmt(income * 0.3 - building)} more per month would put you in a meaningfully different position within a few years.`;
+      if (ratio >= 10) return `<strong>${ratio}% building ratio</strong> — you're building, but slowly. At this rate, lifestyle is winning the race against your future self. The gap between what you earn and what you keep is where wealth gets lost.`;
+      if (ratio > 0)   return `<strong>${ratio}% building ratio</strong> — almost nothing is moving in the right direction. Your income is largely disappearing into costs and lifestyle. That's not a judgment — it's a pattern that can be changed, but it needs to be seen clearly first.`;
+      return `<strong>Nothing left to build with.</strong> Your fixed costs and lifestyle spending are consuming everything you earn — or more. This is the most important number to change.`;
+    }
+
+    function getHeadline(ratio) {
+      if (ratio >= 30) return "You're building. Keep the pressure on.";
+      if (ratio >= 20) return "You're building, but not at full speed.";
+      if (ratio >= 10) return "Most of your income is going out the door.";
+      if (ratio > 0)   return "Your lifestyle is outrunning your future.";
+      return "Nothing left to build with.";
+    }
+
+    function getSub(ratio) {
+      if (ratio >= 30) return "Strong building ratio. The next question is what happens to that capital.";
+      if (ratio >= 20) return "Good foundation. There's still room to close the gap.";
+      if (ratio >= 10) return "You earn enough to do better. The structure isn't there yet.";
+      return "Fixed costs and lifestyle spending are consuming your income.";
+    }
+
+    function renderResult() {
+      const income    = getVal('input-income');
+      const fixed     = getVal('input-fixed');
+      const lifestyle = getVal('input-lifestyle');
+      const building  = Math.max(0, income - fixed - lifestyle);
+      const totalOut  = fixed + lifestyle + building;
+
+      const pFixed     = pct(fixed, income);
+      const pLifestyle = pct(lifestyle, income);
+      const pBuilding  = pct(building, income);
+
+      const ratioEl = document.getElementById('ratio-number');
+      ratioEl.textContent = pBuilding + '%';
+      ratioEl.className = 'ratio-number ' + (pBuilding >= 20 ? 'strong' : pBuilding >= 10 ? 'ok' : 'weak');
+
+      document.getElementById('ratio-sublabel').textContent =
+        building > 0 ? fmt(building) + ' per month available to build' : 'Nothing left after costs and lifestyle';
+
+      setTimeout(() => {
+        document.getElementById('bar-fixed').style.width     = pFixed + '%';
+        document.getElementById('bar-lifestyle').style.width = pLifestyle + '%';
+        document.getElementById('bar-building').style.width  = pBuilding + '%';
+      }, 100);
+
+      document.getElementById('legend-fixed').textContent     = `Fixed ${pFixed}%`;
+      document.getElementById('legend-lifestyle').textContent = `Lifestyle ${pLifestyle}%`;
+      document.getElementById('legend-building').textContent  = `Building ${pBuilding}%`;
+
+      document.getElementById('bp-income').textContent      = fmt(income);
+      document.getElementById('bp-fixed').textContent       = '− ' + fmt(fixed);
+      document.getElementById('bp-lifestyle').textContent   = '− ' + fmt(lifestyle);
+      document.getElementById('bp-building').textContent    = fmt(building);
+      document.getElementById('bp-fixed-pct').textContent   = pFixed + '%';
+      document.getElementById('bp-lifestyle-pct').textContent = pLifestyle + '%';
+      document.getElementById('bp-building-pct').textContent  = pBuilding + '%';
+
+      document.getElementById('result-headline').textContent = getHeadline(pBuilding);
+      document.getElementById('result-sub').textContent      = getSub(pBuilding);
+      document.getElementById('verdict-text').innerHTML      = getVerdict(pBuilding, building, income);
+
+      saveToStorage(income, fixed, lifestyle, building, pBuilding);
+    }
+
+    function saveToStorage(income, fixed, lifestyle, building, ratio) {
+      try {
+        const raw  = localStorage.getItem(STORAGE_KEY);
+        const data = raw ? JSON.parse(raw) : {};
+        data.spendingVsBuilding = {
+          completed: true,
+          income, fixed, lifestyle, building,
+          buildingRatio: ratio,
+          completedAt: new Date().toISOString()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch(e) {
+        console.warn('Could not save data', e);
+      }
+    }
+
+    // NAV
+    document.getElementById('next1').addEventListener('click', () => showStep(1));
+    document.getElementById('next2').addEventListener('click', () => showStep(2));
+    document.getElementById('next3').addEventListener('click', () => { renderResult(); showStep(3); });
+    document.getElementById('back2').addEventListener('click', () => showStep(0));
+    document.getElementById('back3').addEventListener('click', () => showStep(1));
+    document.getElementById('redoBtn').addEventListener('click', () => {
+      ['input-income','input-fixed','input-lifestyle'].forEach(id => document.getElementById(id).value = '');
+      showStep(0);
+    });
+
+    // Live remaining indicators
+    document.getElementById('input-fixed').addEventListener('input', updateRemaining2);
+    document.getElementById('input-income').addEventListener('input', () => { updateRemaining2(); updateRemaining3(); });
+    document.getElementById('input-lifestyle').addEventListener('input', updateRemaining3);
+
+    // Enter key
+    document.getElementById('input-income').addEventListener('keydown',    e => { if (e.key === 'Enter') showStep(1); });
+    document.getElementById('input-fixed').addEventListener('keydown',     e => { if (e.key === 'Enter') showStep(2); });
+    document.getElementById('input-lifestyle').addEventListener('keydown', e => { if (e.key === 'Enter') { renderResult(); showStep(3); } });
+
+    // Pre-fill
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const d = JSON.parse(raw).spendingVsBuilding;
+        if (d) {
+          if (d.income)    document.getElementById('input-income').value = d.income;
+          if (d.fixed)     document.getElementById('input-fixed').value = d.fixed;
+          if (d.lifestyle) document.getElementById('input-lifestyle').value = d.lifestyle;
+        }
+      }
+    } catch(e) {}
+  </script>
+</body>
+</html>
