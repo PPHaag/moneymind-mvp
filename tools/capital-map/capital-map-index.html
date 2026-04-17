@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MoneyMind • Capital Map</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #111827;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #2dd4bf;
+      --accent-dark: #022c22;
+      --border: rgba(45,212,191,.16);
+      --border-soft: rgba(148,163,184,.14);
+      --shadow: 0 18px 40px rgba(0,0,0,.30);
+      --radius: 24px;
+      --direct: #2dd4bf;
+      --accessible: #818cf8;
+      --locked: #f59e0b;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 800px at 20% 0%, rgba(45,212,191,.15), transparent 60%),
+        radial-gradient(800px 700px at 90% 100%, rgba(45,212,191,.08), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* TOPBAR */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 32px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(11,18,32,0.88);
+      backdrop-filter: blur(14px);
+      z-index: 100;
+    }
+
+    .brand { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; color: var(--text); }
+    .brand span { color: var(--accent); }
+    .topbar-right { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+    /* SHELL */
+    .shell {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 40px 18px 72px;
+    }
+
+    /* CARD */
+    .card {
+      background: rgba(17,24,39,.82);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      padding: 28px 24px;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .78rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    /* PROGRESS */
+    .progress-wrap {
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeUp 0.4s ease forwards;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .progress-bar {
+      height: 3px;
+      background: var(--border-soft);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 99px;
+      transition: width 0.4s ease;
+    }
+
+    /* SCREENS */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* STEP CARD */
+    .step-card {
+      opacity: 0;
+      animation: fadeUp 0.45s ease forwards;
+    }
+
+    .step-card h2 {
+      font-size: clamp(1.4rem, 3.5vw, 1.9rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+    }
+
+    .step-hint {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    /* INPUT */
+    .input-wrap {
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    .currency-prefix {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .amount-input {
+      width: 100%;
+      padding: 16px 16px 16px 36px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border-soft);
+      border-radius: 16px;
+      color: var(--text);
+      font-size: 24px;
+      font-weight: 800;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+      -moz-appearance: textfield;
+    }
+
+    .amount-input::-webkit-outer-spin-button,
+    .amount-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    .amount-input:focus {
+      border-color: rgba(45,212,191,.45);
+      background: rgba(45,212,191,.04);
+    }
+
+    .input-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* SKIP LINK */
+    .skip-link {
+      display: inline-block;
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      background: none;
+      border: none;
+      font-family: inherit;
+    }
+
+    .skip-link:hover { color: var(--text); }
+
+    /* BUCKET BADGE */
+    .bucket-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .bucket-badge .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .badge-direct { background: rgba(45,212,191,.12); color: var(--direct); border: 1px solid rgba(45,212,191,.25); }
+    .badge-direct .dot { background: var(--direct); }
+    .badge-accessible { background: rgba(129,140,248,.12); color: var(--accessible); border: 1px solid rgba(129,140,248,.25); }
+    .badge-accessible .dot { background: var(--accessible); }
+    .badge-locked { background: rgba(245,158,11,.10); color: var(--locked); border: 1px solid rgba(245,158,11,.22); }
+    .badge-locked .dot { background: var(--locked); }
+
+    /* RESULT SCREEN */
+    .result-header {
+      text-align: center;
+      padding: 36px 24px 28px;
+      opacity: 0;
+      animation: fadeUp 0.45s ease forwards;
+    }
+
+    .result-header h1 {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+    }
+
+    .result-header p {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* BUCKET GRID */
+    .bucket-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 18px;
+      opacity: 0;
+      animation: fadeUp 0.45s ease 0.1s forwards;
+    }
+
+    .bucket-cell {
+      background: rgba(17,24,39,.95);
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .bucket-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .bucket-value {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .bucket-value.direct { color: var(--direct); }
+    .bucket-value.accessible { color: var(--accessible); }
+    .bucket-value.locked { color: var(--locked); }
+
+    .bucket-sub {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* BAR CHART */
+    .bar-card {
+      opacity: 0;
+      animation: fadeUp 0.45s ease 0.2s forwards;
+    }
+
+    .bar-title {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+    }
+
+    .bar-track {
+      display: flex;
+      height: 12px;
+      border-radius: 99px;
+      overflow: hidden;
+      gap: 2px;
+      margin-bottom: 16px;
+    }
+
+    .bar-segment {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.8s cubic-bezier(.4,0,.2,1);
+    }
+
+    .bar-segment.direct { background: var(--direct); }
+    .bar-segment.accessible { background: var(--accessible); }
+    .bar-segment.locked { background: var(--locked); }
+
+    .bar-legend {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* BREAKDOWN CARD */
+    .breakdown-card {
+      opacity: 0;
+      animation: fadeUp 0.45s ease 0.3s forwards;
+    }
+
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .breakdown-row:last-child { border-bottom: none; }
+
+    .breakdown-name { font-size: 14px; color: var(--text); }
+    .breakdown-amount { font-size: 14px; font-weight: 700; color: var(--text); }
+    .breakdown-bucket {
+      font-size: 11px;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .bb-direct { background: rgba(45,212,191,.12); color: var(--direct); }
+    .bb-accessible { background: rgba(129,140,248,.12); color: var(--accessible); }
+    .bb-locked { background: rgba(245,158,11,.10); color: var(--locked); }
+
+    /* TOTAL */
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 0 0;
+      border-top: 1px solid var(--border);
+      margin-top: 4px;
+    }
+
+    .total-label { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
+    .total-value { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+
+    /* CTA CARD */
+    .cta-card {
+      opacity: 0;
+      animation: fadeUp 0.45s ease 0.4s forwards;
+    }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 13px 24px;
+      font-weight: 800;
+      font-size: 14px;
+      font-family: inherit;
+      transition: .15s ease;
+      text-decoration: none;
+    }
+
+    .btn:active { transform: scale(0.98); }
+
+    .btn-primary { background: var(--accent); color: var(--accent-dark); }
+    .btn-primary:hover { opacity: 0.9; }
+
+    .btn-ghost {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border-soft);
+      color: var(--text);
+    }
+
+    .btn-ghost:hover { border-color: rgba(45,212,191,.35); background: rgba(45,212,191,.06); }
+
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 20px; }
+
+    /* NAV BUTTONS */
+    .nav-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 24px;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      padding: 8px 0;
+    }
+
+    .back-btn:hover { color: var(--text); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 480px) {
+      .topbar { padding: 16px 18px; }
+      .shell { padding: 28px 14px 56px; }
+      .bucket-grid { grid-template-columns: 1fr; }
+      .bucket-value { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="brand">Money<span>Mind</span></div>
+    <div class="topbar-right">Capital Map</div>
+  </div>
+
+  <main class="shell">
+
+    <!-- PROGRESS -->
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-meta">
+        <span id="progressText">Step 1 of 4</span>
+        <span id="progressPct">25%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:25%"></div>
+      </div>
+    </div>
+
+    <!-- STEP 1: CASH & SAVINGS -->
+    <div class="screen active" id="step1">
+      <div class="card step-card">
+        <div class="bucket-badge badge-direct">
+          <div class="dot"></div>
+          Direct
+        </div>
+        <div class="eyebrow">Step 1 of 4</div>
+        <h2>Cash & savings</h2>
+        <p class="step-hint">Money you can access tomorrow — current account, savings account, cash. What's the total?</p>
+        <div class="input-wrap">
+          <span class="currency-prefix">€</span>
+          <input type="number" class="amount-input" id="input-cash" placeholder="0" min="0" />
+        </div>
+        <div class="input-label">Current account + savings accounts combined</div>
+        <div class="nav-row">
+          <span></span>
+          <button class="btn btn-primary" id="next1">Next →</button>
+        </div>
+        <button class="skip-link" id="skip1">Skip this category</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: INVESTMENTS -->
+    <div class="screen" id="step2">
+      <div class="card step-card">
+        <div class="bucket-badge badge-accessible">
+          <div class="dot"></div>
+          Accessible
+        </div>
+        <div class="eyebrow">Step 2 of 4</div>
+        <h2>Investments</h2>
+        <p class="step-hint">Stocks, ETFs, crypto, funds — capital that's not immediately liquid but reachable within days or weeks.</p>
+        <div class="input-wrap">
+          <span class="currency-prefix">€</span>
+          <input type="number" class="amount-input" id="input-investments" placeholder="0" min="0" />
+        </div>
+        <div class="input-label">Current market value of your investment portfolio</div>
+        <div class="nav-row">
+          <button class="back-btn" id="back2">← Back</button>
+          <button class="btn btn-primary" id="next2">Next →</button>
+        </div>
+        <button class="skip-link" id="skip2">Skip this category</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: REAL ESTATE -->
+    <div class="screen" id="step3">
+      <div class="card step-card">
+        <div class="bucket-badge badge-locked">
+          <div class="dot"></div>
+          Locked
+        </div>
+        <div class="eyebrow">Step 3 of 4</div>
+        <h2>Real estate equity</h2>
+        <p class="step-hint">The part of your property you actually own — market value minus outstanding mortgage.</p>
+        <div class="input-wrap">
+          <span class="currency-prefix">€</span>
+          <input type="number" class="amount-input" id="input-realestate" placeholder="0" min="0" />
+        </div>
+        <div class="input-label">Property value minus remaining mortgage</div>
+        <div class="nav-row">
+          <button class="back-btn" id="back3">← Back</button>
+          <button class="btn btn-primary" id="next3">Next →</button>
+        </div>
+        <button class="skip-link" id="skip3">Skip this category</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: BUSINESS EQUITY -->
+    <div class="screen" id="step4">
+      <div class="card step-card">
+        <div class="bucket-badge badge-locked">
+          <div class="dot"></div>
+          Locked
+        </div>
+        <div class="eyebrow">Step 4 of 4</div>
+        <h2>Business equity</h2>
+        <p class="step-hint">Your ownership stake in a business — what it would realistically be worth if sold today.</p>
+        <div class="input-wrap">
+          <span class="currency-prefix">€</span>
+          <input type="number" class="amount-input" id="input-business" placeholder="0" min="0" />
+        </div>
+        <div class="input-label">Estimated current value of your business stake</div>
+        <div class="nav-row">
+          <button class="back-btn" id="back4">← Back</button>
+          <button class="btn btn-primary" id="next4">See my Capital Map →</button>
+        </div>
+        <button class="skip-link" id="skip4">Skip this category</button>
+      </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div class="screen" id="resultScreen">
+
+      <div class="card result-header">
+        <div class="eyebrow">Your Capital Map</div>
+        <h1 id="result-headline">Your capital is structured.</h1>
+        <p id="result-sub">Here's how your wealth is distributed across the three buckets.</p>
+      </div>
+
+      <div class="bucket-grid">
+        <div class="bucket-cell">
+          <div class="bucket-label">Direct</div>
+          <div class="bucket-value direct" id="result-direct">€0</div>
+          <div class="bucket-sub">Cash & savings</div>
+        </div>
+        <div class="bucket-cell">
+          <div class="bucket-label">Accessible</div>
+          <div class="bucket-value accessible" id="result-accessible">€0</div>
+          <div class="bucket-sub">Investments</div>
+        </div>
+        <div class="bucket-cell">
+          <div class="bucket-label">Locked</div>
+          <div class="bucket-value locked" id="result-locked">€0</div>
+          <div class="bucket-sub">Real estate + business</div>
+        </div>
+      </div>
+
+      <div class="card bar-card">
+        <div class="bar-title">Distribution</div>
+        <div class="bar-track">
+          <div class="bar-segment direct" id="bar-direct" style="width:0%"></div>
+          <div class="bar-segment accessible" id="bar-accessible" style="width:0%"></div>
+          <div class="bar-segment locked" id="bar-locked" style="width:0%"></div>
+        </div>
+        <div class="bar-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--direct)"></div><span id="legend-direct">Direct 0%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--accessible)"></div><span id="legend-accessible">Accessible 0%</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--locked)"></div><span id="legend-locked">Locked 0%</span></div>
+        </div>
+      </div>
+
+      <div class="card breakdown-card">
+        <div class="eyebrow">Breakdown</div>
+        <div id="breakdown-rows"></div>
+        <div class="total-row">
+          <span class="total-label">Total capital</span>
+          <span class="total-value" id="result-total">€0</span>
+        </div>
+      </div>
+
+      <div class="card cta-card">
+        <div class="eyebrow">Next move</div>
+        <h2 style="font-size:1.2rem;font-weight:800;margin-bottom:8px;">Back to your dashboard</h2>
+        <p style="font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:0;">Your capital structure is now mapped. The dashboard will show your updated snapshot and next step.</p>
+        <div class="btn-row">
+          <a href="/apps/dashboard/" class="btn btn-primary">Go to Dashboard</a>
+          <button class="btn btn-ghost" id="redoBtn">Redo</button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'moneymind_user_data';
+
+    const values = { cash: 0, investments: 0, realestate: 0, business: 0 };
+
+    const steps = ['step1','step2','step3','step4','resultScreen'];
+    const progressLabels = ['Step 1 of 4','Step 2 of 4','Step 3 of 4','Step 4 of 4','Done'];
+    const progressPcts = [25, 50, 75, 100, 100];
+
+    let currentStep = 0;
+
+    function showStep(idx) {
+      steps.forEach((id, i) => {
+        const el = document.getElementById(id);
+        el.classList.toggle('active', i === idx);
+        // re-trigger animation
+        if (i === idx) {
+          const card = el.querySelector('.step-card, .result-header');
+          if (card) { card.style.animation = 'none'; card.offsetHeight; card.style.animation = ''; }
+        }
+      });
+      currentStep = idx;
+
+      const progressWrap = document.getElementById('progressWrap');
+      progressWrap.style.display = idx === 4 ? 'none' : 'block';
+
+      document.getElementById('progressText').textContent = progressLabels[idx];
+      document.getElementById('progressPct').textContent = progressPcts[idx] + '%';
+      document.getElementById('progressFill').style.width = progressPcts[idx] + '%';
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function getVal(id) {
+      return parseFloat(document.getElementById(id).value) || 0;
+    }
+
+    function formatEuro(v) {
+      return new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(v);
+    }
+
+    function pct(part, total) {
+      if (total === 0) return 0;
+      return Math.round((part / total) * 100);
+    }
+
+    function renderResult() {
+      values.cash        = getVal('input-cash');
+      values.investments = getVal('input-investments');
+      values.realestate  = getVal('input-realestate');
+      values.business    = getVal('input-business');
+
+      const direct     = values.cash;
+      const accessible = values.investments;
+      const locked     = values.realestate + values.business;
+      const total      = direct + accessible + locked;
+
+      // Bucket values
+      document.getElementById('result-direct').textContent     = formatEuro(direct);
+      document.getElementById('result-accessible').textContent = formatEuro(accessible);
+      document.getElementById('result-locked').textContent     = formatEuro(locked);
+      document.getElementById('result-total').textContent      = formatEuro(total);
+
+      // Bar
+      const pDirect     = pct(direct, total);
+      const pAccessible = pct(accessible, total);
+      const pLocked     = pct(locked, total);
+
+      setTimeout(() => {
+        document.getElementById('bar-direct').style.width     = pDirect + '%';
+        document.getElementById('bar-accessible').style.width = pAccessible + '%';
+        document.getElementById('bar-locked').style.width     = pLocked + '%';
+      }, 100);
+
+      document.getElementById('legend-direct').textContent     = `Direct ${pDirect}%`;
+      document.getElementById('legend-accessible').textContent = `Accessible ${pAccessible}%`;
+      document.getElementById('legend-locked').textContent     = `Locked ${pLocked}%`;
+
+      // Breakdown
+      const rows = [
+        { name: 'Cash & savings',    amount: values.cash,        bucket: 'direct',     label: 'Direct' },
+        { name: 'Investments',       amount: values.investments,  bucket: 'accessible', label: 'Accessible' },
+        { name: 'Real estate equity',amount: values.realestate,   bucket: 'locked',     label: 'Locked' },
+        { name: 'Business equity',   amount: values.business,     bucket: 'locked',     label: 'Locked' },
+      ].filter(r => r.amount > 0);
+
+      const container = document.getElementById('breakdown-rows');
+      container.innerHTML = rows.map(r => `
+        <div class="breakdown-row">
+          <span class="breakdown-name">${r.name}</span>
+          <span class="breakdown-bucket bb-${r.bucket}">${r.label}</span>
+          <span class="breakdown-amount">${formatEuro(r.amount)}</span>
+        </div>
+      `).join('');
+
+      // Headline
+      const headline = document.getElementById('result-headline');
+      if (total === 0) {
+        headline.textContent = 'No capital entered yet.';
+        document.getElementById('result-sub').textContent = 'Go back and fill in your numbers to see your map.';
+      } else if (pLocked > 70) {
+        headline.textContent = 'Most of your wealth is locked up.';
+        document.getElementById('result-sub').textContent = 'Your capital exists but isn\'t working fluidly for you yet.';
+      } else if (pDirect > 60) {
+        headline.textContent = 'You\'re sitting on a lot of cash.';
+        document.getElementById('result-sub').textContent = 'High liquidity is safe — but idle cash has a cost too.';
+      } else {
+        headline.textContent = 'Your capital is mapped.';
+        document.getElementById('result-sub').textContent = 'Here\'s how your wealth is distributed across the three buckets.';
+      }
+
+      // Save to localStorage
+      saveToStorage(direct, accessible, locked, total);
+    }
+
+    function saveToStorage(direct, accessible, locked, total) {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        const data = raw ? JSON.parse(raw) : {};
+        data.capitalMap = {
+          completed: true,
+          directCapital: direct,
+          accessibleCapital: accessible,
+          lockedCapital: locked,
+          totalCapital: total,
+          breakdown: {
+            cash: values.cash,
+            investments: values.investments,
+            realestate: values.realestate,
+            business: values.business
+          },
+          completedAt: new Date().toISOString()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch(e) {
+        console.warn('Could not save capital map data', e);
+      }
+    }
+
+    // NAV
+    document.getElementById('next1').addEventListener('click', () => showStep(1));
+    document.getElementById('next2').addEventListener('click', () => showStep(2));
+    document.getElementById('next3').addEventListener('click', () => showStep(3));
+    document.getElementById('next4').addEventListener('click', () => { renderResult(); showStep(4); });
+
+    document.getElementById('back2').addEventListener('click', () => showStep(0));
+    document.getElementById('back3').addEventListener('click', () => showStep(1));
+    document.getElementById('back4').addEventListener('click', () => showStep(2));
+
+    document.getElementById('skip1').addEventListener('click', () => { document.getElementById('input-cash').value = ''; showStep(1); });
+    document.getElementById('skip2').addEventListener('click', () => { document.getElementById('input-investments').value = ''; showStep(2); });
+    document.getElementById('skip3').addEventListener('click', () => { document.getElementById('input-realestate').value = ''; showStep(3); });
+    document.getElementById('skip4').addEventListener('click', () => { document.getElementById('input-business').value = ''; renderResult(); showStep(4); });
+
+    document.getElementById('redoBtn').addEventListener('click', () => {
+      ['input-cash','input-investments','input-realestate','input-business'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      showStep(0);
+    });
+
+    // Enter key support
+    ['input-cash','input-investments','input-realestate'].forEach((id, i) => {
+      document.getElementById(id).addEventListener('keydown', e => {
+        if (e.key === 'Enter') showStep(i + 1);
+      });
+    });
+    document.getElementById('input-business').addEventListener('keydown', e => {
+      if (e.key === 'Enter') { renderResult(); showStep(4); }
+    });
+
+    // Pre-fill from localStorage if available
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const data = JSON.parse(raw);
+        const cm = data.capitalMap?.breakdown;
+        if (cm) {
+          if (cm.cash)        document.getElementById('input-cash').value = cm.cash;
+          if (cm.investments) document.getElementById('input-investments').value = cm.investments;
+          if (cm.realestate)  document.getElementById('input-realestate').value = cm.realestate;
+          if (cm.business)    document.getElementById('input-business').value = cm.business;
+        }
+      }
+    } catch(e) {}
+  </script>
+</body>
+</html>
