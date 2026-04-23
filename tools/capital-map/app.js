@@ -1,119 +1,85 @@
-(function () {
-  function renderRoastImport(prefill) {
-    const roastProfileCard = document.getElementById("roastProfileCard");
-    const profileName = document.getElementById("profileName");
-    const profileText = document.getElementById("profileText");
-    const profileBadge = document.getElementById("profileBadge");
+const STORAGE_KEY = 'moneymind_user_data';
+const DASHBOARD_PATH = '/apps/dashboard/';
 
-    const roastIncomeValue = document.getElementById("roastIncomeValue");
-    const roastInvestValue = document.getElementById("roastInvestValue");
-    const roastProfileValue = document.getElementById("roastProfileValue");
+function readUserData() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  } catch {
+    return {};
+  }
+}
 
-    if (!prefill || !prefill.profileName) return;
+function writeUserData(data) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (err) {
+    console.warn('Could not write user data.', err);
+  }
+}
 
-    if (profileName) profileName.textContent = prefill.profileName;
-    if (profileText) profileText.textContent = prefill.profileDescription || "";
-    if (profileBadge) profileBadge.textContent = prefill.profileName;
+function formatEuro(value) {
+  return new Intl.NumberFormat('nl-NL', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0
+  }).format(Number(value) || 0);
+}
 
-    if (roastIncomeValue) {
-      roastIncomeValue.textContent =
-        window.CapitalMapEngine.formatCurrency(prefill.incomeAmount || 0);
-    }
+function getVal(id) {
+  return Number(document.getElementById(id).value) || 0;
+}
 
-    if (roastInvestValue) {
-      roastInvestValue.textContent =
-        window.CapitalMapEngine.formatCurrency(prefill.investAmount || 0);
-    }
+function updateSummary() {
+  const total = getVal('direct') + getVal('accessible') + getVal('locked');
+  const summary = document.getElementById('summary');
+  const totalEl = document.getElementById('total-value');
 
-    if (roastProfileValue) {
-      roastProfileValue.textContent = prefill.profileName;
-    }
+  if (total > 0) {
+    summary.hidden = false;
+    totalEl.textContent = formatEuro(total);
+  } else {
+    summary.hidden = true;
+  }
+}
 
-    if (roastProfileCard) {
-      roastProfileCard.style.display = "block";
-    }
+function save() {
+  const direct      = getVal('direct');
+  const accessible  = getVal('accessible');
+  const locked      = getVal('locked');
+  const total       = direct + accessible + locked;
+
+  const existing = readUserData();
+
+  existing.capitalMap = {
+    completed:          true,
+    updatedAt:          new Date().toISOString(),
+    directCapital:      direct,
+    accessibleCapital:  accessible,
+    lockedCapital:      locked,
+    totalCapital:       total
+  };
+
+  writeUserData(existing);
+  window.location.href = DASHBOARD_PATH;
+}
+
+function init() {
+  // Pre-fill if data exists
+  const data = readUserData();
+  if (data.capitalMap?.completed) {
+    document.getElementById('direct').value      = data.capitalMap.directCapital     || '';
+    document.getElementById('accessible').value  = data.capitalMap.accessibleCapital || '';
+    document.getElementById('locked').value      = data.capitalMap.lockedCapital     || '';
+    updateSummary();
   }
 
-  function renderCapitalMap() {
-    const data = window.CapitalMapEngine.calculateCapitalMapData();
+  // Live total
+  ['direct', 'accessible', 'locked'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updateSummary);
+  });
 
-    try {
-      const profile = JSON.parse(localStorage.getItem("mm_profile") || "{}");
+  // Save
+  document.getElementById('save-btn').addEventListener('click', save);
+}
 
-      localStorage.setItem("mm_profile", JSON.stringify({
-        ...profile,
-        capitalMap: data,
-        capitalMapUpdatedAt: new Date().toISOString()
-      }));
-    } catch (err) {
-      console.warn("Could not save capital map", err);
-    }
-
-    const directCapitalValue = document.getElementById("directCapitalValue");
-    const lockedCapitalValue = document.getElementById("lockedCapitalValue");
-    const deployableCapitalValue = document.getElementById("deployableCapitalValue");
-    const netWorthValue = document.getElementById("netWorthValue");
-    const capitalInsight = document.getElementById("capitalInsight");
-    const resultBlock = document.getElementById("resultBlock");
-
-    const nextStepText = document.getElementById("nextStepText");
-    const nextStepLink = document.getElementById("nextStepLink");
-
-    if (directCapitalValue) {
-      directCapitalValue.textContent =
-        window.CapitalMapEngine.formatCurrency(data.directCapital);
-    }
-
-    if (lockedCapitalValue) {
-      lockedCapitalValue.textContent =
-        window.CapitalMapEngine.formatCurrency(data.lockedCapital);
-    }
-
-    if (deployableCapitalValue) {
-      deployableCapitalValue.textContent =
-        window.CapitalMapEngine.formatCurrency(data.deployableCapital);
-    }
-
-    if (netWorthValue) {
-      netWorthValue.textContent =
-        window.CapitalMapEngine.formatCurrency(data.netWorth);
-    }
-
-    if (capitalInsight) {
-      capitalInsight.textContent =
-        window.CapitalMapEngine.getCapitalInsight(data);
-    }
-
-    const nextStep = window.CapitalMapEngine.getNextStep(data);
-
-    if (nextStepText) {
-      nextStepText.textContent = nextStep.text;
-    }
-
-    if (nextStepLink) {
-      nextStepLink.textContent = nextStep.label;
-      nextStepLink.setAttribute("href", nextStep.href);
-    }
-
-    if (resultBlock) {
-      resultBlock.style.display = "grid";
-      resultBlock.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-    }
-  }
-
-  function init() {
-    const calculateBtn = document.getElementById("calculateBtn");
-    const prefill = window.CapitalMapEngine.prefillFromRoast();
-
-    renderRoastImport(prefill);
-
-    if (calculateBtn) {
-      calculateBtn.addEventListener("click", renderCapitalMap);
-    }
-  }
-
-  document.addEventListener("DOMContentLoaded", init);
-})();
+init();
