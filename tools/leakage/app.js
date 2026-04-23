@@ -1,263 +1,138 @@
-(function () {
+const STORAGE_KEY = 'moneymind_user_data';
+const DASHBOARD_PATH = '/apps/dashboard/';
 
-  function getNumber(id) {
-    const el = document.getElementById(id);
-    const value = Number(el?.value || 0);
-    return Number.isFinite(value) && value >= 0 ? value : 0;
+function readUserData() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+  } catch {
+    return {};
   }
+}
 
-  function formatCurrency(value) {
-    return new Intl.NumberFormat("nl-NL", {
-      style: "currency",
-      currency: "EUR",
-      maximumFractionDigits: 0
-    }).format(value || 0);
+function writeUserData(data) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (err) {
+    console.warn('Could not write user data.', err);
   }
+}
 
-  function formatPercent(value) {
-    return `${Math.round((value || 0) * 100)}%`;
-  }
+function fmt(value) {
+  return new Intl.NumberFormat('nl-NL', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0
+  }).format(value || 0);
+}
 
-  function getProfile() {
-    try {
-      return JSON.parse(localStorage.getItem("mm_profile") || "{}");
-    } catch (err) {
-      console.warn("Could not read mm_profile", err);
-      return {};
-    }
-  }
+function fmtPct(value) {
+  return Math.round((value || 0) * 100) + '%';
+}
 
-  function prefillFromProfile() {
-    const profile = getProfile();
+function getVal(id) {
+  return Number(document.getElementById(id)?.value || 0);
+}
 
-    const profileCard = document.getElementById("profileCard");
-    const profileName = document.getElementById("profileName");
-    const profileText = document.getElementById("profileText");
-    const profileBadge = document.getElementById("profileBadge");
-    const incomeValue = document.getElementById("incomeValue");
-    const buildingValue = document.getElementById("buildingValue");
-    const flowValue = document.getElementById("flowValue");
+function getHeadline(monthly, ratio) {
+  if (monthly <= 0)    return 'No obvious leakage here. Good.';
+  if (ratio >= 0.2)    return 'A serious part of your income is leaking away.';
+  if (ratio >= 0.1)    return 'More leakage here than you probably feel month to month.';
+  if (monthly >= 250)  return 'Small monthly leakage is adding up faster than it looks.';
+  return 'Your leakage is not catastrophic — but it is slowing you down.';
+}
 
-    if (profile.profileName && profileCard) {
-      profileCard.style.display = "block";
-    }
+function getInsight(monthly, ratio, building) {
+  if (monthly <= 0) return 'Nothing major stands out. That does not mean spending is perfect, but there is no clear leakage pattern here.';
+  if (building > 0 && monthly >= building) return 'Your leakage is at least as large as what you are building. Part of your future is being cancelled out in real time.';
+  if (ratio >= 0.2) return 'A large part of your income is disappearing into spending that does not clearly improve your life or long-term position.';
+  if (ratio >= 0.1) return 'This is the kind of leakage that feels harmless month to month but becomes expensive over a year.';
+  return 'Not dramatic, but this leakage is still competing with your future capital every single month.';
+}
 
-    if (profileName) {
-      profileName.textContent = profile.profileName || "Your profile";
-    }
+function render() {
+  const subscriptions = getVal('subscriptions');
+  const impulse       = getVal('impulse');
+  const convenience   = getVal('convenience');
+  const misc          = getVal('misc');
 
-    if (profileText) {
-      profileText.textContent = profile.profileDescription || "";
-    }
+  const monthly  = subscriptions + impulse + convenience + misc;
+  const annual   = monthly * 12;
 
-    if (profileBadge) {
-      profileBadge.textContent = profile.profileName || "Profile";
-    }
+  const userData = readUserData();
+  const income   = Number(userData.spendingVsBuilding?.income   || userData.roast?.answers?.income?.value  || 0);
+  const building = Number(userData.spendingVsBuilding?.building || 0);
+  const ratio    = income > 0 ? monthly / income : 0;
 
-    if (incomeValue) {
-      incomeValue.textContent = formatCurrency(profile.income || 0);
-    }
+  // Update UI
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
 
-    if (buildingValue) {
-      buildingValue.textContent = formatCurrency(profile.monthlyInvesting || 0);
-    }
+  set('headlineText',       getHeadline(monthly, ratio));
+  set('monthlyLeakageValue', fmt(monthly));
+  set('annualLeakageValue',  fmt(annual));
+  set('leakageRatioValue',   fmtPct(ratio));
+  set('insightText',         getInsight(monthly, ratio, building));
 
-    if (flowValue) {
-      const allocation = profile.allocation || {};
-      const buildingRatio = allocation.buildingRatio || 0;
+  // Breakdown sorted by value
+  const items = [
+    { title: 'Subscriptions',         note: 'Invisible because they feel small and automatic.',       value: subscriptions },
+    { title: 'Impulse spending',       note: 'Feels minor until it stacks up.',                        value: impulse },
+    { title: 'Convenience spending',   note: 'Comfort is expensive when it becomes a habit.',          value: convenience },
+    { title: 'Hidden / forgotten',     note: 'The category that usually hurts more than expected.',    value: misc }
+  ].sort((a, b) => b.value - a.value);
 
-      if (buildingRatio >= 0.2) {
-        flowValue.textContent = "Building momentum";
-      } else if (buildingRatio >= 0.1) {
-        flowValue.textContent = "Some progress";
-      } else if (buildingRatio > 0) {
-        flowValue.textContent = "Weak build rate";
-      } else {
-        flowValue.textContent = "No real build";
-      }
-    }
-  }
-
-  function calculateLeakage() {
-    const subscriptions = getNumber("subscriptions");
-    const impulse = getNumber("impulse");
-    const convenience = getNumber("convenience");
-    const misc = getNumber("misc");
-
-    const monthlyLeakage = subscriptions + impulse + convenience + misc;
-    const annualLeakage = monthlyLeakage * 12;
-
-    const profile = getProfile();
-    const income = Number(profile.income || 0);
-    const building = Number(profile.monthlyInvesting || 0);
-
-    const leakageRatio = income > 0 ? monthlyLeakage / income : 0;
-    const leakageVsBuilding = building > 0 ? monthlyLeakage / building : null;
-
-    return {
-      subscriptions,
-      impulse,
-      convenience,
-      misc,
-      monthlyLeakage,
-      annualLeakage,
-      income,
-      building,
-      leakageRatio,
-      leakageVsBuilding
-    };
-  }
-
-  function getHeadline(data) {
-    if (data.monthlyLeakage <= 0) {
-      return "There is no obvious leakage here. Good.";
-    }
-
-    if (data.leakageRatio >= 0.2) {
-      return "A serious part of your income is leaking away.";
-    }
-
-    if (data.leakageRatio >= 0.1) {
-      return "There is more leakage here than you probably feel month to month.";
-    }
-
-    if (data.monthlyLeakage >= 250) {
-      return "Small monthly leakage is adding up faster than it looks.";
-    }
-
-    return "Your leakage is not catastrophic — but it is still slowing you down.";
-  }
-
-  function getInsight(data) {
-    if (data.monthlyLeakage <= 0) {
-      return "Nothing major stands out here. That does not mean spending is perfect, but there is no clear leakage pattern in this layer.";
-    }
-
-    if (data.leakageVsBuilding && data.leakageVsBuilding >= 1) {
-      return "Your leakage is at least as large as the amount you are building. That means part of your future is being cancelled out in real time.";
-    }
-
-    if (data.leakageRatio >= 0.2) {
-      return "A large part of your monthly income is disappearing into spending that does not clearly improve your life or your long-term position.";
-    }
-
-    if (data.leakageRatio >= 0.1) {
-      return "This is the kind of leakage that feels harmless month to month but becomes expensive over a year.";
-    }
-
-    return "This leakage is not dramatic, but it is still competing with your future capital every single month.";
-  }
-
-  function buildBreakdown(data) {
-    const rows = [
-      {
-        key: "subscriptions",
-        title: "Subscriptions",
-        note: "Usually invisible because they feel small and automatic.",
-        value: data.subscriptions
-      },
-      {
-        key: "impulse",
-        title: "Impulse spending",
-        note: "Random spending that feels minor until it stacks up.",
-        value: data.impulse
-      },
-      {
-        key: "convenience",
-        title: "Convenience spending",
-        note: "Comfort is expensive when it becomes a habit.",
-        value: data.convenience
-      },
-      {
-        key: "misc",
-        title: "Hidden / forgotten spend",
-        note: "The category that usually hurts more than expected.",
-        value: data.misc
-      }
-    ];
-
-    return rows.sort((a, b) => b.value - a.value);
-  }
-
-  function renderBreakdown(data) {
-    const breakdownList = document.getElementById("breakdownList");
-    if (!breakdownList) return;
-
-    const items = buildBreakdown(data);
-
-    breakdownList.innerHTML = items.map(item => `
+  const list = document.getElementById('breakdownList');
+  if (list) {
+    list.innerHTML = items.map(item => `
       <div class="mm-breakdownItem">
         <div class="mm-breakdownLeft">
           <div class="mm-breakdownTitle">${item.title}</div>
           <div class="mm-breakdownNote">${item.note}</div>
         </div>
-        <div class="mm-breakdownValue">${formatCurrency(item.value)}</div>
+        <div class="mm-breakdownValue">${fmt(item.value)}</div>
       </div>
-    `).join("");
+    `).join('');
   }
 
-  function render() {
-    const data = calculateLeakage();
-
-    const resultBlock = document.getElementById("resultBlock");
-    const headlineText = document.getElementById("headlineText");
-    const monthlyLeakageValue = document.getElementById("monthlyLeakageValue");
-    const annualLeakageValue = document.getElementById("annualLeakageValue");
-    const leakageRatioValue = document.getElementById("leakageRatioValue");
-    const insightText = document.getElementById("insightText");
-
-    if (headlineText) {
-      headlineText.textContent = getHeadline(data);
-    }
-
-    if (monthlyLeakageValue) {
-      monthlyLeakageValue.textContent = formatCurrency(data.monthlyLeakage);
-    }
-
-    if (annualLeakageValue) {
-      annualLeakageValue.textContent = formatCurrency(data.annualLeakage);
-    }
-
-    if (leakageRatioValue) {
-      leakageRatioValue.textContent = formatPercent(data.leakageRatio);
-    }
-
-    if (insightText) {
-      insightText.textContent = getInsight(data);
-    }
-
-    renderBreakdown(data);
-
-    if (resultBlock) {
-      resultBlock.style.display = "grid";
-      resultBlock.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-    }
-
-    try {
-      const profile = getProfile();
-
-      localStorage.setItem("mm_profile", JSON.stringify({
-        ...profile,
-        leakage: data,
-        leakageUpdatedAt: new Date().toISOString()
-      }));
-    } catch (err) {
-      console.warn("Could not save leakage data", err);
-    }
+  const resultBlock = document.getElementById('resultBlock');
+  if (resultBlock) {
+    resultBlock.style.display = 'grid';
+    resultBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  function init() {
-    prefillFromProfile();
+  // Save to moneymind_user_data
+  const existing = readUserData();
+  existing.leakage = {
+    completed:     true,
+    completedAt:   new Date().toISOString(),
+    subscriptions,
+    impulse,
+    convenience,
+    misc,
+    monthlyLeakage: monthly,
+    annualLeakage:  annual,
+    leakageRatio:   ratio
+  };
+  writeUserData(existing);
+}
 
-    const calculateBtn = document.getElementById("calculateBtn");
-    if (calculateBtn) {
-      calculateBtn.addEventListener("click", render);
-    }
-  }
+function prefill() {
+  const data = readUserData().leakage;
+  if (!data) return;
+  const set = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+  set('subscriptions', data.subscriptions);
+  set('impulse',       data.impulse);
+  set('convenience',   data.convenience);
+  set('misc',          data.misc);
+}
 
-  document.addEventListener("DOMContentLoaded", init);
+function init() {
+  prefill();
 
-})();
+  const btn = document.getElementById('calculateBtn');
+  if (btn) btn.addEventListener('click', render);
+
+  const dashBtn = document.getElementById('goDashboardBtn');
+  if (dashBtn) dashBtn.addEventListener('click', () => { window.location.href = DASHBOARD_PATH; });
+}
+
+document.addEventListener('DOMContentLoaded', init);
