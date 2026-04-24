@@ -3,159 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MoneyMind • Your Financial Future</title>
+  <title>MoneyMind • Builder</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <main class="mm-shell">
-    <div class="mm-wrap">
+  <header class="topbar">
+    <div class="brand">Money<span>Mind</span></div>
+    <a class="topbar-back" href="/apps/dashboard/">← Dashboard</a>
+  </header>
 
-      <section class="mm-card mm-hero">
-        <div class="mm-eyebrow">MoneyMind • Step 5 of 5</div>
-        <h1>Your Financial Future</h1>
-        <p class="mm-lead">
-          Based on your current behavior, this is where you are likely heading.
+  <main class="shell">
+
+    <section class="card intro-card">
+      <div class="eyebrow">MoneyMind • Step 5 of 5</div>
+      <h1>The Builder</h1>
+      <p class="lead">
+        You have diagnosed your financial reality. Now we build the trajectory.
+        Your plan is based on your actual numbers — not averages, not templates.
+      </p>
+    </section>
+
+    <section class="card" id="summaryCard" style="display:none">
+      <div class="eyebrow">Your Financial Snapshot</div>
+      <div class="snapshot-grid" id="snapshotGrid"></div>
+    </section>
+
+    <section class="card" id="noDataCard" style="display:none">
+      <div class="eyebrow">Missing Data</div>
+      <h3>Complete the other tools first</h3>
+      <p class="muted" style="margin-top:10px">
+        The Builder needs data from Capital Map, Spending vs Building, and Wealth Leakage to generate your plan.
+        Complete those tools and come back here.
+      </p>
+      <a class="btn btn-primary" href="/apps/dashboard/" style="margin-top:20px">Go to Dashboard</a>
+    </section>
+
+    <section class="card priority-card" id="priorityCard" style="display:none">
+      <div class="eyebrow">Your Top Priorities</div>
+      <h3>Where to focus first</h3>
+      <p class="muted" style="margin-top:8px;margin-bottom:20px">Based on your numbers, these are the areas that will move the needle most.</p>
+      <div class="priority-list" id="priorityList"></div>
+    </section>
+
+    <section class="card" id="generateCard" style="display:none">
+      <div class="eyebrow">Your Action Plan</div>
+      <h3>Build your trajectory</h3>
+      <p class="muted" style="margin-top:8px;margin-bottom:20px">
+        We'll generate a personal 90-day plan based on your priorities and exact numbers.
+      </p>
+      <button class="btn btn-primary" id="generateBtn" type="button">Generate My Plan</button>
+    </section>
+
+    <section class="card" id="planCard" style="display:none">
+      <div class="eyebrow">90-Day Action Plan</div>
+      <div id="aiOutput" class="ai-output"></div>
+    </section>
+
+    <section class="card monthly-card" id="monthlyCard" style="display:none">
+      <div class="eyebrow">Monthly Allocation Plan</div>
+      <h3>Where your money should go</h3>
+      <div class="monthly-grid" id="monthlyGrid"></div>
+    </section>
+
+    <section class="card next-card" id="doneCard" style="display:none">
+      <div>
+        <div class="eyebrow">Flow Complete</div>
+        <h3>You have your plan. Now execute.</h3>
+        <p class="muted" style="margin-top:8px">
+          Revisit this tool monthly as your numbers change. The plan updates with your reality.
         </p>
-        <p class="mm-helperIntro">
-          This is not a prediction. It is a consequence view: what your current structure is likely to produce over time.
-        </p>
-      </section>
+      </div>
+      <a class="btn btn-primary" href="/apps/dashboard/">Back to Dashboard</a>
+    </section>
 
-      <section class="mm-card mm-journeyImport" id="journeyProfileCard" style="display:none;">
-        <div class="mm-eyebrow">Imported from your journey</div>
-        <div class="mm-journeyTop">
-          <div>
-            <h2 id="profileName">Your profile</h2>
-            <p id="profileText" class="mm-muted"></p>
-          </div>
-          <div class="mm-profileBadge" id="profileBadge">Profile</div>
-        </div>
-
-        <div class="mm-summaryGrid">
-          <div class="mm-summaryCard">
-            <span class="mm-summaryLabel">Current capital</span>
-            <span class="mm-summaryValue" id="journeyCapitalValue">€0</span>
-          </div>
-          <div class="mm-summaryCard">
-            <span class="mm-summaryLabel">Monthly building</span>
-            <span class="mm-summaryValue" id="journeyInvestValue">€0</span>
-          </div>
-          <div class="mm-summaryCard">
-            <span class="mm-summaryLabel">Years remaining</span>
-            <span class="mm-summaryValue mm-summaryValueSmall" id="journeyYearsValue">0 years</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="mm-card mm-formCard">
-        <div class="mm-sectionHead">
-          <div class="mm-eyebrow">Builder Inputs</div>
-          <h3>Minimal inputs. Maximum consequence.</h3>
-        </div>
-
-        <div class="mm-grid mm-grid2">
-
-          <div class="mm-field">
-            <label class="mm-label" for="currentCapital">
-              Current Capital
-            </label>
-            <div class="mm-input">
-              <span>€</span>
-              <input id="currentCapital" type="number" value="0" min="0">
-            </div>
-          </div>
-
-          <div class="mm-field">
-            <label class="mm-label" for="monthlyInvesting">
-              Monthly Building
-            </label>
-            <div class="mm-input">
-              <span>€</span>
-              <input id="monthlyInvesting" type="number" value="0" min="0">
-            </div>
-          </div>
-
-          <div class="mm-field">
-            <label class="mm-label" for="yearsToGoal">
-              Time Horizon
-            </label>
-            <div class="mm-input">
-              <input id="yearsToGoal" type="number" value="25" min="1" max="50">
-              <span>yrs</span>
-            </div>
-          </div>
-
-        </div>
-
-        <button class="mm-btn" id="calculateBtn" type="button">
-          Show My Future Path
-        </button>
-      </section>
-
-      <section id="resultBlock" class="mm-resultStack" style="display:none;">
-
-        <section class="mm-card mm-resultCard">
-          <div class="mm-eyebrow">Your Wealth Trajectory</div>
-          <h2 id="mainResultTitle">This is where your current path leads.</h2>
-
-          <div class="mm-trajectoryGrid">
-            <div class="mm-trajectoryCard">
-              <div class="mm-trajectoryLabel">Current Path</div>
-              <div class="mm-big" id="currentPathValue">€0</div>
-              <div class="mm-sub">Based on your current monthly building</div>
-            </div>
-
-            <div class="mm-trajectoryCard mm-trajectoryCardOptimized">
-              <div class="mm-trajectoryLabel">Stronger Path</div>
-              <div class="mm-big" id="optimizedPathValue">€0</div>
-              <div class="mm-sub">If your structure becomes more intentional</div>
-            </div>
-          </div>
-
-          <div class="mm-highlightRow">
-            <div class="mm-highlightCard">
-              <div class="mm-highlightLabel">Potential Difference</div>
-              <div class="mm-big" id="differenceValue">€0</div>
-            </div>
-
-            <div class="mm-highlightCard mm-highlightCardWarning">
-              <div class="mm-highlightLabel">5-Year Delay Cost</div>
-              <div class="mm-big" id="delayCostValue">€0</div>
-            </div>
-          </div>
-
-          <div class="mm-impact">
-            <div class="mm-impactMain" id="builderInsight"></div>
-            <div class="mm-impactSub">
-              Wealth is not mainly built by income alone. It is built by structure, consistency, and time.
-            </div>
-          </div>
-        </section>
-
-        <section class="mm-card mm-futureShockCard">
-          <div class="mm-eyebrow">Future Shock</div>
-          <h3>Your future is shaped less by salary than by what you keep and build.</h3>
-          <p class="mm-muted" id="futureShockText"></p>
-        </section>
-
-        <section class="mm-card mm-nextCard">
-          <div>
-            <div class="mm-eyebrow">Next Step</div>
-            <h3>Your core MoneyMind journey is complete.</h3>
-            <p class="mm-muted">
-              You now have the foundations: behavior, capital, monthly structure, leakage, and future trajectory. From here, the dashboard becomes your cockpit.
-            </p>
-          </div>
-
-        <a class="mm-btn" href="/apps/dashboard/index.html">
-        Go to Dashboard
-        </a>
-        </section>
-
-      </section>
-
-    </div>
   </main>
 
   <script src="app.js"></script>
