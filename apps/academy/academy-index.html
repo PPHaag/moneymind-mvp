@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoneyMind • Academy</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand">Money<span>Mind</span></div>
+    <a class="topbar-back" href="/apps/dashboard/">← Dashboard</a>
+  </header>
+
+  <main class="shell">
+
+    <section class="card intro-card">
+      <div class="eyebrow">MoneyMind Academy</div>
+      <h1>Understand what sits behind your numbers.</h1>
+      <p class="lead">
+        Tools give you awareness. The Academy gives you understanding.
+        These lessons connect directly to what MoneyMind already shows you.
+      </p>
+    </section>
+
+    <!-- Progress -->
+    <section class="card progress-card">
+      <div class="eyebrow">Your Progress</div>
+      <div class="progress-row">
+        <div class="progress-stat">
+          <div class="big" id="academyProgressValue">0/5</div>
+          <div class="sub">Lessons completed</div>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar">
+            <div class="progress-fill" id="academyProgressFill"></div>
+          </div>
+          <p class="muted" style="margin-top:8px">You do not need more information. You need the right concepts in the right order.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tool Guides -->
+    <section class="card">
+      <div class="eyebrow">Tool Guides</div>
+      <h2>What your numbers mean</h2>
+      <p class="muted" style="margin-top:6px;margin-bottom:20px">Short explanations of what each MoneyMind tool measures and why it matters.</p>
+      <div class="guide-grid" id="guideGrid">
+
+        <div class="guide-card">
+          <div class="guide-title">Capital Map</div>
+          <p class="guide-text">Maps your financial structure into four buckets: liquid (accessible cash), invested (deployed capital), locked (illiquid assets), and debt. The goal is to see your real net worth — not just your income.</p>
+        </div>
+
+        <div class="guide-card">
+          <div class="guide-title">Spending vs Building</div>
+          <p class="guide-text">Splits your income into what gets consumed versus what builds your future. Your building ratio — the % that goes toward wealth — is the single most important number in your financial life.</p>
+        </div>
+
+        <div class="guide-card">
+          <div class="guide-title">Wealth Leakage</div>
+          <p class="guide-text">Identifies spending that adds no real value. Subscriptions, impulse buys, convenience spend. Not all spending is leakage — but some of it quietly destroys your future without you noticing.</p>
+        </div>
+
+        <div class="guide-card">
+          <div class="guide-title">The Builder</div>
+          <p class="guide-text">Takes your Capital Map, Spending, and Leakage data and generates a personal action plan. Priorities are determined by rules; the plan itself is written by AI based on your exact numbers.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Core Lessons -->
+    <section class="card">
+      <div class="eyebrow">Core Lessons</div>
+      <h2>What to learn next</h2>
+      <p class="muted" style="margin-top:6px;margin-bottom:20px">Five foundational concepts. Read them in order. Each one shifts how you see your money.</p>
+
+      <div class="lesson-list" id="lessonList">
+
+        <article class="lesson-card" data-lesson-id="assets-liabilities">
+          <div class="lesson-top">
+            <div>
+              <div class="lesson-meta">Lesson 1 • Foundations</div>
+              <h3>Assets vs Liabilities</h3>
+            </div>
+            <span class="status-tag" id="status-assets-liabilities">Start</span>
+          </div>
+          <p class="muted">Why some things feel like wealth while they quietly drain your financial momentum.</p>
+          <button class="btn btn-secondary lesson-open-btn" data-lesson-id="assets-liabilities" type="button">Open Lesson</button>
+        </article>
+
+        <article class="lesson-card" data-lesson-id="income-vs-wealth">
+          <div class="lesson-top">
+            <div>
+              <div class="lesson-meta">Lesson 2 • Foundations</div>
+              <h3>Income vs Wealth</h3>
+            </div>
+            <span class="status-tag" id="status-income-vs-wealth">Start</span>
+          </div>
+          <p class="muted">Why a high income and actual wealth are two completely different things.</p>
+          <button class="btn btn-secondary lesson-open-btn" data-lesson-id="income-vs-wealth" type="button">Open Lesson</button>
+        </article>
+
+        <article class="lesson-card" data-lesson-id="lifestyle-inflation">
+          <div class="lesson-top">
+            <div>
+              <div class="lesson-meta">Lesson 3 • Behavior</div>
+              <h3>Lifestyle Inflation</h3>
+            </div>
+            <span class="status-tag" id="status-lifestyle-inflation">Start</span>
+          </div>
+          <p class="muted">Why earning more often changes your lifestyle faster than it changes your wealth.</p>
+          <button class="btn btn-secondary lesson-open-btn" data-lesson-id="lifestyle-inflation" type="button">Open Lesson</button>
+        </article>
+
+        <article class="lesson-card" data-lesson-id="cost-of-delay">
+          <div class="lesson-top">
+            <div>
+              <div class="lesson-meta">Lesson 4 • Wealth</div>
+              <h3>Cost of Delay</h3>
+            </div>
+            <span class="status-tag" id="status-cost-of-delay">Start</span>
+          </div>
+          <p class="muted">Why waiting feels harmless in the present but becomes brutally expensive over time.</p>
+          <button class="btn btn-secondary lesson-open-btn" data-lesson-id="cost-of-delay" type="button">Open Lesson</button>
+        </article>
+
+        <article class="lesson-card" data-lesson-id="first-etf">
+          <div class="lesson-top">
+            <div>
+              <div class="lesson-meta">Lesson 5 • Investing</div>
+              <h3>Your First Investment</h3>
+            </div>
+            <span class="status-tag" id="status-first-etf">Start</span>
+          </div>
+          <p class="muted">Why ETFs are the most practical starting point for most people, and how to think about them.</p>
+          <button class="btn btn-secondary lesson-open-btn" data-lesson-id="first-etf" type="button">Open Lesson</button>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Lesson Detail -->
+    <section class="card detail-card" id="lessonDetailCard" style="display:none;">
+      <div class="detail-header">
+        <div>
+          <div class="eyebrow" id="lessonEyebrow">Lesson</div>
+          <h2 id="lessonTitle">Lesson title</h2>
+        </div>
+        <button class="close-btn" id="closeLessonBtn" type="button">✕ Close</button>
+      </div>
+
+      <div class="detail-body">
+        <section class="detail-section">
+          <h3>Concept</h3>
+          <p id="lessonConcept"></p>
+        </section>
+        <section class="detail-section">
+          <h3>Why it matters</h3>
+          <p id="lessonWhy"></p>
+        </section>
+        <section class="detail-section">
+          <h3>Real-world example</h3>
+          <p id="lessonExample"></p>
+        </section>
+        <section class="detail-section">
+          <h3>Key insight</h3>
+          <p id="lessonInsight"></p>
+        </section>
+        <section class="detail-section">
+          <h3>Reflection</h3>
+          <p id="lessonReflection"></p>
+        </section>
+      </div>
+
+      <div class="detail-footer">
+        <button class="btn btn-primary" id="markCompleteBtn" type="button">Mark as Complete</button>
+      </div>
+    </section>
+
+    <!-- Back -->
+    <section class="card next-card">
+      <div>
+        <div class="eyebrow">Keep Building</div>
+        <h3>More lessons coming in future phases.</h3>
+        <p class="muted" style="margin-top:8px">Investing, crypto, fiscal strategy, wealth architecture — all in the blueprint.</p>
+      </div>
+      <a class="btn btn-secondary" href="/apps/dashboard/">Back to Dashboard</a>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
