@@ -1,13 +1,14 @@
 {
-  "rewrites": [
-    { "source": "/", "destination": "/tools/roast/index.html" },
-    { "source": "/tools/roast", "destination": "/tools/roast/index.html" },
-    { "source": "/tools/builder", "destination": "/tools/builder/index.html" },
-    { "source": "/tools/capital-map", "destination": "/tools/capital-map/index.html" },
-    { "source": "/tools/leakage", "destination": "/tools/leakage/index.html" },
-    { "source": "/tools/spending-vs-building", "destination": "/tools/spending-vs-building/index.html" },
-    { "source": "/apps/dashboard", "destination": "/apps/dashboard/index.html" },
-    { "source": "/apps/auth", "destination": "/apps/auth/index.html" },
-    { "source": "/apps/academy", "destination": "/apps/academy/index.html" }
+  "routes": [
+    { "src": "/", "dest": "/tools/roast/index.html" },
+    { "src": "/tools/roast/?", "dest": "/tools/roast/index.html" },
+    { "src": "/tools/builder/?", "dest": "/tools/builder/index.html" },
+    { "src": "/tools/capital-map/?", "dest": "/tools/capital-map/index.html" },
+    { "src": "/tools/leakage/?", "dest": "/tools/leakage/index.html" },
+    { "src": "/tools/spending-vs-building/?", "dest": "/tools/spending-vs-building/index.html" },
+    { "src": "/apps/dashboard/?", "dest": "/apps/dashboard/index.html" },
+    { "src": "/apps/auth/?", "dest": "/apps/auth/index.html" },
+    { "src": "/apps/academy/?", "dest": "/apps/academy/index.html" },
+    { "src": "/api/(.*)", "dest": "/api/$1" }
   ]
 }
