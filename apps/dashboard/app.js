@@ -97,9 +97,9 @@ function renderHeader(userData) {
 
 function renderSnapshot(userData) {
   if (!userData.capitalMap?.completed) {
-    setText('snap-direct', '—');
-    setText('snap-accessible', '—');
-    setText('snap-locked', '—');
+    setText('snap-direct', '-');
+    setText('snap-accessible', '-');
+    setText('snap-locked', '-');
     return;
   }
   setText('snap-direct', formatEuro(userData.capitalMap.directCapital || 0));
@@ -136,7 +136,7 @@ function renderToolStatus(userData) {
   setTag('tag-leakage', leakageDone, spendingDone && !leakageDone);
 }
 
-// AI INSIGHT
+// ── AI INSIGHT ──────────────────────────────────────────────
 
 let currentAIState = 'placeholder';
 
@@ -153,6 +153,7 @@ function setAIState(state) {
     if (loading) loading.hidden = true;
     if (result) result.hidden = true;
     if (dot) dot.classList.remove('active');
+    if (btn) btn.disabled = false;
   } else if (state === 'loading') {
     if (placeholder) placeholder.hidden = true;
     if (loading) loading.hidden = false;
@@ -168,12 +169,36 @@ function setAIState(state) {
   }
 }
 
-function renderAIResult(result) {
+function formatInsightDate(isoString) {
+  if (!isoString) return '';
+  try {
+    return new Date(isoString).toLocaleString('nl-NL', {
+      day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+    });
+  } catch (e) {
+    return '';
+  }
+}
+
+function renderAIResult(result, fromCache) {
   setText('ai-insight-title', result.title || 'Your financial pattern');
-  setText('ai-what-you-see', result.whatYouSee || result.whatyousee || '—');
-  setText('ai-why-it-matters', result.whyItMatters || result.whyitmatters || '—');
-  setText('ai-think-about', result.thinkAbout || result.thinkabout || '—');
-  setText('ai-next-step', result.nextStep || result.nextstep || '—');
+  setText('ai-what-you-see', result.whatYouSee || result.whatyousee || '-');
+  setText('ai-why-it-matters', result.whyItMatters || result.whyitmatters || '-');
+  setText('ai-think-about', result.thinkAbout || result.thinkabout || '-');
+  setText('ai-next-step', result.nextStep || result.nextstep || '-');
+
+  const cacheLabel = document.getElementById('ai-cache-label');
+  if (cacheLabel) {
+    if (fromCache) {
+      const userData = readUserData();
+      const date = formatInsightDate(userData.ai?.lastUpdated);
+      cacheLabel.textContent = date ? 'Last analyzed: ' + date : 'Previous insight';
+      cacheLabel.hidden = false;
+    } else {
+      cacheLabel.hidden = true;
+    }
+  }
+
   setAIState('result');
 }
 
@@ -192,22 +217,33 @@ function buildDashboardData(userData) {
   };
 }
 
+function showAIError(message) {
+  const el = document.getElementById('ai-error-msg');
+  if (el) {
+    el.textContent = message;
+    el.hidden = false;
+    setTimeout(() => { el.hidden = true; }, 5000);
+  }
+}
+
 async function handleAIClick() {
   const userData = readUserData();
   const data = buildDashboardData(userData);
 
   setAIState('loading');
 
+  // Timeout after 15 seconds — fall back gracefully
   const fallbackTimer = setTimeout(() => {
     if (currentAIState === 'loading') {
       const saved = readUserData();
       if (saved.ai?.lastInsight) {
-        renderAIResult(saved.ai.lastInsight);
+        renderAIResult(saved.ai.lastInsight, true);
       } else {
         setAIState('placeholder');
+        showAIError('The analysis is taking too long. Please try again.');
       }
     }
-  }, 30000);
+  }, 15000);
 
   try {
     const response = await fetch('/api/ai-insight', {
@@ -222,7 +258,7 @@ async function handleAIClick() {
 
     const result = await response.json();
     console.log('AI result received:', result);
-    renderAIResult(result);
+    renderAIResult(result, false);
 
     const updated = readUserData();
     updated.ai = { lastInsight: result, lastUpdated: new Date().toISOString() };
@@ -231,8 +267,15 @@ async function handleAIClick() {
   } catch (err) {
     clearTimeout(fallbackTimer);
     console.error('AI insight error:', err);
-    setAIState('placeholder');
-    alert('Could not load AI insight. Try again in a moment.');
+
+    // If we have a cached result, show it instead of failing hard
+    const saved = readUserData();
+    if (saved.ai?.lastInsight) {
+      renderAIResult(saved.ai.lastInsight, true);
+    } else {
+      setAIState('placeholder');
+      showAIError('Could not load AI insight. Check your connection and try again.');
+    }
   }
 }
 
@@ -244,8 +287,9 @@ function init() {
   renderNextMove(userData);
   renderToolStatus(userData);
 
+  // Show cached insight on load if available — clearly labeled as cached
   if (userData.ai?.lastInsight) {
-    renderAIResult(userData.ai.lastInsight);
+    renderAIResult(userData.ai.lastInsight, true);
   } else {
     setAIState('placeholder');
   }

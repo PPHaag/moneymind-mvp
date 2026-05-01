@@ -27,15 +27,15 @@
       <div class="metric-grid">
         <div class="metric-card">
           <div class="metric-label">Direct</div>
-          <div class="metric-value" id="snap-direct">—</div>
+          <div class="metric-value" id="snap-direct">-</div>
         </div>
         <div class="metric-card">
           <div class="metric-label">Accessible</div>
-          <div class="metric-value" id="snap-accessible">—</div>
+          <div class="metric-value" id="snap-accessible">-</div>
         </div>
         <div class="metric-card">
           <div class="metric-label">Locked</div>
-          <div class="metric-value" id="snap-locked">—</div>
+          <div class="metric-value" id="snap-locked">-</div>
         </div>
       </div>
     </div>
@@ -50,6 +50,7 @@
       <div id="ai-placeholder" class="ai-placeholder">
         <p>Let the AI read your current financial structure and tell you what it actually sees.</p>
         <button class="btn btn-primary" id="generate-ai-insight-btn">Analyze My Situation</button>
+        <div id="ai-error-msg" class="ai-error" hidden></div>
       </div>
 
       <div id="ai-loading" class="ai-loading" hidden>
@@ -58,22 +59,23 @@
       </div>
 
       <div id="ai-result" hidden>
-        <div class="ai-title" id="ai-insight-title">—</div>
+        <div class="ai-cache-label" id="ai-cache-label" hidden></div>
+        <div class="ai-title" id="ai-insight-title">-</div>
         <div class="ai-row">
           <div class="ai-row-label">What you see</div>
-          <div class="ai-row-text highlight" id="ai-what-you-see">—</div>
+          <div class="ai-row-text highlight" id="ai-what-you-see">-</div>
         </div>
         <div class="ai-row">
           <div class="ai-row-label">Why it matters</div>
-          <div class="ai-row-text" id="ai-why-it-matters">—</div>
+          <div class="ai-row-text" id="ai-why-it-matters">-</div>
         </div>
         <div class="ai-row">
           <div class="ai-row-label">Think about</div>
-          <div class="ai-row-text" id="ai-think-about">—</div>
+          <div class="ai-row-text" id="ai-think-about">-</div>
         </div>
         <div class="ai-row">
           <div class="ai-row-label">Next step</div>
-          <div class="ai-row-text" id="ai-next-step">—</div>
+          <div class="ai-row-text" id="ai-next-step">-</div>
         </div>
         <div class="btn-row" style="margin-top:20px">
           <button class="btn btn-ghost" id="regenerate-btn">Refresh insight</button>
@@ -94,19 +96,19 @@
       <div class="eyebrow">Your tools</div>
       <div class="tool-row">
         <span class="tool-name">Roast</span>
-        <span class="tool-tag" id="tag-roast">—</span>
+        <span class="tool-tag" id="tag-roast">-</span>
       </div>
       <div class="tool-row">
         <span class="tool-name">Capital Map</span>
-        <span class="tool-tag" id="tag-capital">—</span>
+        <span class="tool-tag" id="tag-capital">-</span>
       </div>
       <div class="tool-row">
         <span class="tool-name">Spending vs Building</span>
-        <span class="tool-tag" id="tag-spending">—</span>
+        <span class="tool-tag" id="tag-spending">-</span>
       </div>
       <div class="tool-row">
         <span class="tool-name">Leakage</span>
-        <span class="tool-tag" id="tag-leakage">—</span>
+        <span class="tool-tag" id="tag-leakage">-</span>
       </div>
     </div>
 
