@@ -1,17 +1,3 @@
 {
-  "version": 2,
-  "buildCommand": "",
-  "installCommand": "npm install",
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/", "dest": "/tools/roast/index.html" },
-    { "src": "/tools/roast/?", "dest": "/tools/roast/index.html" },
-    { "src": "/tools/builder/?", "dest": "/tools/builder/index.html" },
-    { "src": "/tools/capital-map/?", "dest": "/tools/capital-map/index.html" },
-    { "src": "/tools/leakage/?", "dest": "/tools/leakage/index.html" },
-    { "src": "/tools/spending-vs-building/?", "dest": "/tools/spending-vs-building/index.html" },
-    { "src": "/apps/dashboard/?", "dest": "/apps/dashboard/index.html" },
-    { "src": "/apps/auth/?", "dest": "/apps/auth/index.html" },
-    { "src": "/apps/academy/?", "dest": "/apps/academy/index.html" }
-  ]
+  "version": 2
 }
