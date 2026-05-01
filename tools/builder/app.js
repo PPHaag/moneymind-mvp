@@ -4,7 +4,6 @@
    ============================================ */
 
 const STORAGE_KEY = 'moneymind_user_data';
-const DASHBOARD_PATH = '/apps/dashboard/';
 
 function readUserData() {
   try {
@@ -24,26 +23,21 @@ function fmt(n) {
 }
 
 // --- ROAST SEED HELPERS ------------------------------------------------
-// Roast stores bracket answers e.g. { label: '...', value: 3500 }
-// Used as fallback when dedicated tools have not been completed yet.
+// Roast stores answers with `amount` field (not `value`)
 
 function incomeFromRoast(roast) {
-  const v = roast?.answers?.income?.value;
+  const v = roast?.answers?.income?.amount;
   return typeof v === 'number' ? v : 0;
 }
 
 function savingsFromRoast(roast) {
-  const v = roast?.answers?.savings?.value;
+  const v = roast?.answers?.savings?.amount;
   return typeof v === 'number' ? v : 0;
 }
 
 function investFromRoast(roast) {
-  const income = incomeFromRoast(roast);
-  if (!income) return 0;
-  const key = roast?.answers?.invest?.value || '';
-  const rates = { none: 0, low: 0.05, medium: 0.10, high: 0.20, very_high: 0.30 };
-  const rate = rates[key] ?? 0;
-  return Math.round(income * rate);
+  const v = roast?.answers?.invest?.amount;
+  return typeof v === 'number' ? v : 0;
 }
 
 // --- DATA EXTRACTION ---------------------------------------------------
@@ -55,20 +49,17 @@ function extractData() {
   const leak  = d.leakage            || {};
   const roast = d.roast              || {};
 
-  // Capital — prefer dedicated tool, fallback to roast savings bracket
-  const savingsSeed = savingsFromRoast(roast);
-  const liquid   = cm.liquid   || savingsSeed || 0;
-  const invested = cm.invested || 0;
-  const locked   = cm.locked   || 0;
-  const debt     = cm.debt     || 0;
+  const savingsSeed  = savingsFromRoast(roast);
+  const incomeSeed   = incomeFromRoast(roast);
+  const investSeed   = investFromRoast(roast);
 
-  // Income — prefer dedicated tool, fallback to roast bracket
-  const incomeSeed = incomeFromRoast(roast);
-  const income = svb.income || incomeSeed || 0;
+  const liquid   = cm.liquid   ?? cm.directCapital   ?? savingsSeed ?? 0;
+  const invested = cm.invested ?? cm.accessibleCapital ?? 0;
+  const locked   = cm.locked   ?? cm.lockedCapital   ?? 0;
+  const debt     = cm.debt     ?? 0;
 
-  // Building — prefer dedicated tool, fallback to roast invest estimate
-  const buildingSeed = investFromRoast(roast);
-  const building  = svb.building  || buildingSeed || 0;
+  const income   = svb.income   || incomeSeed  || 0;
+  const building = svb.building || investSeed  || 0;
   const fixed     = svb.fixed     || 0;
   const lifestyle = svb.lifestyle || 0;
 
@@ -80,11 +71,7 @@ function extractData() {
     netWorth:    liquid + invested + locked - debt,
     capitalComplete: !!cm.completed,
 
-    income,
-    fixed,
-    lifestyle,
-    building,
-    buildingRatio,
+    income, fixed, lifestyle, building, buildingRatio,
     spendingComplete: !!svb.completed,
 
     monthlyLeakage: leak.monthlyLeakage || 0,
@@ -94,7 +81,7 @@ function extractData() {
 
     roastComplete: !!roast.completed,
     profile: roast.profile || null,
-    goal:    roast.goal    || roast.answers?.goal?.label || null
+    goal: roast.goal || roast.answers?.goal?.label || null
   };
 }
 
@@ -153,7 +140,6 @@ function buildPriorities(d) {
     });
   }
 
-  // Fallback: always at least one priority
   if (priorities.length === 0) {
     priorities.push({
       weight: 50,
@@ -188,7 +174,7 @@ function buildMonthlyPlan(d) {
   ].filter(r => r && r.amount !== 0);
 }
 
-// --- AI PLAN GENERATOR ------------------------------------------------
+// --- AI PLAN — via Vercel API route ------------------------------------
 
 async function generateAIPlan(d, priorities) {
   const priorityText = priorities
@@ -197,44 +183,36 @@ async function generateAIPlan(d, priorities) {
 
   const dataQuality = d.capitalComplete && d.spendingComplete && d.leakageComplete
     ? 'Full data from all tools.'
-    : `Partial — roast completed: ${d.roastComplete}, capital tool: ${d.capitalComplete}, spending tool: ${d.spendingComplete}, leakage tool: ${d.leakageComplete}. Some numbers are estimates from roast brackets.`;
+    : `Partial data. Roast: ${d.roastComplete}, Capital: ${d.capitalComplete}, Spending: ${d.spendingComplete}, Leakage: ${d.leakageComplete}. Some numbers estimated from roast.`;
 
-  const prompt = `You are a sharp, direct financial coach — not a cheerleader, not a therapist. You give honest, specific, actionable advice.
+  const payload = {
+    type: 'builder-plan',
+    income: d.income,
+    fixed: d.fixed,
+    lifestyle: d.lifestyle,
+    building: d.building,
+    buildingRatio: d.buildingRatio,
+    liquid: d.liquid,
+    invested: d.invested,
+    debt: d.debt,
+    monthlyLeakage: d.monthlyLeakage,
+    leakageRatio: d.leakageRatio,
+    goal: d.goal || 'Not specified',
+    profile: d.profile?.name || 'Not specified',
+    dataQuality,
+    priorities: priorityText
+  };
 
-Here is the user's financial snapshot:
-- Monthly income: ${fmt(d.income)}${!d.spendingComplete ? ' (estimated from roast)' : ''}
-- Fixed costs: ${fmt(d.fixed)} (${d.income > 0 ? ((d.fixed/d.income)*100).toFixed(0) : 0}% of income)
-- Lifestyle spending: ${fmt(d.lifestyle)}
-- Currently building: ${fmt(d.building)}/month (${d.buildingRatio.toFixed(0)}% of income)${!d.spendingComplete ? ' (estimated)' : ''}
-- Liquid assets: ${fmt(d.liquid)}${!d.capitalComplete ? ' (estimated from roast)' : ''}
-- Invested capital: ${fmt(d.invested)}
-- Debt: ${fmt(d.debt)}
-- Monthly leakage: ${fmt(d.monthlyLeakage)} (${d.leakageRatio.toFixed(0)}% of income)
-- Financial goal: ${d.goal || 'Not specified'}
-- Profile: ${d.profile?.name || 'Not specified'}
-- Data quality: ${dataQuality}
-
-Top priorities:
-${priorityText}
-
-Write a 90-day action plan in 4-6 short, punchy paragraphs. Be specific — use the actual numbers. Where data is estimated, acknowledge briefly but still give concrete direction. No bullet points. No generic advice. No empty praise. Start with the most important action. Plain language. End with one concrete monthly habit that will have the most impact.`;
-
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
+  const response = await fetch('/api/builder-plan', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      messages: [{ role: 'user', content: prompt }]
-    })
+    body: JSON.stringify(payload)
   });
 
-  const data = await response.json();
-  const text = (data.content || [])
-    .filter(b => b.type === 'text')
-    .map(b => b.text)
-    .join('');
-  return text || 'Unable to generate plan. Please try again.';
+  if (!response.ok) throw new Error('API status ' + response.status);
+
+  const result = await response.json();
+  return result.plan || 'Unable to generate plan. Please try again.';
 }
 
 // --- RENDER FUNCTIONS --------------------------------------------------
@@ -242,19 +220,14 @@ Write a 90-day action plan in 4-6 short, punchy paragraphs. Be specific — use 
 function renderSnapshot(d) {
   const monthsBuffer = d.income > 0 ? (d.liquid / d.income) : 0;
   const items = [
-    { label: 'Income',
-      value: fmt(d.income), color: '' },
-    { label: 'Building',
-      value: fmt(d.building) + '/mo',
+    { label: 'Income',       value: d.income > 0 ? fmt(d.income) : '—',     color: '' },
+    { label: 'Building',     value: d.building > 0 ? fmt(d.building) + '/mo' : '—',
       color: d.buildingRatio >= 20 ? 'good' : d.buildingRatio >= 10 ? '' : 'danger' },
-    { label: 'Leakage',
-      value: d.leakageComplete ? fmt(d.monthlyLeakage) + '/mo' : '—',
+    { label: 'Leakage',      value: d.leakageComplete ? fmt(d.monthlyLeakage) + '/mo' : '—',
       color: d.leakageComplete ? (d.leakageRatio > 20 ? 'danger' : d.leakageRatio > 10 ? 'warn' : 'good') : '' },
-    { label: 'Net worth',
-      value: (d.capitalComplete || d.liquid > 0) ? fmt(d.netWorth) : '—',
-      color: d.netWorth > 0 ? 'good' : 'danger' },
-    { label: 'Liquid buffer',
-      value: d.income > 0 ? monthsBuffer.toFixed(1) + ' mo' : '—',
+    { label: 'Net worth',    value: (d.capitalComplete || d.liquid > 0) ? fmt(d.netWorth) : '—',
+      color: d.netWorth > 0 ? 'good' : d.netWorth < 0 ? 'danger' : '' },
+    { label: 'Liquid buffer', value: d.income > 0 ? monthsBuffer.toFixed(1) + ' mo' : '—',
       color: monthsBuffer >= 3 ? 'good' : 'warn' },
   ];
 
@@ -264,19 +237,6 @@ function renderSnapshot(d) {
       <div class="snapshot-value ${it.color}">${it.value}</div>
     </div>
   `).join('');
-}
-
-function renderDataQualityBanner(d) {
-  const allComplete = d.capitalComplete && d.spendingComplete && d.leakageComplete;
-  const banner = document.getElementById('dataQualityBanner');
-  if (!banner) return;
-  if (allComplete) { banner.style.display = 'none'; return; }
-  const missing = [];
-  if (!d.capitalComplete) missing.push('Capital Map');
-  if (!d.spendingComplete) missing.push('Spending vs Building');
-  if (!d.leakageComplete) missing.push('Leakage Check');
-  banner.style.display = '';
-  banner.innerHTML = `<strong>Some numbers are estimates</strong> based on your Roast answers. Complete ${missing.join(', ')} for precise results.`;
 }
 
 function renderPriorities(priorities) {
@@ -310,7 +270,6 @@ function show(id) {
 async function init() {
   const d = extractData();
 
-  // Roast is the minimum to show anything useful
   if (!d.roastComplete) {
     show('noDataCard');
     return;
@@ -318,8 +277,6 @@ async function init() {
 
   renderSnapshot(d);
   show('summaryCard');
-
-  renderDataQualityBanner(d);
 
   const priorities = buildPriorities(d);
   renderPriorities(priorities);
@@ -345,6 +302,7 @@ async function init() {
       aiOutput.textContent = text;
       aiOutput.className = 'ai-output';
     } catch(e) {
+      console.error('Builder AI error:', e);
       aiOutput.textContent = 'Something went wrong. Check your connection and try again.';
       aiOutput.className = 'ai-output';
       btn.disabled = false;
