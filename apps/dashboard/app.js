@@ -180,6 +180,13 @@ function formatInsightDate(isoString) {
   }
 }
 
+function scrollToAICard() {
+  const card = document.querySelector('.ai-card');
+  if (card) {
+    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
 function renderAIResult(result, fromCache) {
   setText('ai-insight-title', result.title || 'Your financial pattern');
   setText('ai-what-you-see', result.whatYouSee || result.whatyousee || '-');
@@ -231,19 +238,21 @@ async function handleAIClick() {
   const data = buildDashboardData(userData);
 
   setAIState('loading');
+  scrollToAICard();
 
-  // Timeout after 15 seconds — fall back gracefully
+  // 20 seconds — allows for Vercel cold start + API response
   const fallbackTimer = setTimeout(() => {
     if (currentAIState === 'loading') {
       const saved = readUserData();
       if (saved.ai?.lastInsight) {
         renderAIResult(saved.ai.lastInsight, true);
+        scrollToAICard();
       } else {
         setAIState('placeholder');
         showAIError('The analysis is taking too long. Please try again.');
       }
     }
-  }, 15000);
+  }, 20000);
 
   try {
     const response = await fetch('/api/ai-insight', {
@@ -259,6 +268,7 @@ async function handleAIClick() {
     const result = await response.json();
     console.log('AI result received:', result);
     renderAIResult(result, false);
+    scrollToAICard();
 
     const updated = readUserData();
     updated.ai = { lastInsight: result, lastUpdated: new Date().toISOString() };
@@ -268,10 +278,10 @@ async function handleAIClick() {
     clearTimeout(fallbackTimer);
     console.error('AI insight error:', err);
 
-    // If we have a cached result, show it instead of failing hard
     const saved = readUserData();
     if (saved.ai?.lastInsight) {
       renderAIResult(saved.ai.lastInsight, true);
+      scrollToAICard();
     } else {
       setAIState('placeholder');
       showAIError('Could not load AI insight. Check your connection and try again.');
@@ -287,7 +297,6 @@ function init() {
   renderNextMove(userData);
   renderToolStatus(userData);
 
-  // Show cached insight on load if available — clearly labeled as cached
   if (userData.ai?.lastInsight) {
     renderAIResult(userData.ai.lastInsight, true);
   } else {
