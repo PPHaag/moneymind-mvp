@@ -1,0 +1,13 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/tools/roast/index.html" },
+    { "source": "/tools/roast", "destination": "/tools/roast/index.html" },
+    { "source": "/tools/builder", "destination": "/tools/builder/index.html" },
+    { "source": "/tools/capital-map", "destination": "/tools/capital-map/index.html" },
+    { "source": "/tools/leakage", "destination": "/tools/leakage/index.html" },
+    { "source": "/tools/spending-vs-building", "destination": "/tools/spending-vs-building/index.html" },
+    { "source": "/apps/dashboard", "destination": "/apps/dashboard/index.html" },
+    { "source": "/apps/auth", "destination": "/apps/auth/index.html" },
+    { "source": "/apps/academy", "destination": "/apps/academy/index.html" }
+  ]
+}
