@@ -298,3 +298,17 @@ body {
 .good   { color: var(--good); }
 .warn   { color: var(--warn); }
 .danger { color: var(--danger); }
+/* Voeg dit toe onderaan style.css */
+
+.ai-cache-label {
+  font-size: 0.72rem;
+  color: var(--text-muted, #888);
+  margin-bottom: 12px;
+  font-style: italic;
+}
+
+.ai-error {
+  margin-top: 12px;
+  font-size: 0.82rem;
+  color: #e05a5a;
+}
