@@ -1,4 +1,5 @@
 {
+  "outputDirectory": ".",
   "routes": [
     { "src": "/", "dest": "/tools/roast/index.html" },
     { "src": "/tools/roast/?", "dest": "/tools/roast/index.html" },
