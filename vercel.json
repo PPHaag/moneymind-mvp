@@ -1,6 +1,8 @@
 {
-  "outputDirectory": ".",
+  "buildCommand": null,
+  "outputDirectory": null,
   "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
     { "src": "/", "dest": "/tools/roast/index.html" },
     { "src": "/tools/roast/?", "dest": "/tools/roast/index.html" },
     { "src": "/tools/builder/?", "dest": "/tools/builder/index.html" },
@@ -9,7 +11,6 @@
     { "src": "/tools/spending-vs-building/?", "dest": "/tools/spending-vs-building/index.html" },
     { "src": "/apps/dashboard/?", "dest": "/apps/dashboard/index.html" },
     { "src": "/apps/auth/?", "dest": "/apps/auth/index.html" },
-    { "src": "/apps/academy/?", "dest": "/apps/academy/index.html" },
-    { "src": "/api/(.*)", "dest": "/api/$1" }
+    { "src": "/apps/academy/?", "dest": "/apps/academy/index.html" }
   ]
 }
