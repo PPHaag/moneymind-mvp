@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MoneyMind Weekly Check-in</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f0f13;
+    color: #e8e8f0;
+    min-height: 100vh;
+    padding: 24px 16px;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .logo { font-size: 13px; font-weight: 700; color: #6c63ff; letter-spacing: 2px; text-transform: uppercase; }
+  .week-label { font-size: 12px; color: #666; }
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #888; margin-bottom: 24px; }
+
+  .week-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .week-tag {
+    background: #1a1a24;
+    border: 1px solid #2a2a3a;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: #888;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .week-tag.active { background: #6c63ff22; border-color: #6c63ff; color: #a5a0ff; }
+
+  .section {
+    background: #1a1a24;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a3a;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .section-title { font-size: 14px; font-weight: 700; color: #c8c8e0; text-transform: uppercase; letter-spacing: 1px; }
+
+  .items-list { list-style: none; }
+  .items-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #222230;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  .items-list li:last-child { border-bottom: none; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+  .dot-green { background: #4ade80; }
+  .dot-purple { background: #6c63ff; }
+  .dot-yellow { background: #fbbf24; }
+
+  .add-row { display: flex; gap: 8px; margin-top: 12px; }
+  .add-input {
+    flex: 1;
+    background: #111118;
+    border: 1px solid #2a2a3a;
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: #e8e8f0;
+    font-size: 13px;
+    outline: none;
+  }
+  .add-input:focus { border-color: #6c63ff; }
+  .add-input::placeholder { color: #444; }
+  .add-btn {
+    background: #6c63ff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .del-btn {
+    background: none;
+    border: none;
+    color: #444;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 4px;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .del-btn:hover { color: #ff6b6b; }
+
+  .blocker-box {
+    background: #1a1218;
+    border: 1px solid #ff6b6b33;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .blocker-title {
+    font-size: 14px; font-weight: 700; color: #ff6b6b;
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px;
+  }
+
+  .horizon-box {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 1px solid #6c63ff44;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .horizon-title {
+    font-size: 14px; font-weight: 700; color: #6c63ff;
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px;
+  }
+  .milestone {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #1e1e30;
+    font-size: 14px;
+  }
+  .milestone:last-child { border-bottom: none; }
+  .milestone-num {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: #6c63ff22;
+    border: 1px solid #6c63ff55;
+    color: #6c63ff;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .milestone-text { flex: 1; }
+  .milestone-status {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+  .status-done { background: #4ade8022; color: #4ade80; }
+  .status-active { background: #6c63ff22; color: #a5a0ff; }
+  .status-next { background: #fbbf2422; color: #fbbf24; }
+  .status-later { background: #33333a; color: #666; }
+
+  .save-row { display: flex; gap: 10px; margin-top: 8px; align-items: center; }
+  .save-btn {
+    background: #4ade80;
+    color: #0f0f13;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .saved-label { font-size: 12px; color: #4ade80; display: none; }
+  .empty-state { font-size: 13px; color: #444; font-style: italic; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">MoneyMind</div>
+  <div class="week-label" id="weekLabel"></div>
+</div>
+
+<h1>Weekly Check-in</h1>
+<p class="subtitle">Een keer per week. Wat staat er, wat komt er, waar gaan we naartoe.</p>
+
+<div class="week-nav" id="weekNav"></div>
+
+<div class="section">
+  <div class="section-header">
+    <span>checkmark</span>
+    <span class="section-title">Deze week gedaan</span>
+  </div>
+  <ul class="items-list" id="doneList"></ul>
+  <div class="add-row">
+    <input class="add-input" id="doneInput" placeholder="Wat heb je afgerond?" />
+    <button class="add-btn" id="doneBtn">+</button>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header">
+    <span>target</span>
+    <span class="section-title">Focus volgende week</span>
+  </div>
+  <ul class="items-list" id="nextList"></ul>
+  <div class="add-row">
+    <input class="add-input" id="nextInput" placeholder="Wat is de priority?" />
+    <button class="add-btn" id="nextBtn">+</button>
+  </div>
+</div>
+
+<div class="blocker-box">
+  <div class="blocker-title">Blokkers en openstaand</div>
+  <ul class="items-list" id="blockerList"></ul>
+  <div class="add-row">
+    <input class="add-input" id="blockerInput" placeholder="Wat blokkeert je?" />
+    <button class="add-btn" id="blockerBtn">+</button>
+  </div>
+</div>
+
+<div class="horizon-box">
+  <div class="horizon-title">Stip op de horizon</div>
+  <div id="milestoneList"></div>
+</div>
+
+<div class="save-row">
+  <button class="save-btn" id="saveBtn">Opslaan</button>
+  <span class="saved-label" id="savedLabel">Opgeslagen</span>
+</div>
+
+<script>
+var STORAGE_KEY = 'moneymind_weekly_checkin';
+
+var MILESTONES = [
+  { label: 'Roast Tool + Dashboard live', status: 'done' },
+  { label: 'AI Insight prompt (masterprompt v4.1)', status: 'active' },
+  { label: 'Supabase auth + redirect fix', status: 'active' },
+  { label: 'Monetisatie: free/pro via Supabase', status: 'next' },
+  { label: 'Academy volledig live', status: 'later' }
+];
+
+var STATUS_LABELS = { done: 'Done', active: 'Bezig', next: 'Volgende', later: 'Later' };
+var STATUS_CLASS = { done: 'status-done', active: 'status-active', next: 'status-next', later: 'status-later' };
+var DOT_CLASS = { done: 'dot-green', next: 'dot-purple', blocker: 'dot-yellow' };
+
+var currentWeek = getWeekKey(new Date());
+var allData = {};
+
+function getWeekKey(date) {
+  var d = new Date(date);
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+  var yearStart = new Date(d.getFullYear(), 0, 1);
+  var weekNum = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  return d.getFullYear() + '-W' + String(weekNum).padStart(2, '0');
+}
+
+function getWeekLabel(key) {
+  var parts = key.split('-W');
+  var year = parseInt(parts[0]);
+  var week = parseInt(parts[1]);
+  var simple = new Date(year, 0, 1 + (week - 1) * 7);
+  var mon = new Date(simple);
+  mon.setDate(simple.getDate() - simple.getDay() + 1);
+  var sun = new Date(mon);
+  sun.setDate(mon.getDate() + 6);
+  function fmt(d) {
+    return d.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
+  }
+  return fmt(mon) + ' - ' + fmt(sun);
+}
+
+function loadAll() {
+  try { allData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+  catch(e) { allData = {}; }
+}
+
+function getCurrentData() {
+  return allData[currentWeek] || { done: [], next: [], blocker: [] };
+}
+
+function renderWeekNav() {
+  var nav = document.getElementById('weekNav');
+  nav.innerHTML = '';
+  var keys = Object.keys(allData).sort().reverse().slice(0, 5);
+  if (keys.indexOf(currentWeek) === -1) keys.unshift(currentWeek);
+  var thisWeek = getWeekKey(new Date());
+  keys.forEach(function(k) {
+    var tag = document.createElement('div');
+    tag.className = 'week-tag' + (k === currentWeek ? ' active' : '');
+    tag.textContent = k === thisWeek ? 'Deze week' : getWeekLabel(k);
+    tag.onclick = (function(wk) { return function() { currentWeek = wk; render(); }; })(k);
+    nav.appendChild(tag);
+  });
+}
+
+function renderList(listId, items, type) {
+  var ul = document.getElementById(listId);
+  ul.innerHTML = '';
+  if (!items || items.length === 0) {
+    ul.innerHTML = '<li><span class="empty-state">Nog niets toegevoegd</span></li>';
+    return;
+  }
+  items.forEach(function(item, i) {
+    var li = document.createElement('li');
+    var dot = document.createElement('div');
+    dot.className = 'dot ' + (DOT_CLASS[type] || 'dot-purple');
+    var text = document.createElement('span');
+    text.textContent = item;
+    text.style.flex = '1';
+    var del = document.createElement('button');
+    del.className = 'del-btn';
+    del.textContent = 'x';
+    del.onclick = (function(t, idx) { return function() { removeItem(t, idx); }; })(type, i);
+    li.appendChild(dot);
+    li.appendChild(text);
+    li.appendChild(del);
+    ul.appendChild(li);
+  });
+}
+
+function renderMilestones() {
+  var container = document.getElementById('milestoneList');
+  container.innerHTML = '';
+  MILESTONES.forEach(function(m, i) {
+    var div = document.createElement('div');
+    div.className = 'milestone';
+    var num = document.createElement('div');
+    num.className = 'milestone-num';
+    num.textContent = i + 1;
+    var txt = document.createElement('div');
+    txt.className = 'milestone-text';
+    txt.textContent = m.label;
+    var status = document.createElement('div');
+    status.className = 'milestone-status ' + STATUS_CLASS[m.status];
+    status.textContent = STATUS_LABELS[m.status];
+    div.appendChild(num);
+    div.appendChild(txt);
+    div.appendChild(status);
+    container.appendChild(div);
+  });
+}
+
+function render() {
+  loadAll();
+  var data = getCurrentData();
+  document.getElementById('weekLabel').textContent = getWeekLabel(currentWeek);
+  renderList('doneList', data.done, 'done');
+  renderList('nextList', data.next, 'next');
+  renderList('blockerList', data.blocker, 'blocker');
+  renderMilestones();
+  renderWeekNav();
+}
+
+function addItem(type) {
+  var input = document.getElementById(type + 'Input');
+  var val = input.value.trim();
+  if (!val) return;
+  loadAll();
+  if (!allData[currentWeek]) allData[currentWeek] = { done: [], next: [], blocker: [] };
+  allData[currentWeek][type].push(val);
+  input.value = '';
+  saveData(true);
+  render();
+}
+
+function removeItem(type, index) {
+  loadAll();
+  if (!allData[currentWeek]) return;
+  allData[currentWeek][type].splice(index, 1);
+  saveData(true);
+  render();
+}
+
+function saveData(silent) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(allData));
+  if (!silent) {
+    var lbl = document.getElementById('savedLabel');
+    lbl.style.display = 'inline';
+    setTimeout(function() { lbl.style.display = 'none'; }, 2000);
+  }
+}
+
+document.getElementById('doneBtn').onclick = function() { addItem('done'); };
+document.getElementById('nextBtn').onclick = function() { addItem('next'); };
+document.getElementById('blockerBtn').onclick = function() { addItem('blocker'); };
+document.getElementById('saveBtn').onclick = function() { saveData(false); };
+
+document.getElementById('doneInput').addEventListener('keydown', function(e) { if(e.key==='Enter') addItem('done'); });
+document.getElementById('nextInput').addEventListener('keydown', function(e) { if(e.key==='Enter') addItem('next'); });
+document.getElementById('blockerInput').addEventListener('keydown', function(e) { if(e.key==='Enter') addItem('blocker'); });
+
+render();
+</script>
+</body>
+</html>
