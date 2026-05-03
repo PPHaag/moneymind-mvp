@@ -5,8 +5,178 @@ const TOOL_PATHS = {
   spendingVsBuilding: '/tools/spending-vs-building/index.html',
   leakage: '/tools/leakage/index.html',
   builder: '/tools/builder/index.html',
-  roast: '/tools/roast/index.html'
+  roast: '/tools/roast/index.html',
+  weeklyCheckin: '/planning/moneymind-weekly.html'
 };
+
+// ── PRO GATE CONFIG ─────────────────────────────────────────
+// Add any future gated feature here — nothing else needs to change
+const PRO_FEATURES = {
+  aiInsight: { label: 'AI Insight', description: 'Get a personalized AI analysis of your full financial picture.' },
+  builder: { label: 'Builder Tool', description: 'Build and refine your personal wealth plan with guided steps.' },
+  weeklyCheckin: { label: 'Weekly Check-in', description: 'Track your progress week by week and spot patterns over time.' },
+  academyFull: { label: 'Full Academy', description: 'Unlock all modules, deep dives and advanced financial frameworks.' }
+};
+
+// ── PLAN STATE ───────────────────────────────────────────────
+let userPlan = 'free'; // default — overwritten by getPlan()
+
+// ── PLAN FETCHING ────────────────────────────────────────────
+async function getPlan() {
+  try {
+    const response = await fetch('/api/auth.js?action=get-plan', {
+      method: 'GET',
+      credentials: 'include'
+    });
+    if (!response.ok) return 'free';
+    const data = await response.json();
+    return data.plan || 'free';
+  } catch (err) {
+    console.warn('Could not fetch plan, defaulting to free.', err);
+    return 'free';
+  }
+}
+
+// ── PRO MODAL ────────────────────────────────────────────────
+function showProModal(featureKey) {
+  const feature = PRO_FEATURES[featureKey] || { label: 'This feature', description: 'This is a Pro feature.' };
+
+  // Remove any existing modal
+  const existing = document.getElementById('pro-modal-overlay');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'pro-modal-overlay';
+  overlay.style.cssText = `
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px; animation: mmFadeIn 0.18s ease;
+  `;
+
+  overlay.innerHTML = `
+    <style>
+      @keyframes mmFadeIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
+      #pro-modal-box { background: #fff; border-radius: 16px; padding: 36px 32px 28px; max-width: 420px; width: 100%; text-align: center; box-shadow: 0 24px 64px rgba(0,0,0,0.18); }
+      #pro-modal-box .modal-lock { font-size: 2.4rem; margin-bottom: 12px; }
+      #pro-modal-box h2 { font-size: 1.25rem; font-weight: 700; margin: 0 0 10px; color: #111; }
+      #pro-modal-box p { font-size: 0.95rem; color: #555; margin: 0 0 24px; line-height: 1.5; }
+      #pro-modal-box .modal-badge { display: inline-block; background: #f0f0f0; color: #888; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px; padding: 4px 14px; margin-bottom: 20px; }
+      #pro-modal-box .modal-soon { font-size: 0.88rem; color: #aaa; margin: 0; }
+      #pro-modal-close { position: absolute; top: 16px; right: 20px; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #999; line-height: 1; }
+    </style>
+    <div id="pro-modal-box" style="position:relative;">
+      <button id="pro-modal-close" aria-label="Close">&times;</button>
+      <div class="modal-lock">🔒</div>
+      <div class="modal-badge">Pro feature</div>
+      <h2>${feature.label}</h2>
+      <p>${feature.description}</p>
+      <p class="modal-soon">Upgrade coming soon — stay tuned.</p>
+    </div>
+  `;
+
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.remove();
+  });
+
+  overlay.querySelector('#pro-modal-close').addEventListener('click', () => overlay.remove());
+
+  document.body.appendChild(overlay);
+}
+
+// ── PRO GATE HELPER ──────────────────────────────────────────
+// Returns true if action is allowed, false if gated
+function checkGate(featureKey) {
+  if (userPlan === 'pro') return true;
+  showProModal(featureKey);
+  return false;
+}
+
+// ── PRO BADGE HELPER ─────────────────────────────────────────
+function addProBadge(elementId) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  const badge = document.createElement('span');
+  badge.textContent = ' 🔒 Pro';
+  badge.style.cssText = 'font-size:0.75rem; font-weight:600; color:#aaa; margin-left:6px; vertical-align:middle;';
+  el.appendChild(badge);
+}
+
+// ── RENDER PRO GATES ─────────────────────────────────────────
+function renderProGates() {
+  if (userPlan === 'pro') return; // nothing to gate
+
+  // AI Insight button
+  const aiBtn = document.getElementById('generate-ai-insight-btn');
+  if (aiBtn) {
+    aiBtn.addEventListener('click', (e) => {
+      e.stopImmediatePropagation();
+      showProModal('aiInsight');
+    }, true); // capture phase so it fires before handleAIClick
+    addProBadge('generate-ai-insight-btn');
+  }
+
+  // Regenerate button (also in AI card)
+  const regenBtn = document.getElementById('regenerate-btn');
+  if (regenBtn) {
+    regenBtn.addEventListener('click', (e) => {
+      e.stopImmediatePropagation();
+      showProModal('aiInsight');
+    }, true);
+  }
+
+  // Builder tool link
+  const builderLinks = document.querySelectorAll('a[href*="builder"]');
+  builderLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      showProModal('builder');
+    });
+    link.style.opacity = '0.6';
+    link.style.cursor = 'default';
+  });
+
+  // Weekly Check-in link
+  const checkinLinks = document.querySelectorAll('a[href*="moneymind-weekly"]');
+  checkinLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      showProModal('weeklyCheckin');
+    });
+    link.style.opacity = '0.6';
+    link.style.cursor = 'default';
+  });
+
+  // Academy full content — gate is handled in Academy itself,
+  // but we can add a badge to the Academy card on dashboard
+  const academyCard = document.querySelector('.academy-card, [data-tool="academy"]');
+  if (academyCard) {
+    const badge = document.createElement('span');
+    badge.textContent = '🔒 Full content is Pro';
+    badge.style.cssText = 'display:block; font-size:0.75rem; color:#aaa; margin-top:4px;';
+    academyCard.appendChild(badge);
+  }
+}
+
+// ── PLAN BADGE IN HEADER ─────────────────────────────────────
+function renderPlanBadge() {
+  const header = document.querySelector('header, .dashboard-header, nav');
+  if (!header) return;
+
+  const badge = document.createElement('span');
+  badge.id = 'plan-badge';
+  badge.textContent = userPlan === 'pro' ? '✦ Pro' : 'Free';
+  badge.style.cssText = `
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; padding: 3px 10px; border-radius: 999px;
+    background: ${userPlan === 'pro' ? '#111' : '#f0f0f0'};
+    color: ${userPlan === 'pro' ? '#fff' : '#999'};
+    margin-left: 12px; vertical-align: middle;
+  `;
+  header.appendChild(badge);
+}
+
+// ── EXISTING FUNCTIONS (unchanged) ───────────────────────────
 
 function readUserData() {
   try {
@@ -234,13 +404,16 @@ function showAIError(message) {
 }
 
 async function handleAIClick() {
+  // Gate check — if free user, modal is shown by renderProGates listener
+  // This function only runs for pro users
+  if (!checkGate('aiInsight')) return;
+
   const userData = readUserData();
   const data = buildDashboardData(userData);
 
   setAIState('loading');
   scrollToAICard();
 
-  // 20 seconds — allows for Vercel cold start + API response
   const fallbackTimer = setTimeout(() => {
     if (currentAIState === 'loading') {
       const saved = readUserData();
@@ -289,13 +462,19 @@ async function handleAIClick() {
   }
 }
 
-function init() {
+// ── INIT ─────────────────────────────────────────────────────
+async function init() {
+  // Fetch plan first — everything else depends on it
+  userPlan = await getPlan();
+
   const userData = readUserData();
 
   renderHeader(userData);
   renderSnapshot(userData);
   renderNextMove(userData);
   renderToolStatus(userData);
+  renderPlanBadge();
+  renderProGates(); // applies gates based on userPlan
 
   if (userData.ai?.lastInsight) {
     renderAIResult(userData.ai.lastInsight, true);
@@ -303,6 +482,7 @@ function init() {
     setAIState('placeholder');
   }
 
+  // AI buttons — only attached for pro users (free users are intercepted by renderProGates)
   const aiBtn = document.getElementById('generate-ai-insight-btn');
   if (aiBtn) aiBtn.addEventListener('click', handleAIClick);
 
