@@ -9,17 +9,16 @@ const TOOL_PATHS = {
   weeklyCheckin: '/planning/moneymind-weekly.html'
 };
 
-// ── PRO GATE CONFIG ─────────────────────────────────────────
-// Add any future gated feature here — nothing else needs to change
+// ── PRO GATE CONFIG ──────────────────────────────────────────
 const PRO_FEATURES = {
-  aiInsight: { label: 'AI Insight', description: 'Get a personalized AI analysis of your full financial picture.' },
-  builder: { label: 'Builder Tool', description: 'Build and refine your personal wealth plan with guided steps.' },
-  weeklyCheckin: { label: 'Weekly Check-in', description: 'Track your progress week by week and spot patterns over time.' },
-  academyFull: { label: 'Full Academy', description: 'Unlock all modules, deep dives and advanced financial frameworks.' }
+  aiInsight:    { label: 'AI Insight',       description: 'Get a personalized AI analysis of your full financial picture.' },
+  builder:      { label: 'Builder Tool',     description: 'Build and refine your personal wealth plan with guided steps.' },
+  weeklyCheckin:{ label: 'Weekly Check-in',  description: 'Track your progress week by week and spot patterns over time.' },
+  academyFull:  { label: 'Full Academy',     description: 'Unlock all modules, deep dives and advanced financial frameworks.' }
 };
 
 // ── PLAN STATE ───────────────────────────────────────────────
-let userPlan = 'free'; // default — overwritten by getPlan()
+let userPlan = 'free';
 
 // ── PLAN FETCHING ────────────────────────────────────────────
 async function getPlan() {
@@ -41,7 +40,6 @@ async function getPlan() {
 function showProModal(featureKey) {
   const feature = PRO_FEATURES[featureKey] || { label: 'This feature', description: 'This is a Pro feature.' };
 
-  // Remove any existing modal
   const existing = document.getElementById('pro-modal-overlay');
   if (existing) existing.remove();
 
@@ -75,94 +73,22 @@ function showProModal(featureKey) {
     </div>
   `;
 
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) overlay.remove();
-  });
-
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
   overlay.querySelector('#pro-modal-close').addEventListener('click', () => overlay.remove());
-
   document.body.appendChild(overlay);
 }
 
-// ── PRO GATE HELPER ──────────────────────────────────────────
-// Returns true if action is allowed, false if gated
+// ── GATE CHECK ───────────────────────────────────────────────
 function checkGate(featureKey) {
   if (userPlan === 'pro') return true;
   showProModal(featureKey);
   return false;
 }
 
-// ── PRO BADGE HELPER ─────────────────────────────────────────
-function addProBadge(elementId) {
-  const el = document.getElementById(elementId);
-  if (!el) return;
-  const badge = document.createElement('span');
-  badge.textContent = ' 🔒 Pro';
-  badge.style.cssText = 'font-size:0.75rem; font-weight:600; color:#aaa; margin-left:6px; vertical-align:middle;';
-  el.appendChild(badge);
-}
-
-// ── RENDER PRO GATES ─────────────────────────────────────────
-function renderProGates() {
-  if (userPlan === 'pro') return; // nothing to gate
-
-  // AI Insight button
-  const aiBtn = document.getElementById('generate-ai-insight-btn');
-  if (aiBtn) {
-    aiBtn.addEventListener('click', (e) => {
-      e.stopImmediatePropagation();
-      showProModal('aiInsight');
-    }, true); // capture phase so it fires before handleAIClick
-    addProBadge('generate-ai-insight-btn');
-  }
-
-  // Regenerate button (also in AI card)
-  const regenBtn = document.getElementById('regenerate-btn');
-  if (regenBtn) {
-    regenBtn.addEventListener('click', (e) => {
-      e.stopImmediatePropagation();
-      showProModal('aiInsight');
-    }, true);
-  }
-
-  // Builder tool link
-  const builderLinks = document.querySelectorAll('a[href*="builder"]');
-  builderLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      showProModal('builder');
-    });
-    link.style.opacity = '0.6';
-    link.style.cursor = 'default';
-  });
-
-  // Weekly Check-in link
-  const checkinLinks = document.querySelectorAll('a[href*="moneymind-weekly"]');
-  checkinLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      showProModal('weeklyCheckin');
-    });
-    link.style.opacity = '0.6';
-    link.style.cursor = 'default';
-  });
-
-  // Academy full content — gate is handled in Academy itself,
-  // but we can add a badge to the Academy card on dashboard
-  const academyCard = document.querySelector('.academy-card, [data-tool="academy"]');
-  if (academyCard) {
-    const badge = document.createElement('span');
-    badge.textContent = '🔒 Full content is Pro';
-    badge.style.cssText = 'display:block; font-size:0.75rem; color:#aaa; margin-top:4px;';
-    academyCard.appendChild(badge);
-  }
-}
-
-// ── PLAN BADGE IN HEADER ─────────────────────────────────────
+// ── PLAN BADGE ───────────────────────────────────────────────
 function renderPlanBadge() {
   const header = document.querySelector('header, .dashboard-header, nav');
   if (!header) return;
-
   const badge = document.createElement('span');
   badge.id = 'plan-badge';
   badge.textContent = userPlan === 'pro' ? '✦ Pro' : 'Free';
@@ -174,6 +100,44 @@ function renderPlanBadge() {
     margin-left: 12px; vertical-align: middle;
   `;
   header.appendChild(badge);
+}
+
+// ── PRO GATES ────────────────────────────────────────────────
+function renderProGates() {
+  if (userPlan === 'pro') return;
+
+  // AI Insight button — intercept in capture phase before handleAIClick fires
+  const aiBtn = document.getElementById('generate-ai-insight-btn');
+  if (aiBtn) {
+    aiBtn.addEventListener('click', (e) => {
+      e.stopImmediatePropagation();
+      showProModal('aiInsight');
+    }, true);
+  }
+
+  const regenBtn = document.getElementById('regenerate-btn');
+  if (regenBtn) {
+    regenBtn.addEventListener('click', (e) => {
+      e.stopImmediatePropagation();
+      showProModal('aiInsight');
+    }, true);
+  }
+
+  // Builder links
+  document.querySelectorAll('a[href*="builder"]').forEach(link => {
+    link.addEventListener('click', (e) => { e.preventDefault(); showProModal('builder'); });
+    link.style.opacity = '0.6';
+    link.style.cursor = 'default';
+  });
+
+  // Weekly Check-in links
+  document.querySelectorAll('a[href*="moneymind-weekly"]').forEach(link => {
+    link.addEventListener('click', (e) => { e.preventDefault(); showProModal('weeklyCheckin'); });
+    link.style.opacity = '0.6';
+    link.style.cursor = 'default';
+  });
+
+  // Academy — no badge on dashboard, gates live inside Academy itself
 }
 
 // ── EXISTING FUNCTIONS (unchanged) ───────────────────────────
@@ -306,7 +270,7 @@ function renderToolStatus(userData) {
   setTag('tag-leakage', leakageDone, spendingDone && !leakageDone);
 }
 
-// ── AI INSIGHT ──────────────────────────────────────────────
+// ── AI INSIGHT ───────────────────────────────────────────────
 
 let currentAIState = 'placeholder';
 
@@ -345,16 +309,12 @@ function formatInsightDate(isoString) {
     return new Date(isoString).toLocaleString('nl-NL', {
       day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
     });
-  } catch (e) {
-    return '';
-  }
+  } catch (e) { return ''; }
 }
 
 function scrollToAICard() {
   const card = document.querySelector('.ai-card');
-  if (card) {
-    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
+  if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function renderAIResult(result, fromCache) {
@@ -404,10 +364,8 @@ function showAIError(message) {
 }
 
 async function handleAIClick() {
-  // Gate check — if free user, modal is shown by renderProGates listener
-  // This function only runs for pro users
-  if (!checkGate('aiInsight')) return;
-
+  // Pro gate is handled via capture listener in renderProGates()
+  // This function only executes for pro users
   const userData = readUserData();
   const data = buildDashboardData(userData);
 
@@ -435,7 +393,6 @@ async function handleAIClick() {
     });
 
     clearTimeout(fallbackTimer);
-
     if (!response.ok) throw new Error('API status ' + response.status);
 
     const result = await response.json();
@@ -464,7 +421,7 @@ async function handleAIClick() {
 
 // ── INIT ─────────────────────────────────────────────────────
 async function init() {
-  // Fetch plan first — everything else depends on it
+  // Plan eerst ophalen — alles hangt hiervan af
   userPlan = await getPlan();
 
   const userData = readUserData();
@@ -474,15 +431,15 @@ async function init() {
   renderNextMove(userData);
   renderToolStatus(userData);
   renderPlanBadge();
-  renderProGates(); // applies gates based on userPlan
+  renderProGates();
 
-  if (userData.ai?.lastInsight) {
+  // AI cache: alleen tonen voor pro users
+  if (userPlan === 'pro' && userData.ai?.lastInsight) {
     renderAIResult(userData.ai.lastInsight, true);
   } else {
     setAIState('placeholder');
   }
 
-  // AI buttons — only attached for pro users (free users are intercepted by renderProGates)
   const aiBtn = document.getElementById('generate-ai-insight-btn');
   if (aiBtn) aiBtn.addEventListener('click', handleAIClick);
 
