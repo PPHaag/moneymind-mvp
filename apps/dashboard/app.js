@@ -109,6 +109,7 @@ function renderProGates() {
   // AI Insight — intercept in capture phase before handleAIClick fires
   const aiBtn = document.getElementById('generate-ai-insight-btn');
   if (aiBtn) {
+    aiBtn.textContent = "🔒 Analyze My Situation";
     aiBtn.addEventListener('click', (e) => {
       e.stopImmediatePropagation();
       showProModal('aiInsight');
@@ -457,7 +458,8 @@ async function init() {
   }
 
   const aiBtn = document.getElementById('generate-ai-insight-btn');
-  if (aiBtn) aiBtn.addEventListener('click', handleAIClick);
+  if (aiBtn) aiBtn.textContent = "🔒 Analyze My Situation";
+    aiBtn.addEventListener('click', handleAIClick);
 
   const regenBtn = document.getElementById('regenerate-btn');
   if (regenBtn) regenBtn.addEventListener('click', handleAIClick);
