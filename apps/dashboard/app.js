@@ -87,8 +87,8 @@ function checkGate(featureKey) {
 
 // ── PLAN BADGE ───────────────────────────────────────────────
 function renderPlanBadge() {
-  const header = document.querySelector('header, .dashboard-header, nav');
-  if (!header) return;
+  const topbarRight = document.querySelector('.topbar-right');
+  if (!topbarRight) return;
   const badge = document.createElement('span');
   badge.id = 'plan-badge';
   badge.textContent = userPlan === 'pro' ? '✦ Pro' : 'Free';
@@ -97,16 +97,16 @@ function renderPlanBadge() {
     text-transform: uppercase; padding: 3px 10px; border-radius: 999px;
     background: ${userPlan === 'pro' ? '#111' : '#f0f0f0'};
     color: ${userPlan === 'pro' ? '#fff' : '#999'};
-    margin-left: 12px; vertical-align: middle;
+    margin-left: 10px; vertical-align: middle;
   `;
-  header.appendChild(badge);
+  topbarRight.appendChild(badge);
 }
 
 // ── PRO GATES ────────────────────────────────────────────────
 function renderProGates() {
   if (userPlan === 'pro') return;
 
-  // AI Insight button — intercept in capture phase before handleAIClick fires
+  // AI Insight — intercept in capture phase before handleAIClick fires
   const aiBtn = document.getElementById('generate-ai-insight-btn');
   if (aiBtn) {
     aiBtn.addEventListener('click', (e) => {
@@ -123,24 +123,23 @@ function renderProGates() {
     }, true);
   }
 
-  // Builder links
+  // Builder links (not next-btn — that is handled in renderNextMove)
   document.querySelectorAll('a[href*="builder"]').forEach(link => {
+    if (link.id === 'next-btn') return; // handled separately
     link.addEventListener('click', (e) => { e.preventDefault(); showProModal('builder'); });
     link.style.opacity = '0.6';
-    link.style.cursor = 'default';
+    link.style.cursor = 'pointer';
   });
 
   // Weekly Check-in links
   document.querySelectorAll('a[href*="moneymind-weekly"]').forEach(link => {
     link.addEventListener('click', (e) => { e.preventDefault(); showProModal('weeklyCheckin'); });
     link.style.opacity = '0.6';
-    link.style.cursor = 'default';
+    link.style.cursor = 'pointer';
   });
-
-  // Academy — no badge on dashboard, gates live inside Academy itself
 }
 
-// ── EXISTING FUNCTIONS (unchanged) ───────────────────────────
+// ── EXISTING FUNCTIONS ───────────────────────────────────────
 
 function readUserData() {
   try {
@@ -183,22 +182,26 @@ function getNextStep(userData) {
   if (!userData.capitalMap?.completed) return {
     title: 'Map your capital structure',
     desc: 'Before optimizing anything else, understand what is directly usable, accessible, and locked.',
-    path: TOOL_PATHS.capitalMap
+    path: TOOL_PATHS.capitalMap,
+    gated: false
   };
   if (!userData.spendingVsBuilding?.completed) return {
     title: 'Check your Spending vs Building ratio',
     desc: 'The next weak point is whether your income is actually converting into long-term capital.',
-    path: TOOL_PATHS.spendingVsBuilding
+    path: TOOL_PATHS.spendingVsBuilding,
+    gated: false
   };
   if (!userData.leakage?.completed) return {
     title: 'Run your Leakage Check',
     desc: 'Some spending is fine. Some spending quietly blocks future wealth. You need to know the difference.',
-    path: TOOL_PATHS.leakage
+    path: TOOL_PATHS.leakage,
+    gated: false
   };
   return {
     title: 'Refine your wealth plan',
     desc: 'Your core tools are done. The next step is improving consistency and tightening your system.',
-    path: TOOL_PATHS.builder
+    path: TOOL_PATHS.builder,
+    gated: true  // Builder is Pro
   };
 }
 
@@ -249,7 +252,23 @@ function renderNextMove(userData) {
 
   if (titleEl) titleEl.textContent = next.title;
   if (descEl) descEl.textContent = next.desc;
-  if (btnEl) btnEl.setAttribute('href', next.path);
+
+  if (!btnEl) return;
+
+  // If gated and user is free: show lock icon, intercept click with modal
+  if (next.gated && userPlan !== 'pro') {
+    btnEl.textContent = '🔒 Open tool';
+    btnEl.style.cursor = 'pointer';
+    btnEl.setAttribute('href', '#');
+    btnEl.addEventListener('click', (e) => {
+      e.preventDefault();
+      showProModal('builder');
+    });
+  } else {
+    btnEl.textContent = 'Open tool';
+    btnEl.style.cursor = 'pointer';
+    btnEl.setAttribute('href', next.path);
+  }
 }
 
 function renderToolStatus(userData) {
@@ -364,8 +383,6 @@ function showAIError(message) {
 }
 
 async function handleAIClick() {
-  // Pro gate is handled via capture listener in renderProGates()
-  // This function only executes for pro users
   const userData = readUserData();
   const data = buildDashboardData(userData);
 
@@ -421,19 +438,18 @@ async function handleAIClick() {
 
 // ── INIT ─────────────────────────────────────────────────────
 async function init() {
-  // Plan eerst ophalen — alles hangt hiervan af
   userPlan = await getPlan();
 
   const userData = readUserData();
 
   renderHeader(userData);
   renderSnapshot(userData);
-  renderNextMove(userData);
+  renderNextMove(userData);  // uses userPlan internally
   renderToolStatus(userData);
   renderPlanBadge();
   renderProGates();
 
-  // AI cache: alleen tonen voor pro users
+  // AI cache: alleen voor pro users
   if (userPlan === 'pro' && userData.ai?.lastInsight) {
     renderAIResult(userData.ai.lastInsight, true);
   } else {
