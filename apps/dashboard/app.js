@@ -253,7 +253,7 @@ function renderNextMove(userData) {
       showProModal('builder');
     });
   } else {
-    btnEl.textContent = 'Open tool';
+    btnEl.textContent = '\uD83D\uDD12 Open tool';
     btnEl.style.cursor = 'pointer';
     btnEl.setAttribute('href', next.path);
   }
