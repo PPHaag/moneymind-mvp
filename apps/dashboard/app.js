@@ -449,7 +449,7 @@ async function init() {
 
   const aiBtn = document.getElementById('generate-ai-insight-btn');
   if (aiBtn) {
-    aiBtn.textContent = 'Analyze My Situation';
+    aiBtn.textContent = '\uD83D\uDD12 Analyze My Situation';
     if (userPlan !== 'pro') {
       aiBtn.addEventListener('click', (e) => {
         e.stopImmediatePropagation();
