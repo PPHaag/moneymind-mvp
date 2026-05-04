@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoneyMind — Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0f0d;
+      --surface: #111a15;
+      --border: #1a2820;
+      --accent: #00e5a0;
+      --accent-dim: #00c488;
+      --text: #e8f0eb;
+      --muted: #4a6655;
+      --error: #ff6b6b;
+    }
+
+    html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-weight: 300; }
+
+    .euro-mark {
+      position: fixed;
+      right: -80px;
+      bottom: -120px;
+      font-family: 'DM Serif Display', serif;
+      font-size: 580px;
+      line-height: 1;
+      color: rgba(0,229,160,0.04);
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,160,0.01) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,160,0.01) 1px, transparent 1px);
+      background-size: 64px 64px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-glow {
+      position: fixed;
+      width: 700px;
+      height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,229,160,0.04) 0%, transparent 65%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 0;
+      animation: pulse 7s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 0.5; transform: translate(-50%, -50%) scale(1.08); }
+    }
+
+    .layout {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 60px 1fr 60px;
+    }
+
+    .left, .right {
+      padding: 0 52px;
+      display: contents;
+    }
+
+    .col-logo-left {
+      grid-column: 1;
+      grid-row: 1;
+      padding: 52px 52px 0;
+      border-right: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+    }
+
+    .col-body-left {
+      grid-column: 1;
+      grid-row: 2;
+      padding: 0 52px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .col-footer-left {
+      grid-column: 1;
+      grid-row: 3;
+      padding: 0 52px 52px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .col-logo-right {
+      grid-column: 2;
+      grid-row: 1;
+      padding: 52px 52px 0;
+      display: flex;
+      align-items: center;
+      visibility: hidden;
+    }
+
+    .col-body-right {
+      grid-column: 2;
+      grid-row: 2;
+      padding: 0 52px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .col-footer-right {
+      grid-column: 2;
+      grid-row: 3;
+      padding: 0 52px 52px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+    }
+
+    /* override old selectors */
+    .left, .right { padding: 0; border: none; }
+
+    /* Logo — same in both cols, same size, same top position */
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.5rem;
+      letter-spacing: -0.01em;
+      line-height: 1;
+      height: 1.5rem; /* explicit height so both cols align */
+    }
+
+    .logo .money { color: var(--text); }
+    .logo .mind  { color: var(--accent); }
+
+    .left-body { display: contents; }
+
+    .tagline {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.2rem, 2.8vw, 2.8rem);
+      line-height: 1.12;
+      letter-spacing: -0.025em;
+      margin-bottom: 20px;
+    }
+
+    .tagline em { font-style: italic; color: var(--accent); }
+
+    .sub {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 320px;
+    }
+
+    .metrics {
+      display: flex;
+      gap: 36px;
+      margin-top: 48px;
+    }
+
+    .metric-value {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .metric-label {
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-top: 5px;
+    }
+
+    .left-footer {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    /* Right column */
+    .right {
+      justify-content: space-between;
+    }
+
+    .right-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.5rem;
+      letter-spacing: -0.01em;
+      line-height: 1;
+      height: 1.5rem;
+      visibility: hidden; /* same height as left logo, invisible */
+    }
+
+    .right-body { display: contents; }
+
+    .right-footer {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    .card { width: 100%; max-width: 360px; animation: fadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-eyebrow {
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+
+    .card-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+
+    .card-sub {
+      font-size: 0.84rem;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 32px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .field input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 13px 15px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 300;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.18s, box-shadow 0.18s;
+    }
+
+    .field input::placeholder { color: var(--muted); opacity: 0.6; }
+    .field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,229,160,0.07); }
+
+    .btn {
+      width: 100%;
+      background: var(--accent);
+      color: #0a0f0d;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.18s, transform 0.1s;
+    }
+
+    .btn:hover:not(:disabled) { background: var(--accent-dim); }
+    .btn:active:not(:disabled) { transform: scale(0.99); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .spinner {
+      width: 15px; height: 15px;
+      border: 2px solid rgba(10,15,13,0.25);
+      border-top-color: #0a0f0d;
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+      display: none; flex-shrink: 0;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .msg { margin-top: 14px; padding: 11px 14px; border-radius: 8px; font-size: 0.82rem; line-height: 1.5; display: none; }
+    .msg.success { display: block; background: rgba(0,229,160,0.07); border: 1px solid rgba(0,229,160,0.18); color: var(--accent); }
+    .msg.error   { display: block; background: rgba(255,107,107,0.07); border: 1px solid rgba(255,107,107,0.18); color: var(--error); }
+
+    .note { margin-top: 16px; font-size: 0.74rem; color: var(--muted); line-height: 1.5; }
+
+    /* Mobile */
+    @media (max-width: 720px) {
+      .layout { grid-template-columns: 1fr; }
+      .left { display: none; }
+      .right { padding: 40px 28px; min-height: 100vh; justify-content: flex-start; }
+      .right-logo { visibility: visible; margin-bottom: 48px; }
+      .right-body { flex: none; justify-content: flex-start; padding: 0; }
+      .right-footer { display: none; }
+      .card { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="euro-mark">&euro;</div>
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+
+<div class="layout">
+
+  <div class="left">
+    <div class="col-logo-left"><div class="logo"><span class="money">Money</span><span class="mind">Mind</span></div></div>
+    <div class="col-body-left">
+      <h1 class="tagline">See your money<br><em>as it really is.</em></h1>
+      <p class="sub">Not what you hope it is. Not what you fear it is. What it actually is — structured, clear, actionable.</p>
+      <div class="metrics">
+        <div><div class="metric-value">4</div><div class="metric-label">Core tools</div></div>
+        <div><div class="metric-value">1</div><div class="metric-label">Clear picture</div></div>
+        <div><div class="metric-value">0</div><div class="metric-label">Fluff</div></div>
+      </div>
+    </div>
+    <div class="col-footer-left"><div class="left-footer">No financial advice. No upsells. Just clarity.</div></div>
+  </div>
+
+  <div class="right">
+    <div class="col-logo-right"><div class="logo"><span class="money">Money</span><span class="mind">Mind</span></div></div>
+    <div class="col-body-right">
+      <div class="card">
+        <div class="card-eyebrow">Get started</div>
+        <h2 class="card-title">Your financial<br>mirror awaits.</h2>
+        <p class="card-sub">Enter your email. We send a link. No password needed.</p>
+        <div class="field">
+          <label for="email">Email address</label>
+          <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <button class="btn" id="send-btn" onclick="handleLogin()">
+          <div class="spinner" id="spinner"></div>
+          <span id="btn-text">Send magic link</span>
+        </button>
+        <div class="msg" id="msg"></div>
+        <p class="note">We send a secure link. Click it and you're in — no password, no friction.</p>
+      </div>
+    </div>
+    <div class="col-footer-right"><div class="right-footer">moneymind-mvp-five.vercel.app</div></div>
+  </div>
+
+</div>
+
+<script>
+  async function handleLogin() {
+    const email = document.getElementById('email').value.trim();
+    const btn = document.getElementById('send-btn');
+    const spinner = document.getElementById('spinner');
+    const btnText = document.getElementById('btn-text');
+    const msg = document.getElementById('msg');
+
+    msg.className = 'msg';
+    msg.textContent = '';
+
+    if (!email || !email.includes('@')) {
+      msg.className = 'msg error';
+      msg.textContent = 'Please enter a valid email address.';
+      return;
+    }
+
+    btn.disabled = true;
+    spinner.style.display = 'block';
+    btnText.textContent = 'Sending...';
+
+    try {
+      const response = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'magic-link', email: email })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Something went wrong.');
+      spinner.style.display = 'none';
+      btnText.textContent = 'Link sent';
+      msg.className = 'msg success';
+      msg.textContent = 'Check your inbox. Click the link to access your dashboard.';
+    } catch (err) {
+      spinner.style.display = 'none';
+      btn.disabled = false;
+      btnText.textContent = 'Send magic link';
+      msg.className = 'msg error';
+      msg.textContent = err.message || 'Could not send link. Try again.';
+    }
+  }
+
+  document.getElementById('email').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') handleLogin();
+  });
+</script>
+
+</body>
+</html>
