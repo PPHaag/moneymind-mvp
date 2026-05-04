@@ -362,6 +362,10 @@ async function init() {
   }
 
   const userData = readUserData();
+  if (!userData.roast?.completed) {
+    window.location.href = '/tools/roast/index.html';
+    return;
+  }
 
   renderHeader(userData);
   renderSnapshot(userData);
