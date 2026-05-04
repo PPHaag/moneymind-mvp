@@ -113,12 +113,14 @@ function renderProGates() {
   document.querySelectorAll('a[href*="builder"]').forEach(link => {
     if (link.id === 'next-btn') return;
     link.addEventListener('click', (e) => { e.preventDefault(); showProModal('builder'); });
+    link.textContent = '\uD83D\uDD12 ' + link.textContent;
     link.style.opacity = '0.6';
     link.style.cursor = 'pointer';
   });
 
   document.querySelectorAll('a[href*="moneymind-weekly"]').forEach(link => {
     link.addEventListener('click', (e) => { e.preventDefault(); showProModal('weeklyCheckin'); });
+    link.textContent = '\uD83D\uDD12 ' + link.textContent;
     link.style.opacity = '0.6';
     link.style.cursor = 'pointer';
   });
