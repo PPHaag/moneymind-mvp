@@ -70,18 +70,13 @@
       min-height: 100vh;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      grid-template-rows: 60px 1fr 60px;
-    }
-
-    .left, .right {
-      padding: 0 52px;
-      display: contents;
+      grid-template-rows: auto 1fr auto;
     }
 
     .col-logo-left {
       grid-column: 1;
       grid-row: 1;
-      padding: 52px 52px 0;
+      padding: 40px 52px 0;
       border-right: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -90,7 +85,7 @@
     .col-body-left {
       grid-column: 1;
       grid-row: 2;
-      padding: 0 52px;
+      padding: 40px 52px;
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
@@ -100,7 +95,7 @@
     .col-footer-left {
       grid-column: 1;
       grid-row: 3;
-      padding: 0 52px 52px;
+      padding: 0 52px 40px;
       border-right: 1px solid var(--border);
       display: flex;
       align-items: flex-end;
@@ -109,7 +104,7 @@
     .col-logo-right {
       grid-column: 2;
       grid-row: 1;
-      padding: 52px 52px 0;
+      padding: 40px 52px 0;
       display: flex;
       align-items: center;
       visibility: hidden;
@@ -118,7 +113,7 @@
     .col-body-right {
       grid-column: 2;
       grid-row: 2;
-      padding: 0 52px;
+      padding: 40px 52px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -127,28 +122,21 @@
     .col-footer-right {
       grid-column: 2;
       grid-row: 3;
-      padding: 0 52px 52px;
+      padding: 0 52px 40px;
       display: flex;
       align-items: flex-end;
       justify-content: flex-end;
     }
 
-    /* override old selectors */
-    .left, .right { padding: 0; border: none; }
-
-    /* Logo — same in both cols, same size, same top position */
     .logo {
       font-family: 'DM Serif Display', serif;
       font-size: 1.5rem;
       letter-spacing: -0.01em;
       line-height: 1;
-      height: 1.5rem; /* explicit height so both cols align */
     }
 
     .logo .money { color: var(--text); }
     .logo .mind  { color: var(--accent); }
-
-    .left-body { display: contents; }
 
     .tagline {
       font-family: 'DM Serif Display', serif;
@@ -192,28 +180,6 @@
     .left-footer {
       font-size: 0.72rem;
       color: var(--muted);
-    }
-
-    /* Right column */
-    .right {
-      justify-content: space-between;
-    }
-
-    .right-logo {
-      font-family: 'DM Serif Display', serif;
-      font-size: 1.5rem;
-      letter-spacing: -0.01em;
-      line-height: 1;
-      height: 1.5rem;
-      visibility: hidden; /* same height as left logo, invisible */
-    }
-
-    .right-body { display: contents; }
-
-    .right-footer {
-      font-size: 0.72rem;
-      color: var(--muted);
-      text-align: right;
     }
 
     .card { width: 100%; max-width: 360px; animation: fadeUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) both; }
@@ -317,11 +283,10 @@
     /* Mobile */
     @media (max-width: 720px) {
       .layout { grid-template-columns: 1fr; }
-      .left { display: none; }
-      .right { padding: 40px 28px; min-height: 100vh; justify-content: flex-start; }
-      .right-logo { visibility: visible; margin-bottom: 48px; }
-      .right-body { flex: none; justify-content: flex-start; padding: 0; }
-      .right-footer { display: none; }
+      .col-logo-left, .col-body-left, .col-footer-left { display: none; }
+      .col-logo-right { visibility: visible; }
+      .col-body-right { padding: 32px 28px; }
+      .col-footer-right { display: none; }
       .card { max-width: 100%; }
     }
   </style>
@@ -334,40 +299,48 @@
 
 <div class="layout">
 
-  <div class="left">
-    <div class="col-logo-left"><div class="logo"><span class="money">Money</span><span class="mind">Mind</span></div></div>
-    <div class="col-body-left">
-      <h1 class="tagline">See your money<br><em>as it really is.</em></h1>
-      <p class="sub">Not what you hope it is. Not what you fear it is. What it actually is — structured, clear, actionable.</p>
-      <div class="metrics">
-        <div><div class="metric-value">4</div><div class="metric-label">Core tools</div></div>
-        <div><div class="metric-value">1</div><div class="metric-label">Clear picture</div></div>
-        <div><div class="metric-value">0</div><div class="metric-label">Fluff</div></div>
-      </div>
-    </div>
-    <div class="col-footer-left"><div class="left-footer">No financial advice. No upsells. Just clarity.</div></div>
+  <div class="col-logo-left">
+    <div class="logo"><span class="money">Money</span><span class="mind">Mind</span></div>
   </div>
 
-  <div class="right">
-    <div class="col-logo-right"><div class="logo"><span class="money">Money</span><span class="mind">Mind</span></div></div>
-    <div class="col-body-right">
-      <div class="card">
-        <div class="card-eyebrow">Get started</div>
-        <h2 class="card-title">Your financial<br>mirror awaits.</h2>
-        <p class="card-sub">Enter your email. We send a link. No password needed.</p>
-        <div class="field">
-          <label for="email">Email address</label>
-          <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
-        </div>
-        <button class="btn" id="send-btn" onclick="handleLogin()">
-          <div class="spinner" id="spinner"></div>
-          <span id="btn-text">Send magic link</span>
-        </button>
-        <div class="msg" id="msg"></div>
-        <p class="note">We send a secure link. Click it and you're in — no password, no friction.</p>
-      </div>
+  <div class="col-body-left">
+    <h1 class="tagline">See your money<br><em>as it really is.</em></h1>
+    <p class="sub">Not what you hope it is. Not what you fear it is. What it actually is — structured, clear, actionable.</p>
+    <div class="metrics">
+      <div><div class="metric-value">4</div><div class="metric-label">Core tools</div></div>
+      <div><div class="metric-value">1</div><div class="metric-label">Clear picture</div></div>
+      <div><div class="metric-value">0</div><div class="metric-label">Jargon</div></div>
     </div>
-    <div class="col-footer-right"><div class="right-footer">moneymind-mvp-five.vercel.app</div></div>
+  </div>
+
+  <div class="col-footer-left">
+    <div class="left-footer">No financial advice. No upsells. Just clarity.</div>
+  </div>
+
+  <div class="col-logo-right">
+    <div class="logo"><span class="money">Money</span><span class="mind">Mind</span></div>
+  </div>
+
+  <div class="col-body-right">
+    <div class="card">
+      <div class="card-eyebrow">Get started</div>
+      <h2 class="card-title">Your financial<br>mirror awaits.</h2>
+      <p class="card-sub">Enter your email. We send a link. No password needed.</p>
+      <div class="field">
+        <label for="email">Email address</label>
+        <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
+      </div>
+      <button class="btn" id="send-btn" onclick="handleLogin()">
+        <div class="spinner" id="spinner"></div>
+        <span id="btn-text">Send magic link</span>
+      </button>
+      <div class="msg" id="msg"></div>
+      <p class="note">We send a secure link. Click it and you're in — no password, no friction.</p>
+    </div>
+  </div>
+
+  <div class="col-footer-right">
+    <div class="right-footer" style="font-size:0.72rem;color:var(--muted);">moneymind-mvp-five.vercel.app</div>
   </div>
 
 </div>
